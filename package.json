@@ -1,0 +1,48 @@
+{
+  "name": "alarm_bk",
+  "version": "1.0.0",
+  "description": "#4 main proj bk_repo",
+  "main": "index.js",
+  "scripts": {
+    "dev": "nodemon app",
+    "prettify": "prettier --write *.js **/*.js",
+    "test": "jest",
+    "start": "cross-env NODE_ENV=production pm2 start app.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kiwihannah/alarm_bk.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/kiwihannah/alarm_bk/issues"
+  },
+  "homepage": "https://github.com/kiwihannah/alarm_bk#readme",
+  "dependencies": {
+    "append-field": "^2.0.0",
+    "bcrypt": "^5.0.1",
+    "cors": "^2.8.5",
+    "cross-env": "^7.0.3",
+    "dotenv": "^16.0.0",
+    "express": "^4.17.3",
+    "joi": "^17.6.0",
+    "jsonwebtoken": "^8.5.1",
+    "moment": "^2.29.1",
+    "multer": "^1.4.4",
+    "mysql2": "^2.3.3",
+    "pm2": "^5.2.0",
+    "sequelize": "^6.16.1",
+    "swagger-jsdoc": "^6.1.0",
+    "swagger-ui-express": "^4.3.0"
+  },
+  "devDependencies": {
+    "jest": "^27.5.1",
+    "morgan": "^1.10.0",
+    "nodemon": "^2.0.15",
+    "prettier": "^2.5.1",
+    "sequelize-cli": "^6.4.1",
+    "supertest": "^6.2.2"
+  }
+}
