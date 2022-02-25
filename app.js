@@ -4,9 +4,9 @@ const morgan = require("morgan");
 const cors = require("cors");
 const path = require("path");
 const { swaggerUi, specs } = require('./swagger')
-const port = process.env.PORT; // 4000
 const dotenv = require('dotenv');
 dotenv.config();
+const port = process.env.PORT; // 4000
 
 const app = express();
 const router = express.Router();
