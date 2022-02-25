@@ -33,10 +33,11 @@ db.sequelize
   })
   .catch(console.error);
 
-router.get('/', (req, res) => { res.send('#4 main proj bk_repo'); });
+router.get('/', (req, res) => { res.send('#4 main proj alarm_bk sever open test'); });
 
 // app.use("/api", postRouter);
 
 app.listen(port, () => { console.log(`server listening on ${port}`); });
 
 module.exports = app;
+ 
