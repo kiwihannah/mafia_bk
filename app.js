@@ -4,7 +4,7 @@ const morgan = require("morgan");
 const cors = require("cors");
 const path = require("path");
 const { swaggerUi, specs } = require('./swagger')
-const port = process.env.PORT; //3000
+const port = process.env.PORT; // 4000
 const dotenv = require('dotenv');
 dotenv.config();
 
@@ -37,6 +37,6 @@ router.get('/', (req, res) => { res.send('#4 main proj bk_repo'); });
 
 // app.use("/api", postRouter);
 
-app.listen(port, () => { console.log('서버가 켜졌어요!'); });
+app.listen(port, () => { console.log(`server listening on ${port}`); });
 
 module.exports = app;
