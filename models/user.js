@@ -2,18 +2,9 @@ module.exports = (sequelize, DataTypes) => {
   const User = sequelize.define(
     'user',
     {
-      email: {
-        type: DataTypes.STRING(40),
-        unique: true,
-        allowNull: false,
-      },
       nickname: {
         type: DataTypes.STRING(10),
         unique: true,
-        allowNull: false,
-      },
-      password: {
-        type: DataTypes.STRING(100),
         allowNull: false,
       },
     },
@@ -23,9 +14,11 @@ module.exports = (sequelize, DataTypes) => {
     }
   );
 
-  // User.associate = (db) => {
-  //   db.User.hasMany(db.Alarm, { onDelete: "CASCADE" });  
-  // };
+  User.associate = (db) => {
+    db.User.belongsTo(db.Room);
+    //db.User.hasMany(db.games, { onDelete: "CASCADE" });
+    //db.User.hasMany(db.chattings, { onDelete: "CASCADE" });
+  };
 
   return User;
 };

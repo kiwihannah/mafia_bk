@@ -11,6 +11,7 @@ const sequelize = new Sequelize(
 );
 
 db.User = require("./user")(sequelize, Sequelize);
+db.Room = require("./room")(sequelize, Sequelize);
 
 Object.keys(db).forEach((modelName) => {
   if (db[modelName].associate) {
