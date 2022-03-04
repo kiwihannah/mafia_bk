@@ -1,4 +1,4 @@
-const { Room } = require('../models');
+const { Room, User } = require('../models');
 
 module.exports = {
   create: {
@@ -8,4 +8,20 @@ module.exports = {
       return room.id;
     },
   },
+
+  get: {
+    rooms: async () => {
+      const room = await Room.findAll({
+        include: {
+          model: User,
+          attributes: ["id", "nickname"],
+        },
+        order: [["currPlayer", "DESC"], ["onPlay", "ASC"], ["roomPwd", "ASC"]],
+      });
+
+      return room;
+    },
+  },
+
+
 };
