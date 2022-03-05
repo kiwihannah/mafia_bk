@@ -36,7 +36,7 @@ module.exports = (sequelize, DataTypes) => {
   );
 
   Room.associate = (db) => {
-    db.Room.hasOne(db.User);
+    db.Room.hasMany(db.User);
     // db.Room.hasMany(db.game, { onDelete: "CASCADE" });
   };
   return Room;

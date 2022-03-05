@@ -9,7 +9,7 @@ dotenv.config();
 const port = process.env.PORT; // 4000
 
 const app = express();
-const router = express.Router();
+const router = express.Router();  
 
 // 캡쳐 이미지 경로
 // app.use('/', express.static(path.join(__dirname, 'images')));
@@ -22,8 +22,6 @@ app.use(morgan("dev"));
 app.use(cors({ origin: "*" }));
 app.use("/api", bodyParser.json(), router);
 
-// routes
-
 // connect DataBase
 const db = require('./models');
 db.sequelize
@@ -35,10 +33,11 @@ db.sequelize
 
 router.get('/', (req, res) => { res.send('#4 main proj mafia_bk sever open test'); });
 
+// routes
 const userRouter = require("./routes/user");
 const roomRouter = require("./routes/room");
 
-app.use("/api", [userRouter, roomRouter]);
+app.use("/api", [ userRouter, roomRouter ]);
 
 app.listen(port, () => { console.log(`server listening on ${port}`); });
 
