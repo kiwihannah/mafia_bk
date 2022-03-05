@@ -36,8 +36,9 @@ router.get('/', (req, res) => { res.send('#4 main proj mafia_bk sever open test'
 // routes
 const userRouter = require("./routes/user");
 const roomRouter = require("./routes/room");
+const tutolRouter = require("./routes/tutorial");
 
-app.use("/api", [ userRouter, roomRouter ]);
+app.use("/api", [ userRouter, roomRouter, tutolRouter ]);
 
 app.listen(port, () => { console.log(`server listening on ${port}`); });
 

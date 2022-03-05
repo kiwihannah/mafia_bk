@@ -9,8 +9,8 @@ module.exports = {
     },
   },
 
-  updateIn: {
-    user: async (data) => {
+  update: {
+    userEnter: async (data) => {
       const prevUser = await User.findOne({ where: { id: data.userId } });
       const prevRoom = await Room.findOne({ where: { id: data.roomId } });
 
@@ -29,11 +29,9 @@ module.exports = {
           return user;
         }
       }
-    }
-  },
+    },
 
-  updateOut: {
-    user: async (data) => {
+    userOut: async (data) => {
       const prevUser = await User.findOne({ where: { id: data.userId } });
       const prevRoom = await Room.findOne({ where: { id: data.roomId } });
 
@@ -51,6 +49,16 @@ module.exports = {
           return user;
         }
       }
+    },
+
+  },
+
+  get : {
+    users: async (data) => {
+      const users = await User.findAll({ where: { roomId: data.roomId }, });
+      return users.length >= 1 ? users : "잘못된 경로";
     }
-  }
+  },
+
+    
 };
