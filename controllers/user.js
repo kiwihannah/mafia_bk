@@ -1,4 +1,4 @@
-const userService = require("../services/user");
+const userService = require('../services/user');
 
 module.exports = {
   create: {
@@ -13,7 +13,11 @@ module.exports = {
     userEnter: async (req, res) => {
       const { roomId, userId } = req.params;
       const { roomPwd } = req.body;
-      const user = await userService.update.userEnter({ roomId, userId, roomPwd });
+      const user = await userService.update.userEnter({
+        roomId,
+        userId,
+        roomPwd,
+      });
       return res.status(200).json({ user });
     },
 

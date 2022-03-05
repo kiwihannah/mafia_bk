@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 
-const UserController = require("../controllers/user");
+const UserController = require('../controllers/user');
 
 // 유저 닉네임 생성
 router.post('/user', UserController.create.user);
