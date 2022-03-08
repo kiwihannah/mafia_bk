@@ -3,9 +3,18 @@ const { User, Room } = require('../models');
 module.exports = {
   create: {
     user: async (data) => {
-      nickname = data.nickname;
-      const user = await User.create({ nickname });
-      return user;
+      const isNickname = await User.findOne({
+        where: { nickname: data.nickname },
+      });
+      if (isNickname) {
+        return { msg: '이미 플레이 중인 닉네임 입니다.' };
+      } else {
+        const user = await User.create({
+          nickname: data.nickname,
+          isHost: 'N',
+        });
+        return user;
+      }
     },
   },
 
@@ -47,13 +56,24 @@ module.exports = {
         if (prevRoom.onPlay === 'Y') {
           return { msg: '게임이 시작되면 나갈 수 없습니다.' };
         } else {
+          const user = await prevUser.update({ roomId: null });
+
+          const nextHost = await User.findOne({
+            where: { roomId: data.roomId },
+            order: [['createdAt', 'ASC']],
+          });
+
+          if (prevUser.id === prevRoom.hostId) {
+            await prevRoom.update({ hostId: nextHost.id });
+          }
+
           User.sequelize.query(
             `UPDATE rooms SET currPlayer = currPlayer - 1 WHERE id=${data.roomId};`,
             (err) => {
               if (err) throw err;
             }
           );
-          const user = await prevUser.update({ roomId: null });
+
           return user;
         }
       }
@@ -63,7 +83,9 @@ module.exports = {
   get: {
     users: async (data) => {
       const users = await User.findAll({ where: { roomId: data.roomId } });
-      return users.length >= 1 ? users : '잘못된 경로';
+      return users.length >= 1
+        ? users
+        : '! 잘못된 경로 ! 플레이어가 없는 방 입니다.';
     },
   },
 };

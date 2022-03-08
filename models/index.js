@@ -12,6 +12,8 @@ const sequelize = new Sequelize(
 
 db.User = require('./user')(sequelize, Sequelize);
 db.Room = require('./room')(sequelize, Sequelize);
+db.GameResult = require('./gameResult')(sequelize, Sequelize);
+db.GameGroup = require('./gameGroup')(sequelize, Sequelize);
 
 Object.keys(db).forEach((modelName) => {
   if (db[modelName].associate) {
