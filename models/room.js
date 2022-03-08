@@ -11,7 +11,7 @@ module.exports = (sequelize, DataTypes) => {
         allowNull: false,
       },
       currPlayer: {
-        type: DataTypes.INTEGER, // ++, -- 계산
+        type: DataTypes.INTEGER,
         allowNull: false,
         default: 1,
       },
@@ -22,7 +22,7 @@ module.exports = (sequelize, DataTypes) => {
       onPlay: {
         type: DataTypes.TEXT,
         allowNull: false,
-        default: 'N', //Y or N
+        default: 'N',
       },
       roomPwd: {
         type: DataTypes.INTEGER,
@@ -36,8 +36,9 @@ module.exports = (sequelize, DataTypes) => {
   );
 
   Room.associate = (db) => {
-    db.Room.hasMany(db.User);
-    // db.Room.hasMany(db.game, { onDelete: "CASCADE" });
+    db.Room.hasMany(db.GameResult);
+    db.Room.hasOne(db.GameGroup);
   };
+
   return Room;
 };

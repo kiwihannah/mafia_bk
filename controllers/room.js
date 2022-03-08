@@ -19,8 +19,8 @@ module.exports = {
 
   get: {
     rooms: async (_, res) => {
-      const room = await roomService.get.rooms({});
-      return res.status(200).json({ room });
+      const rooms = await roomService.get.rooms({});
+      return res.status(200).json({ rooms });
     },
   },
 };

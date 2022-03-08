@@ -3,7 +3,7 @@ module.exports = (sequelize, DataTypes) => {
     'user',
     {
       nickname: {
-        type: DataTypes.STRING(10),
+        type: DataTypes.STRING(15),
         unique: true,
         allowNull: false,
       },
@@ -15,9 +15,7 @@ module.exports = (sequelize, DataTypes) => {
   );
 
   User.associate = (db) => {
-    db.User.belongsTo(db.Room);
-    //db.User.hasMany(db.games, { onDelete: "CASCADE" });
-    //db.User.hasMany(db.chattings, { onDelete: "CASCADE" });
+    db.GameGroup.belongsTo(db.GameGroup);
   };
 
   return User;
