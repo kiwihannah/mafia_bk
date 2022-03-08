@@ -1,4 +1,10 @@
 const userService = require('../services/user');
+const {
+  uniqueNamesGenerator,
+  adjectives,
+  colors,
+  animals,
+} = require('unique-names-generator');
 
 module.exports = {
   create: {
@@ -33,6 +39,13 @@ module.exports = {
       const { roomId } = req.params;
       const users = await userService.get.users({ roomId });
       return res.status(200).json({ users });
+    },
+
+    randomNick: () => {
+      const randomName = uniqueNamesGenerator({
+        dictionaries: [adjectives, colors, animals],
+      }); 
+      return randomName;
     },
   },
 };
