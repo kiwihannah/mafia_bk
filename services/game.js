@@ -94,6 +94,12 @@ module.exports = {
       if (prevGameResult.emplCnt <= prevGameResult.spyCnt) return 2;
       if (prevGameResult.spyCnt === 0) return 1;
     },
+  },
+
+  delete: {
+    playerOut: async (data) => {
+
+    }
   }
 
 

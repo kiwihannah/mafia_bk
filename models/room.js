@@ -15,10 +15,6 @@ module.exports = (sequelize, DataTypes) => {
         allowNull: false,
         default: 1,
       },
-      hostId: {
-        type: DataTypes.INTEGER,
-        allowNull: false,
-      },
       onPlay: {
         type: DataTypes.TEXT,
         allowNull: false,
