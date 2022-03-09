@@ -11,5 +11,9 @@ router.put('/enter/:roomId/user/:userId', UserController.update.userEnter);
 router.put('/out/:roomId/user/:userId', UserController.update.userOut);
 // 방 안 유저 리스트 조회
 router.get('/room/:roomId/users', UserController.get.users);
+// 랜덤 아이디 생성 요청 -> string 반환
+router.get('/randomNick', UserController.get.randomNick);
+// 유저 삭제
+router.delete('/user/:userId', UserController.delete.user);
 
 module.exports = router;

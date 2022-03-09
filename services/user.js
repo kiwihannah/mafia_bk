@@ -1,13 +1,14 @@
 const { User, Room } = require('../models');
+const { ServiceAsyncWrapper } = require('../utils/wrapper');
 
 module.exports = {
   create: {
-    user: async (data) => {
+    user: ServiceAsyncWrapper(async (data) => {
       const isNickname = await User.findOne({
         where: { nickname: data.nickname },
       });
       if (isNickname) {
-        return { msg: '이미 플레이 중인 닉네임 입니다.' };
+        throw ({ msg: '이미 플레이 중인 닉네임 입니다.' });
       } else {
         const user = await User.create({
           nickname: data.nickname,
@@ -15,16 +16,18 @@ module.exports = {
         });
         return user;
       }
-    },
+    }),
   },
 
   update: {
     userEnter: async (data) => {
+      console.log(`SerUoomId:${data.roomId} SerUserId: ${data.userId} SerRoomPwd: ${data.roomPwd}`);
+
       const prevUser = await User.findOne({ where: { id: data.userId } });
       const prevRoom = await Room.findOne({ where: { id: data.roomId } });
 
       if (
-        !prevRoom ||
+        prevRoom.length < 1 ||
         prevRoom.onPlay === 'Y' ||
         prevRoom.currPlayer === prevRoom.maxPlayer
       ) {
@@ -81,12 +84,19 @@ module.exports = {
   },
 
   get: {
-    users: async (data) => {
+    users: ServiceAsyncWrapper(async (data) => {
       const users = await User.findAll({ where: { roomId: data.roomId } });
-      return users.length >= 1
-        ? users
-        : '! 잘못된 경로 ! 플레이어가 없는 방 입니다.';
-    },
+      if(!users) throw ({ msg :'* 플레이어가 없는 방 입니다. *'});
+      else return users;
+    }),
+  },
+
+  delete: {
+    user: ServiceAsyncWrapper(async (data) => {
+      const user = await User.findAll({ where: { id: data.userId } });
+      if(user.length < 1 ) throw ({ msg :'존재하지 않는 유저입니다.'});
+      else await User.destroy({ where: { id: data.userId } });;
+    }),
   },
   
 };

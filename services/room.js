@@ -31,9 +31,9 @@ module.exports = {
           attributes: ['id', 'nickname'],
         },
         order: [
+          //['onPlay', 'ASC'], //N부터
+          //['roomPwd', 'ASC'],
           ['currPlayer', 'DESC'],
-          ['onPlay', 'ASC'],
-          ['roomPwd', 'ASC'],
         ],
       });
 

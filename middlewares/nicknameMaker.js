@@ -91,7 +91,7 @@ module.exports = () => {
     '게임광',
     '사실은 AI',
     '스파이',
-    '사장',
+    '쾌남',
     '부장',
     '차장',
     '과장',
@@ -101,6 +101,7 @@ module.exports = () => {
     '나왜요뭐요',
     '세계관주인공',
   ];
+  
   let adjPick_1 = adjective_1[Math.floor(Math.random() * 30)];
   let adjPick_2 = adjective_2[Math.floor(Math.random() * 30)];
   let nounPick = noun[Math.floor(Math.random() * 30)];
