@@ -21,11 +21,9 @@ module.exports = {
 
   update: {
     userEnter: async (data) => {
-      console.log(`SerUoomId:${data.roomId} SerUserId: ${data.userId} SerRoomPwd: ${data.roomPwd}`);
-
       const prevUser = await User.findOne({ where: { id: data.userId } });
       const prevRoom = await Room.findOne({ where: { id: data.roomId } });
-
+      console.log('1', prevUser);
       if (
         prevRoom.length < 1 ||
         prevRoom.onPlay === 'Y' ||
@@ -42,7 +40,7 @@ module.exports = {
               if (err) throw err;
             }
           );
-          console.log(prevUser);
+          console.log('2', prevUser);
           const user = await prevUser.update({ roomId: data.roomId });
           return user;
         }

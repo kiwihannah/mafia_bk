@@ -14,7 +14,6 @@ module.exports = {
     userEnter: async (req, res) => {
       const { roomId, userId } = req.params;
       const { roomPwd } = req.body;
-      console.log(`roomId:${roomId} userId: ${userId} roomPwd: ${roomPwd}`);
       const user = await userService.update.userEnter({
         roomId,
         userId,
