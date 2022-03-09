@@ -1,5 +1,5 @@
 // 형용사 + 형용사 + 명사 의 조합 반환
-module.exports = (_, _, next) => {
+module.exports = () => {
   // ~ 하고
   const adjective_1 = [
     '사랑스럽고 ',

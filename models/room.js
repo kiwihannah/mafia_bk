@@ -15,10 +15,6 @@ module.exports = (sequelize, DataTypes) => {
         allowNull: false,
         default: 1,
       },
-      hostId: {
-        type: DataTypes.INTEGER,
-        allowNull: false,
-      },
       onPlay: {
         type: DataTypes.TEXT,
         allowNull: false,
@@ -38,6 +34,7 @@ module.exports = (sequelize, DataTypes) => {
   Room.associate = (db) => {
     db.Room.hasMany(db.GameResult);
     db.Room.hasOne(db.GameGroup);
+    db.Room.hasMany(db.User);
   };
 
   return Room;

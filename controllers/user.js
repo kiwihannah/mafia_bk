@@ -34,5 +34,6 @@ module.exports = {
       const users = await userService.get.users({ roomId });
       return res.status(200).json({ users });
     },
+
   },
 };

@@ -15,7 +15,8 @@ module.exports = (sequelize, DataTypes) => {
   );
 
   User.associate = (db) => {
-    db.GameGroup.belongsTo(db.GameGroup);
+    db.User.belongsTo(db.GameGroup);
+    db.User.belongsTo(db.Room);
   };
 
   return User;

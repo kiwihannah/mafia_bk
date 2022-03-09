@@ -1,11 +1,15 @@
 module.exports = (sequelize, DataTypes) => {
-  const GameGroup = sequelize.define(
+  const GameGroup = sequelize.define( 
     'gameGroup',
     {
       isReady: {
         type: DataTypes.STRING(2),
         allowNull: false,
         default: 'N',
+      },
+      userId: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
       },
       role: {
         type: DataTypes.INTEGER,
