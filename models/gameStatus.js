@@ -1,6 +1,6 @@
 module.exports = (sequelize, DataTypes) => {
-  const GameResult = sequelize.define(
-    'gameResult',
+  const GameStatus = sequelize.define(
+    'gameStatus',
     {
       roundNo: {
         type: DataTypes.INTEGER,
@@ -24,9 +24,9 @@ module.exports = (sequelize, DataTypes) => {
     }
   );
 
-  GameResult.associate = (db) => {
-    db.GameResult.belongsTo(db.Room, { onDelete: 'CASCADE' });
+  GameStatus.associate = (db) => {
+    db.GameStatus.belongsTo(db.Room, { onDelete: 'CASCADE' });
   };
 
-  return GameResult;
+  return GameStatus;
 };

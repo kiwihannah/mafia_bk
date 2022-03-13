@@ -6,7 +6,7 @@ const path = require('path');
 const { swaggerUi, specs } = require('./swagger');
 const dotenv = require('dotenv');
 dotenv.config();
-const port = process.env.PORT; // 4000
+const port = process.env.PORT; // 3000
 
 const app = express();
 const router = express.Router();
@@ -38,9 +38,9 @@ router.get('/', (req, res) => {
 // routes
 const userRouter = require('./routes/user');
 const roomRouter = require('./routes/room');
-const tutolRouter = require('./routes/tutorial');
+const gamelRouter = require('./routes/game');
 
-app.use('/api', [userRouter, roomRouter, tutolRouter]);
+app.use('/api', [userRouter, roomRouter, gamelRouter]);
 
 app.listen(port, () => {
   console.log(`server listening on ${port}`);

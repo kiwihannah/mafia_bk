@@ -11,14 +11,14 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.INTEGER,
         allowNull: false,
       },
-      role: {
+      role: { // 시민 {일개미: 1, 변호사: 2, 탐정: 3}, 스파이: 4
         type: DataTypes.INTEGER,
         allowNull: true,
       },
       isEliminated: {
-        type: DataTypes.STRING(2),
+        type: DataTypes.STRING(2), 
         allowNull: false,
-        default: 'Y',
+        default: 'N',
       },
       isAi: {
         type: DataTypes.STRING(2),
@@ -28,6 +28,11 @@ module.exports = (sequelize, DataTypes) => {
       isHost: {
         type: DataTypes.STRING(2),
         allowNull: false,
+        default: 'N',
+      },
+      isProtected: {
+        type: DataTypes.STRING(2),
+        allowNull: true,
         default: 'N',
       },
     },

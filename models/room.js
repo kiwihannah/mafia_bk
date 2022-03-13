@@ -32,7 +32,7 @@ module.exports = (sequelize, DataTypes) => {
   );
 
   Room.associate = (db) => {
-    db.Room.hasMany(db.GameResult);
+    db.Room.hasMany(db.GameStatus);
     db.Room.hasOne(db.GameGroup);
     db.Room.hasMany(db.User);
   };
