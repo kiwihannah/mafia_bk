@@ -21,8 +21,8 @@ module.exports = {
 
   delete: {
     user: ServiceAsyncWrapper(async (data) => {
-      const user = await User.findAll({ where: { id: data.userId } });
-      if(user.length < 1 ) throw ({ msg :'존재하지 않는 유저입니다.'});
+      const user = await User.findOne({ where: { id: data.userId } });
+      if(!user) throw ({ msg :'존재하지 않는 유저입니다.'});
       else await User.destroy({ where: { id: data.userId } });;
     }),
   },

@@ -11,7 +11,7 @@ module.exports = {
         userId,
         roomPwd,
       });
-      return res.status(200).json({ user });
+      return res.status(200).json({ userId });
     }),
 
     exit: ControllerAsyncWrapper(async (req, res) => {
@@ -25,7 +25,7 @@ module.exports = {
     readyGroup: ControllerAsyncWrapper(async (req, res) => {
       const { roomId, userId } = req.params;
       await gameService.create.readyGroup({ roomId, userId });
-      return res.status(201);
+      return res.status(201).json({ userId });
     }),
 
     aiPlayer: ControllerAsyncWrapper(async (req, res) => {
@@ -39,15 +39,15 @@ module.exports = {
     ready: ControllerAsyncWrapper(async (req, res) => {
       const { roomId, userId } = req.params;
       await gameService.cancel.ready({ userId });
-      return res.status(200);
+      return res.status(200).json({ userId });
     }),
   },
 
   start: {
     game: ControllerAsyncWrapper(async (req, res) => {
       const { roomId, userId } = req.params;
-      const user = await gameService.readyAndStart.game({ roomId, userId });
-      return res.status(200).json({ user });   
+      const msg = await gameService.start.game({ roomId, userId });
+      return res.status(200).json({ msg }); 
     }),
   },
 
@@ -102,7 +102,7 @@ module.exports = {
 
     users: ControllerAsyncWrapper(async (req, res) => {
       const { roomId } = req.params;
-      const users = await userService.getGame.users({ roomId });
+      const users = await gameService.getGame.users({ roomId });
       return res.status(200).json({ users });
     }),
   },

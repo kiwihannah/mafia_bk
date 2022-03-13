@@ -11,8 +11,7 @@ module.exports = {
         roomPwd,
         onPlay: 'N',
         currPlayer: 1,
-        userId,
-        doorType
+        userId
       });
       return res.status(201).json({ room });
     },

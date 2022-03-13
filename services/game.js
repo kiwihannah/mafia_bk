@@ -11,7 +11,6 @@ const Roles = [
 
 module.exports = {
   entryAndExit: {
-
     // 방 입장
     enterRoom: ServiceAsyncWrapper(async (data) => {
       const prevUser = await User.findOne({ where: { id: data.userId } });
@@ -52,7 +51,7 @@ module.exports = {
           });
 
           // 유저 리스트 반환
-          return gameGroup;
+          return gameGroup.userId;
         }
       }
     }),
@@ -61,10 +60,6 @@ module.exports = {
     exitRoom: ServiceAsyncWrapper(async (data) => {
       const prevUser = await User.findOne({ where: { id: data.userId } });
       const prevRoom = await Room.findOne({ where: { id: data.roomId } });
-
-      // 현재인원 < 0 방 자동 삭제
-      if (prevRoom.currPlayer < 0)
-        await prevRoom.destroy({ where: { id: data.roomId } });
 
       if (!prevUser) {
         // 유저 예외 처리
@@ -96,6 +91,12 @@ module.exports = {
             if (err) throw err;
           }
         );
+
+        if (prevRoom.currPlayer < 0) {
+          // 현재인원 < 0 방 자동 삭제
+          await prevRoom.destroy({ where: { id: data.roomId } });
+        }
+
         return user;
       }
     }),
@@ -104,7 +105,7 @@ module.exports = {
   create: {
     // 레디 하기
     readyGroup: ServiceAsyncWrapper(async (data) => {
-      const prevGameGroupUser = await gameGroup.findOne({
+      const prevGameGroupUser = await GameGroup.findOne({
         where: { userId: data.userId },
       });
 
@@ -112,7 +113,7 @@ module.exports = {
         throw { msg: '존재하지 않는 유저입니다.' };
       } else {
         const gameGroup = await prevGameGroupUser.update({ isReady: 'Y' });
-        return gameGroup;
+        return gameGroup.userId;
       }
     }),
 
@@ -127,8 +128,8 @@ module.exports = {
         throw { msg: '게임 할 방이 삭제되었거나, 유저가 없습니다.' };
       } else {
         const gap = prevRoom.maxPlayer - prevGameGroup.length;
-        
-        while (gap--) {
+
+        while (--gap) {
           await GameGroup.create({
             isReady: 'Y',
             userId: 0,
@@ -139,7 +140,6 @@ module.exports = {
           });
           if (gap === 0) break;
         }
-
       }
     }),
   },
@@ -147,15 +147,17 @@ module.exports = {
   cancel: {
     // 레디 취소 하기
     ready: ServiceAsyncWrapper(async (data) => {
-      const prevGameGroup = await GameGroup.findAll({
+      const prevGameGroup = await GameGroup.findOne({
         where: { userId: data.userId },
       });
+
+      console.log(prevGameGroup);
 
       if (!prevGameGroup) {
         throw { msg: '존재하지 않는 유저입니다.' };
       } else {
         const gameGroup = await prevGameGroup.update({ isReady: 'N' });
-        return gameGroup;
+        return gameGroup.userId;
       }
     }),
   },
@@ -163,33 +165,32 @@ module.exports = {
   start: {
     // 게임 시작하기
     game: ServiceAsyncWrapper(async (data) => {
-      const prevRoom = await Room.findAll({ where: { id: data.roomId } });
+      const prevRoom = await Room.findOne({ where: { id: data.roomId } });
       const prevGameGroup = await GameGroup.findAll({
         where: {
           roomId: data.roomId,
           isReady: 'Y',
         },
       });
-      const isHost = await GameGroup.findOne({ userId : data.userId }).isHost;
+      const isHost = await GameGroup.findOne({
+        where: { userId: data.userId },
+      });
 
       if (!prevRoom) {
         throw { msg: '방이 존재하지 않습니다.' };
       } else {
-        if (isHost !== 'Y') {
+        if (isHost.isHost !== 'Y') {
           throw { msg: '권한이 없습니다.' };
         } else {
-          if (prevGameGroup.length === prevRoom.currPlayer) {
+          if (prevGameGroup.length !== prevRoom.currPlayer) {
+            throw { meg: '모두 준비가 완료되지 않았습니다.' };
+          } else {
             // 게임 시작 상태로 돌림
             await prevRoom.update({ onPlay: 'Y' });
             // ai 사용 여부
-            if (prevRoom.currPlayer !== prevRoom.maxPlayer) {
-              return {
-                // confirm 으로 받음 Y-> 인공지능 생성 api 요청 | N -> 유저 기다리기
-                meg: `부족한 인원은 인공지능 플레이어로 대체 하시겠습니까?\n미리 말씀드리자면, 인공지능은 상당히 멍청합니다.`,
-              };
-            }
-          } else {
-            throw { meg: '모두 준비가 완료되지 않았습니다.' };
+            return prevRoom.currPlayer < prevRoom.maxPlayer
+              ? `부족한 인원은 인공지능 플레이어로 대체 하시겠습니까?\n미리 말씀드리자면, 인공지능은 상당히 멍청합니다.`
+              : '시작!';
           }
         }
       }
@@ -254,7 +255,9 @@ module.exports = {
         throw { msg: '존재하지 않는 유저입니다.' };
       } else {
         await prevGameGroup.update({ isProtected: 'Y' });
-        return { msg: `[ ${prevUser.nickname} ] (이)를 스파이로 부터 1회 보호합니다.` };
+        return {
+          msg: `[ ${prevUser.nickname} ] (이)를 스파이로 부터 1회 보호합니다.`,
+        };
       }
     }),
 
@@ -281,15 +284,19 @@ module.exports = {
         where: { userId: data.userId },
       });
       const prevUser = await User.findAll({ where: { id: data.userId } });
-      
+
       if (!prevGameGroup) {
         throw { msg: '존재하지 않는 유저입니다.' };
       } else {
         if (!prevGameGroup.isProtected === 'Y') {
           await prevGameGroup.update({ isEliminated: 'Y' });
-          return { msg: `선량한 시민 [ ${prevUser.nickname} ] (이)가 간 밤에 해고당했습니다.` }
+          return {
+            msg: `선량한 시민 [ ${prevUser.nickname} ] (이)가 간 밤에 해고당했습니다.`,
+          };
         } else {
-          return { meg: `현명한 변호사가 일개미 [ ${prevUser.nickname} ] (이)의 해고를 막았습니다.` };
+          return {
+            meg: `현명한 변호사가 일개미 [ ${prevUser.nickname} ] (이)의 해고를 막았습니다.`,
+          };
         }
       }
     }),
@@ -319,10 +326,10 @@ module.exports = {
     // 두번째 낮이 밝기 전에 실행
     result: ServiceAsyncWrapper(async (data) => {
       const prevSpyCnt = await GameGroup.findAll({
-        where: { roomId: data.roomId , role: 4},
+        where: { roomId: data.roomId, role: 4 },
       });
       const prevNonSpyCnt = await GameGroup.findAll({
-        where: { roomId: data.roomId , role: 1 || 2 || 3 },
+        where: { roomId: data.roomId, role: 1 || 2 || 3 },
       });
 
       const spyCnt = prevSpyCnt.length;
@@ -332,12 +339,12 @@ module.exports = {
         where: { roomId: data.roomId },
       });
 
-      if (!prevGameStatus){
+      if (!prevGameStatus) {
         await GameStatus.create({
           roundNo: 1,
           spyCnt,
           emplCnt,
-          roomId : data.roomId,
+          roomId: data.roomId,
         });
       } else {
         GameStatus.sequelize.query(
@@ -359,14 +366,15 @@ module.exports = {
 
     // 회차 반환
     status: ServiceAsyncWrapper(async (data) => {
-      const gameStatus = await GameStatus.findAll({ roomId: data.roomId });
+      const gameStatus = await GameStatus.findAll({
+        where: { roomId: data.roomId },
+      });
       return gameStatus.roundNo;
     }),
 
     // 유저 배열 반환
     users: ServiceAsyncWrapper(async (data) => {
-      const users = await GameGroup.findAll({ roomId: data.roomId });
-
+      const users = await GameGroup.findAll({ where: { roomId: data.roomId } });
       if (!users) throw { msg: '방에 입장한 유저가 없습니다.' };
       else return users;
     }),
