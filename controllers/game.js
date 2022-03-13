@@ -6,7 +6,7 @@ module.exports = {
     enter: ControllerAsyncWrapper(async (req, res) => {
       const { roomId, userId } = req.params;
       const { roomPwd } = req.body;
-      const user = await gameService.entryAndExit.enterRoom({
+      await gameService.entryAndExit.enterRoom({
         roomId,
         userId,
         roomPwd,
@@ -16,8 +16,8 @@ module.exports = {
 
     exit: ControllerAsyncWrapper(async (req, res) => {
       const { roomId, userId } = req.params;
-      const user = await gameService.entryAndExit.exitRoom({ roomId, userId });
-      return res.status(200).json({ user });
+      await gameService.entryAndExit.exitRoom({ roomId, userId });
+      return res.status(200).json({ userId });
     }),
   },
 

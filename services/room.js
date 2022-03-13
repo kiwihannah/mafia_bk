@@ -34,7 +34,7 @@ module.exports = {
           isEliminated: 'N',
           isAi : 'N',
           isHost : 'Y',
-          roomId: data.roomId,
+          roomId: room.id,
         });
        
         return room;

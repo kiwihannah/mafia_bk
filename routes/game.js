@@ -6,20 +6,20 @@ const GameController = require('../controllers/game');
 // 유저 방 입장
 router.put('/enter/:roomId/user/:userId', GameController.entryAndExit.enter);
 // 유저 방 나가기 & 강퇴 기능 공동 사용
-router.put('/out/:roomId/user/:userId', GameController.entryAndExit.exit);
+router.patch('/out/:roomId/user/:userId', GameController.entryAndExit.exit);
 // 방 안 유저 리스트 조회
 router.get('/room/:roomId/users', GameController.get.users);
 // 레디한 유저 게임 플레이 유저로 추가
-router.put('/room/:roomId/user/:userId/ready', GameController.create.readyGroup);
+router.patch('/room/:roomId/user/:userId/ready', GameController.create.readyGroup);
 // ai 플레이어 생성 수락한 방에 부족한 인원 인공지능으로 채우기
 router.put('/room/:roomId/ai', GameController.create.aiPlayer);
 // 레디 취소하기 
-router.put('/room/:roomId/user/:userId/cancelReady', GameController.cancel.ready);
+router.patch('/room/:roomId/user/:userId/cancelReady', GameController.cancel.ready);
 
 // 게임 시작하기
-router.put('/room/:roomId/user/:userId/start', GameController.start.game);
-// 게임 시작 후 역할 부여
-router.put('/room/:roomId/role', GameController.gamePlay.giveRole);
+router.patch('/room/:roomId/user/:userId/start', GameController.start.game);
+// 역할 부여
+router.patch('/room/:roomId/role', GameController.gamePlay.giveRole);
 // 변호사가 일개미 지키기
 router.patch('/room/:roomId/lawyerAct', GameController.gamePlay.lawyerAct);
 // 탐정이 스파이 알아보기

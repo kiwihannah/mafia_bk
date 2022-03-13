@@ -97,7 +97,7 @@ module.exports = {
           await prevRoom.destroy({ where: { id: data.roomId } });
         }
 
-        return user;
+        return user.id;
       }
     }),
   },
