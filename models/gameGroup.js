@@ -11,6 +11,10 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.INTEGER,
         allowNull: false,
       },
+      nickname: {
+        type: DataTypes.STRING(20),
+        allowNull: false,
+      },
       role: { // 시민 {일개미: 1, 변호사: 2, 탐정: 3}, 스파이: 4
         type: DataTypes.INTEGER,
         allowNull: true,

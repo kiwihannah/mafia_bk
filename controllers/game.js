@@ -15,6 +15,7 @@ module.exports = {
     }),
 
     exit: ControllerAsyncWrapper(async (req, res) => {
+      
       const { roomId, userId } = req.params;
       await gameService.entryAndExit.exitRoom({ roomId, userId });
       return res.status(200).json({ userId });

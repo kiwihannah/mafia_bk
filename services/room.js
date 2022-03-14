@@ -30,6 +30,7 @@ module.exports = {
         await GameGroup.create({
           isReady : 'Y',
           userId: data.userId,
+          nickname: prevUser.nickname,
           role: null,
           isEliminated: 'N',
           isAi : 'N',

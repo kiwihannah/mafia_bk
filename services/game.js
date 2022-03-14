@@ -40,9 +40,13 @@ module.exports = {
           );
 
           await prevUser.update({ roomId: data.roomId });
+
+          console.log(data.userId)
+          
           const gameGroup = await GameGroup.create({
             isReady: 'N',
             userId: data.userId,
+            nickname: prevUser.nickname,
             role: null,
             isEliminated: 'N',
             isAi: 'N',
@@ -291,11 +295,11 @@ module.exports = {
         if (!prevGameGroup.isProtected === 'Y') {
           await prevGameGroup.update({ isEliminated: 'Y' });
           return {
-            msg: `선량한 시민 [ ${prevUser.nickname} ] (이)가 간 밤에 해고당했습니다.`,
+            msg: `선량한 시민 [ ${prevUser.nickname} ] (이)가 간 밤에 해고 당했습니다.`,
           };
         } else {
           return {
-            meg: `현명한 변호사가 일개미 [ ${prevUser.nickname} ] (이)의 해고를 막았습니다.`,
+            meg: `현명한 변호사가 일개미 [ ${prevUser.nickname} ] (이)의 부당 해고를 막았습니다.`,
           };
         }
       }
@@ -313,7 +317,7 @@ module.exports = {
         await prevGameGroup.update({ isEliminated: 'Y' });
         return !prevGameGroup.role === 4
           ? {
-              msg: `선량한 시민 [ ${prevUser.nickname} ] (이)가 해고당했습니다.`,
+              msg: `선량한 시민 [ ${prevUser.nickname} ] (이)가 해고 당했습니다.`,
             }
           : {
               msg: `산업 스파이 [ ${prevUser.nickname} ] (이)가 붙잡혔습니다.`,
@@ -374,7 +378,13 @@ module.exports = {
 
     // 유저 배열 반환
     users: ServiceAsyncWrapper(async (data) => {
-      const users = await GameGroup.findAll({ where: { roomId: data.roomId } });
+      const users = await GameGroup.findAll({ 
+        where: { roomId: data.roomId },
+        include: {
+          model: User,
+          attributes: ['id', 'nickname'],
+        },
+      });
       if (!users) throw { msg: '방에 입장한 유저가 없습니다.' };
       else return users;
     }),
