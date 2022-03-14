@@ -10,17 +10,36 @@ const port = process.env.PORT; // 4000
 
 const app = express();
 const router = express.Router();
-
+var fs = require('fs');
+var session = require('express-session');
+var https = require('https');
 // 캡쳐 이미지 경로
 // app.use('/', express.static(path.join(__dirname, 'images')));
-
+app.use(
+  session({
+    saveUninitialized: true,
+    resave: false,
+    secret: 'MY_SECRET',
+  })
+);
 //swagger
 app.use('/swagger', swaggerUi.serve, swaggerUi.setup(specs));
 
 // middlewares
 app.use(morgan('dev'));
 app.use(cors({ origin: '*' }));
-app.use('/', bodyParser.json(), router);
+app.use(
+  '/',
+  bodyParser.json({
+    type: 'application/vnd.api+json',
+  }),
+  router
+);
+var options = {
+  key: fs.readFileSync('openvidukey.pem'),
+  cert: fs.readFileSync('openviducert.pem'),
+};
+https.createServer(options, app);
 
 // connect DataBase
 const db = require('./models');
