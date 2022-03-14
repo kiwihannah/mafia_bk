@@ -1,12 +1,13 @@
 const userService = require('../services/user');
+const { ControllerAsyncWrapper } = require('../utils/wrapper');
 
 module.exports = {
   create: {
-    user: async (req, res) => {
+    user: ControllerAsyncWrapper(async (req, res) => {
       const { nickname } = req.body;
       const user = await userService.create.user({ nickname });
       return res.status(201).json({ user });
-    },
+    }),
   },
 
   update: {
@@ -35,5 +36,16 @@ module.exports = {
       return res.status(200).json({ users });
     },
 
+    randomNick: async (req, res) => {
+
+    },
+  },
+
+  delete: {
+    user: ControllerAsyncWrapper(async (req, res) => {
+      const { userId } = req.params;
+      await userService.delete.user({ userId });
+      return res.status(202).json({ });
+    }),
   },
 };
