@@ -48,9 +48,9 @@ function joinSession() {
     // --- 4) Connect to the session passing the retrieved token and some more data from
     //        the client (in this case a JSON with the nickname chosen by the user) ---
 
-    var nickName = $('#nickName').val();
+    var nickname = $('#nickname').val();
     session
-      .connect(token, { clientData: nickName })
+      .connect(token, { clientData: nickname })
       .then(() => {
         // --- 5) Set page layout for active call ---
 
@@ -153,25 +153,6 @@ async function logIn(nickname) {
     console.log(err);
   }
 }
-// function logIn(nickname) {
-//   var nickname = $('#nickname').val(); // Username
-//   //var pass = $('#pass').val(); // Password
-
-//   httpPostRequest(
-//     '/api/user',
-//     { nickname },
-//     //{ user: user, pass: pass },
-//     'Login WRONG',
-//     (response) => {
-//       $('#name-user').text(nickname);
-//       $('#not-logged').hide();
-//       $('#logged').show();
-//       // Random nickName and session
-//       $('#sessionName').val('Session ' + Math.floor(Math.random() * 10));
-//       $('#nickName').val('Participant ' + Math.floor(Math.random() * 100));
-//     }
-//   );
-// }
 
 function logOut() {
   httpPostRequest('api-login/logout', {}, 'Logout WRONG', (response) => {

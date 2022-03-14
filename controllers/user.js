@@ -8,6 +8,7 @@ module.exports = {
       const { nickname } = req.body;
       const user = await userService.create.user({ nickname });
       req.session.loggedUser = user;
+      console.log(`Logging in | ${user}`);
       return res.status(201).json({ user });
     }),
   },
