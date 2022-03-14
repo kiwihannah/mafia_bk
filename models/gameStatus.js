@@ -7,15 +7,10 @@ module.exports = (sequelize, DataTypes) => {
         allowNull: false,
         default: 0,
       },
-      spyCnt: {
+      isResult: {
         type: DataTypes.INTEGER,
-        allowNull: false,
-        default: 2,
-      },
-      emplCnt: {
-        type: DataTypes.INTEGER,
-        allowNull: false,
-        default: 4,
+        allowNull: true,
+        default: 0, // 2 : spy win | 1 : empl win
       },
     },
     {
@@ -26,6 +21,7 @@ module.exports = (sequelize, DataTypes) => {
 
   GameStatus.associate = (db) => {
     db.GameStatus.belongsTo(db.Room, { onDelete: 'CASCADE' });
+    db.GameStatus.hasMany(db.Vote, { onDelete: 'CASCADE' });
   };
 
   return GameStatus;

@@ -6,12 +6,12 @@ module.exports = {
       const { roomName, maxPlayer, roomPwd } = req.body;
       const { userId } = req.params;
       const room = await roomService.create.room({
+        userId,
         roomName,
         maxPlayer,
         roomPwd,
         onPlay: 'N',
         currPlayer: 1,
-        userId
       });
       return res.status(201).json({ room });
     },

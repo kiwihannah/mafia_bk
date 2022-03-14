@@ -4,11 +4,10 @@ module.exports = {
   create: {
     room: async (data) => {
       const { roomName, maxPlayer, roomPwd, onPlay, currPlayer, userId } = data;
+      const prevUser = await User.findOne({ where: { id: userId } });
 
-      const prevUser = await User.findOne({ id : userId });
-
-      if(!prevUser) {
-        throw { msg :'존재하지 않는 유저입니다.' };
+      if (!prevUser) {
+        throw { msg: '존재하지 않는 유저입니다.' };
       } else {
         // 방 만들기
         const room = await Room.create({
@@ -16,28 +15,37 @@ module.exports = {
           maxPlayer,
           roomPwd,
           onPlay,
-          currPlayer
+          currPlayer,
+          userId,
         });
 
         // 유저 테이블에 방번호 입력
-        const prevRoomId = await Room.findOne({ order: [['createdAt', 'DESC']] });
         User.sequelize.query(
-          `UPDATE users SET roomId = ${prevRoomId.id} WHERE id=${userId};`,
-          (err) => { if (err) throw err; }
+          `UPDATE users SET roomId = ${room.id} WHERE id=${userId};`,
+          (err) => {
+            if (err) throw err;
+          }
         );
 
         // 방장 -> 자동 레디
-        await GameGroup.create({
-          isReady : 'Y',
-          userId: data.userId,
-          nickname: prevUser.nickname,
+        const gameGroup = await GameGroup.create({
+          userId,
+          isReady: 'Y',
           role: null,
           isEliminated: 'N',
-          isAi : 'N',
-          isHost : 'Y',
+          isAi: 'N',
+          isHost: 'Y',
           roomId: room.id,
         });
-       
+
+        // 유저 게임 그룹 테이블 연결
+        User.sequelize.query(
+          `UPDATE users SET gameGroupId = ${gameGroup.id} WHERE id=${data.userId};`,
+          (err) => {
+            if (err) throw err;
+          }
+        );
+
         return room;
       }
     },
@@ -50,9 +58,7 @@ module.exports = {
           model: User,
           attributes: ['id', 'nickname'],
         },
-        order: [
-          ['currPlayer', 'DESC'],
-        ],
+        order: [['currPlayer', 'DESC']],
       });
       return room;
     },

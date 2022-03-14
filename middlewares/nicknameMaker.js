@@ -1,5 +1,5 @@
 // 형용사 + 형용사 + 명사 의 조합 반환
-const nickname = function() {
+const nickname = function () {
   // ~ 하고
   const adjective_1 = [
     '사랑스럽고 ',
@@ -107,6 +107,6 @@ const nickname = function() {
   let nounPick = noun[Math.floor(Math.random() * 30)];
 
   return adjPick_1 + adjPick_2 + nounPick;
-}
+};
 
 module.exports = nickname;

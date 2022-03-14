@@ -9,19 +9,33 @@ router.put('/enter/:roomId/user/:userId', GameController.entryAndExit.enter);
 router.patch('/out/:roomId/user/:userId', GameController.entryAndExit.exit);
 // 방 안 유저 리스트 조회
 router.get('/room/:roomId/users', GameController.get.users);
+
+
 // 레디한 유저 게임 플레이 유저로 추가
-router.patch('/room/:roomId/user/:userId/ready', GameController.create.readyGroup);
+router.patch(
+  '/room/:roomId/user/:userId/ready',
+  GameController.create.readyGroup
+);
 // ai 플레이어 생성 수락한 방에 부족한 인원 인공지능으로 채우기
 router.put('/room/:roomId/ai', GameController.create.aiPlayer);
-// 레디 취소하기 
-router.patch('/room/:roomId/user/:userId/cancelReady', GameController.cancel.ready);
+// 레디 취소하기
+router.patch(
+  '/room/:roomId/user/:userId/cancelReady',
+  GameController.cancel.ready
+);
+
 
 // 게임 시작하기
 router.patch('/room/:roomId/user/:userId/start', GameController.start.game);
 // 조건 : maxPlayer > currPlayer, aiPlayer = N, downgradePlayer = Y
-router.patch('/room/:roomId/changeMaxPlayer', GameController.update.changeMaxPlayer); 
+router.patch(
+  '/room/:roomId/changeMaxPlayer',
+  GameController.update.changeMaxPlayer
+);
 // 역할 부여
 router.patch('/room/:roomId/role', GameController.gamePlay.giveRole);
+
+
 // 변호사가 일개미 지키기
 router.patch('/room/:roomId/lawyerAct', GameController.gamePlay.lawyerAct);
 // 탐정이 스파이 알아보기
@@ -30,10 +44,19 @@ router.get('/room/:roomId/detectiveAct', GameController.gamePlay.detectiveAct);
 router.patch('/room/:roomId/spyAct', GameController.gamePlay.spyAct);
 // 낮시간 투표
 router.patch('/room/:roomId/dayTimeVote', GameController.gamePlay.dayTimeVote);
+// 유저 낮 투표 저장
+router.put(
+  '/room/:roomId/voter/:userId/vote',
+  GameController.gamePlay.dayTimeVoteArr
+);
+// 투표마다 결과 확인
+router.get('/room/:roomId/voteResult', GameController.get.voteResult);
+
 
 // 게임 스테이지 가져오기
-router.get('/room/:roomId/gameStatus', GameController.get.gameStatus);
+router.get('/room/:roomId/status', GameController.get.status);
 // 결과가 났는지 확인
-router.get('/room/:roomId/result', GameController.get.result);
+router.get('/room/:roomId/gameResult', GameController.get.result);
+
 
 module.exports = router;
