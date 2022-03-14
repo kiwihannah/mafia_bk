@@ -20,7 +20,7 @@ app.use('/swagger', swaggerUi.serve, swaggerUi.setup(specs));
 // middlewares
 app.use(morgan('dev'));
 app.use(cors({ origin: '*' }));
-app.use('/api', bodyParser.json(), router);
+app.use('/', bodyParser.json(), router);
 
 // connect DataBase
 const db = require('./models');
