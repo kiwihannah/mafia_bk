@@ -1,11 +1,13 @@
 const userService = require('../services/user');
 const { ControllerAsyncWrapper } = require('../utils/wrapper');
+const session = require('express-session');
 
 module.exports = {
   create: {
     user: ControllerAsyncWrapper(async (req, res) => {
       const { nickname } = req.body;
       const user = await userService.create.user({ nickname });
+      req.session.loggedUser = user;
       return res.status(201).json({ user });
     }),
   },
@@ -36,16 +38,14 @@ module.exports = {
       return res.status(200).json({ users });
     },
 
-    randomNick: async (req, res) => {
-
-    },
+    randomNick: async (req, res) => {},
   },
 
   delete: {
     user: ControllerAsyncWrapper(async (req, res) => {
       const { userId } = req.params;
       await userService.delete.user({ userId });
-      return res.status(202).json({ });
+      return res.status(202).json({});
     }),
   },
 };

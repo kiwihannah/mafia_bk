@@ -2,7 +2,11 @@
   <head>
     <title>openvidu-js-node</title>
 
-    <meta name="viewport" content="width=device-width, initial-scale=1" charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1"
+      charset="utf-8"
+    />
     <link rel="shortcut icon" href="images/favicon.ico" type="image/x-icon" />
 
     <!-- Bootstrap -->
@@ -31,12 +35,14 @@
     <link rel="styleSheet" href="style.css" type="text/css" media="screen" />
     <script src="openvidu-browser-2.21.0.js"></script>
     <script src="app.js"></script>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+
     <script>
       $(document).ready(function () {
         $('[data-toggle="tooltip"]').tooltip({
           html: true,
-        })
-      })
+        });
+      });
     </script>
   </head>
 
@@ -45,8 +51,11 @@
       <div class="container">
         <div class="navbar-header">
           <a class="navbar-brand" href="/"
-            ><img class="demo-logo" src="images/openvidu_vert_white_bg_trans_cropped.png" /> JS
-            Node</a
+            ><img
+              class="demo-logo"
+              src="images/openvidu_vert_white_bg_trans_cropped.png"
+            />
+            JS Node</a
           >
           <a
             class="navbar-brand nav-icon"
@@ -68,17 +77,26 @@
 
     <div id="main-container" class="container">
       <div id="not-logged" class="vertical-center">
-        <div id="img-div"><img src="images/openvidu_grey_bg_transp_cropped.png" /></div>
+        <div id="img-div">
+          <img src="images/openvidu_grey_bg_transp_cropped.png" />
+        </div>
         <form class="form-group jumbotron" onsubmit="return false">
           <p>
-            <label>User</label><input class="form-control" type="text" id="user" required />
+            <label>User</label
+            ><input class="form-control" type="text" id="nickname" required />
           </p>
-          <p>
+          <!-- <p>
             <label>Pass</label
             ><input class="form-control" type="password" id="pass" required />
-          </p>
+          </p> -->
           <p class="text-center">
-            <button class="btn btn-lg btn-info" onclick="logIn()">Log in</button>
+            <button
+              class="btn btn-lg btn-info"
+              type="submit"
+              onclick="logIn( document.getElementById('nickname').value)"
+            >
+              Log in
+            </button>
           </p>
         </form>
         <table class="table">
@@ -115,20 +133,36 @@
 
       <div id="logged" hidden>
         <div id="join" class="vertical-center">
-          <div id="img-div"><img src="images/openvidu_grey_bg_transp_cropped.png" /></div>
+          <div id="img-div">
+            <img src="images/openvidu_grey_bg_transp_cropped.png" />
+          </div>
           <div id="join-dialog" class="jumbotron">
             <h1>Join a video session</h1>
             <form class="form-group" onsubmit="return false">
               <p>
                 <label>nickname</label>
-                <input class="form-control" type="text" id="nickName" required />
+                <input
+                  class="form-control"
+                  type="text"
+                  id="nickName"
+                  required
+                />
               </p>
               <p>
                 <label>Session</label>
-                <input class="form-control" type="text" id="sessionName" required />
+                <input
+                  class="form-control"
+                  type="text"
+                  id="sessionName"
+                  required
+                />
               </p>
               <p class="text-center">
-                <button class="btn btn-lg btn-success" id="join-btn" onclick="joinSession()">
+                <button
+                  class="btn btn-lg btn-success"
+                  id="join-btn"
+                  onclick="joinSession()"
+                >
                   Join!
                 </button>
               </p>
@@ -136,7 +170,11 @@
             <hr />
             <div id="login-info">
               <div>Logged as <span id="name-user"></span></div>
-              <button id="logout-btn" class="btn btn-warning" onclick="logOut()">
+              <button
+                id="logout-btn"
+                class="btn btn-warning"
+                onclick="logOut()"
+              >
                 Log out
               </button>
             </div>
@@ -168,7 +206,9 @@
       <div class="container">
         <div class="text-muted">OpenVidu © 2021</div>
         <a href="http://www.openvidu.io/" target="_blank"
-          ><img class="openvidu-logo" src="images/openvidu_globe_bg_transp_cropped.png"
+          ><img
+            class="openvidu-logo"
+            src="images/openvidu_globe_bg_transp_cropped.png"
         /></a>
       </div>
     </footer>
