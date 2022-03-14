@@ -201,6 +201,19 @@ module.exports = {
     }),
   },
 
+  update: {
+    // 부족한 인원 인공지능으로 시작X , 현재인원 6명 이상인 경우
+    changeMaxPlayer: ServiceAsyncWrapper(async (data) => { 
+      if (data.maxPlayer < 6) {
+        throw { msg : '바꾸려는 인원이 최소인원을 충족하지 못했습니다.\n( 최소인원 : 6 )' };
+      } else {
+        const prevRoom = await Room.findOne({ where : { id : data.roomId } });
+        const room = await prevRoom.update({ maxPlayer : data.maxPlayer });
+        return room;
+      }
+    }),
+  },
+
   gamePlay: {
     // 랜덤으로 역할 분담 AI 플레이어 포함
     giveRole: ServiceAsyncWrapper(async (data) => {

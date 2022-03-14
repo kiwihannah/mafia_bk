@@ -18,6 +18,8 @@ router.patch('/room/:roomId/user/:userId/cancelReady', GameController.cancel.rea
 
 // 게임 시작하기
 router.patch('/room/:roomId/user/:userId/start', GameController.start.game);
+// 조건 : maxPlayer > currPlayer, aiPlayer = N, downgradePlayer = Y
+router.patch('/room/:roomId/changeMaxPlayer', GameController.update.changeMaxPlayer); 
 // 역할 부여
 router.patch('/room/:roomId/role', GameController.gamePlay.giveRole);
 // 변호사가 일개미 지키기

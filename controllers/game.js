@@ -52,6 +52,15 @@ module.exports = {
     }),
   },
 
+  update: {
+    changeMaxPlayer: ControllerAsyncWrapper(async (req, res) => {
+      const { roomId } = req.params;
+      const { maxPlayer } = req.body;
+      const room = await gameService.update.changeMaxPlayer({ roomId, maxPlayer });
+      return res.status(200).json({ room });
+    }),
+  },
+
   gamePlay: {
     giveRole: ControllerAsyncWrapper(async (req, res) => {
       const { roomId } = req.params;
