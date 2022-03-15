@@ -11,6 +11,7 @@ module.exports = {
       } else {
         // 방 만들기
         const room = await Room.create({
+          nickname: prevUser.nickname,
           roomName,
           maxPlayer,
           roomPwd,
@@ -30,6 +31,7 @@ module.exports = {
         // 방장 -> 자동 레디
         const gameGroup = await GameGroup.create({
           userId,
+          nickname: prevUser.nickname,
           isReady: 'Y',
           role: null,
           isEliminated: 'N',

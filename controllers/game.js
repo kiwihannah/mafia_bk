@@ -6,6 +6,7 @@ module.exports = {
     enter: ControllerAsyncWrapper(async (req, res) => {
       const { roomId, userId } = req.params;
       const { roomPwd } = req.body;
+
       await gameService.entryAndExit.enterRoom({
         roomId,
         userId,
@@ -94,7 +95,6 @@ module.exports = {
     dayTimeVote: ControllerAsyncWrapper(async (req, res) => {
       const { roomId, userId } = req.params;
       const { candidacy } = req.body;
-      console.log('@@@@@@',roomId, userId, candidacy)
       const game = await gameService.gamePlay.dayTimeVoteArr({
         roomId,
         userId,
@@ -105,21 +105,22 @@ module.exports = {
 
     dayTimeVoteArr: ControllerAsyncWrapper(async (req, res) => {
       const { roomId, userId } = req.params;
-      const { candidacy } = req.body;
-      const game = await gameService.gamePlay.dayTimeVoteArr({
+      const { candidacy, roundNo } = req.body;
+      const voteUserId = await gameService.gamePlay.dayTimeVoteArr({
         roomId,
         userId,
-        candidacy
+        candidacy,
+        roundNo
       });
-      return res.status(200).json({ game });
+      return res.status(200).json({ voteUserId });
     }),
   },
 
   get: {
-    voteResult: ControllerAsyncWrapper(async (req, res) => {
-      const { roomId } = req.params;
-      const status = await gameService.gamePlay.voteResult({ roomId });
-      return res.status(200);
+    dayTimeVoteResult: ControllerAsyncWrapper(async (req, res) => {
+      const { roomId, roundNo } = req.params;
+      const msg = await gameService.gamePlay.getVoteResult({ roomId, roundNo });
+      return res.status(200).json({ msg });
     }),
 
     status: ControllerAsyncWrapper(async (req, res) => {

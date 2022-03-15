@@ -43,6 +43,7 @@ module.exports = {
 
           const gameGroup = await GameGroup.create({
             userId: data.userId,
+            nickname: prevUser.nickname,
             isReady: 'N',
             role: null,
             isEliminated: 'N',
@@ -336,7 +337,7 @@ module.exports = {
 
     // 낮 투표 모음
     dayTimeVoteArr: ServiceAsyncWrapper(async (data) => {
-      const { roomId, userId, candidacy } = data;
+      const { roomId, userId, candidacy, roundNo } = data;
       const prevGameStatus = await GameStatus.findOne({
         where: { roomId },
       });
@@ -347,19 +348,22 @@ module.exports = {
         throw { msg: '투표한 정보가 없습니다.' };
       } else if (candidacy !== 0) {
         // 투표 테이블에 추가
-        await Vote.create({
+        const vote = await Vote.create({
           voter: userId,
           candidacy,
           gameStatusId: prevGameStatus.id,
           roomId,
+          roundNo
         });
+
+        return vote.voter;
       }
     }),
 
-    // 시민 낮 투표
-    voteResult: ServiceAsyncWrapper(async (data) => {
+    // 시민 낮 투표 결과 반환
+    getVoteResult: ServiceAsyncWrapper(async (data) => {
       const prevVote = await Vote.findAll({
-        where: { roomId: data.roomId },
+        where: { roomId: data.roomId, roundNo: data.roundNo },
       });
 
       if (!prevVote) {
@@ -369,19 +373,17 @@ module.exports = {
         for (let i = 0; i < prevVote.length; i++) {
           tempVoteArr.push(prevVote.candidacy);
         }
+        let result = [];
         tempVoteArr.forEach((vote) => {
           result[vote] = (result[vote] || 0) + 1;
         });
+
         console.log(result)
 
         await prevGameGroup.update({ isEliminated: 'Y' });
         return !prevGameGroup.role === 4
-          ? {
-              msg: `선량한 시민 [ ${prevUser.nickname} ] (이)가 해고 당했습니다.`,
-            }
-          : {
-              msg: `산업 스파이 [ ${prevUser.nickname} ] (이)가 붙잡혔습니다.`,
-            };
+          ? `선량한 시민 [ ${prevUser.nickname} ] (이)가 해고 당했습니다.`
+          : `산업 스파이 [ ${prevUser.nickname} ] (이)가 붙잡혔습니다.`;
       }
     }),
   },

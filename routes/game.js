@@ -45,12 +45,12 @@ router.patch('/room/:roomId/spyAct', GameController.gamePlay.spyAct);
 // 낮시간 투표
 router.patch('/room/:roomId/dayTimeVote', GameController.gamePlay.dayTimeVote);
 // 유저 낮 투표 저장
-router.put(
+router.patch(
   '/room/:roomId/voter/:userId/vote',
   GameController.gamePlay.dayTimeVoteArr
 );
-// 투표마다 결과 확인
-router.get('/room/:roomId/voteResult', GameController.get.voteResult);
+// 라운드 별 사원 투표 결과 확인
+router.get('/room/:roomId/round/:roundNo', GameController.get.dayTimeVoteResult);
 
 
 // 게임 스테이지 라운드 번호 가져오기

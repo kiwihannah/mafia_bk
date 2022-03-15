@@ -5,6 +5,7 @@ module.exports = {
     room: async (req, res) => {
       const { roomName, maxPlayer, roomPwd } = req.body;
       const { userId } = req.params;
+
       const room = await roomService.create.room({
         userId,
         roomName,

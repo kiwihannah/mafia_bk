@@ -14,6 +14,10 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.INTEGER,
         allowNull: true,
       },
+      roundNo: {
+        type: DataTypes.INTEGER,
+        allowNull: true,
+      },
     },
     {
       charset: 'utf8mb4',
