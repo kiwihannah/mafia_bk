@@ -53,8 +53,8 @@ router.put(
 router.get('/room/:roomId/voteResult', GameController.get.voteResult);
 
 
-// 게임 스테이지 가져오기
-router.get('/room/:roomId/status', GameController.get.status);
+// 게임 스테이지 라운드 번호 가져오기
+router.get('/room/:roomId/roundNo', GameController.get.roundNo);
 // 결과가 났는지 확인
 router.get('/room/:roomId/gameResult', GameController.get.result);
 

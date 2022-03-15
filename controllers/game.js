@@ -128,6 +128,12 @@ module.exports = {
       return res.status(200).json({ status });
     }),
 
+    roundNo: ControllerAsyncWrapper(async (req, res) => {
+      const { roomId } = req.params;
+      const roundNo = await gameService.getGame.roundNo({ roomId });
+      return res.status(200).json({ roundNo });
+    }),
+
     result: ControllerAsyncWrapper(async (req, res) => {
       const { roomId } = req.params;
       const result = await gameService.getGame.result({ roomId });

@@ -374,19 +374,31 @@ module.exports = {
         });
         console.log(result)
 
-        //await prevGameGroup.update({ isEliminated: 'Y' });
-        // return !prevGameGroup.role === 4
-        //   ? {
-        //       msg: `선량한 시민 [ ${prevUser.nickname} ] (이)가 해고 당했습니다.`,
-        //     }
-        //   : {
-        //       msg: `산업 스파이 [ ${prevUser.nickname} ] (이)가 붙잡혔습니다.`,
-        //     };
+        await prevGameGroup.update({ isEliminated: 'Y' });
+        return !prevGameGroup.role === 4
+          ? {
+              msg: `선량한 시민 [ ${prevUser.nickname} ] (이)가 해고 당했습니다.`,
+            }
+          : {
+              msg: `산업 스파이 [ ${prevUser.nickname} ] (이)가 붙잡혔습니다.`,
+            };
       }
     }),
   },
 
   getGame: {
+    roundNo: ServiceAsyncWrapper(async (data) => {
+      const gameStatus = await GameStatus.findOne({
+        where: { roomId: data.roomId },
+        order: [['createdAt', 'DESC']],
+      });
+      if (!gameStatus) {
+        throw { msg: '게임 정보가 존재하지 않습니다.' };
+      } else {
+        return gameStatus.roundNo;
+      }
+    }),
+
     // 회차, 결과 반환
     status: ServiceAsyncWrapper(async (data) => {
       const prevGameStatus = await GameStatus.findAll({
