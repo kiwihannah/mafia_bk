@@ -128,13 +128,13 @@ app.post('/session', async function (req, res) {
       serverData: req.session.loggedUser.nickname,
     });
     console.log(serverData);
-
+    let role = OpenViduRole.PUBLISHER;
     console.log('Getting a token | {sessionName}={' + sessionName + '}');
 
     // Build connectionProperties object with the serverData and the role
     var connectionProperties = {
       data: serverData,
-      role: OpenViduRole.PUBLISHER,
+      role: role,
     };
     console.log(connectionProperties);
 

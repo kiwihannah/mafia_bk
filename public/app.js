@@ -50,7 +50,7 @@ function joinSession() {
 
     var nickname = $('#nickname').val();
     session
-      .connect(token, { clientData: nickname })
+      .connect(token, { nickname })
       .then(() => {
         // --- 5) Set page layout for active call ---
 
@@ -83,8 +83,7 @@ function joinSession() {
           publisher.on('videoElementCreated', (event) => {
             // Init the main video with ours and append our data
             var userData = {
-              nickName: nickName,
-              userName: userName,
+              nickname,
             };
             initMainVideo(event.element, userData);
             appendUserData(event.element, userData);
@@ -232,7 +231,7 @@ function appendUserData(videoElement, connection) {
   if (connection.nickName) {
     // Appending local video data
     clientData = connection.nickName;
-    serverData = connection.nickname;
+    serverData = connection.userName;
     nodeId = 'main-videodata';
   } else {
     clientData = JSON.parse(connection.data.split('%/%')[0]).clientData;
