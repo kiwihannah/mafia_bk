@@ -30,6 +30,7 @@ dotenv.config();
 const port = process.env.PORT; // 4000
 
 var session = require('express-session');
+const FileStore = require('session-file-store')(session);
 const { User } = require('./models');
 
 const app = express();
@@ -44,6 +45,7 @@ app.use(
     saveUninitialized: true,
     resave: false,
     secret: 'MY_SECRET',
+    store: new FileStore(),
   })
 );
 //swagger
@@ -51,7 +53,9 @@ app.use('/swagger', swaggerUi.serve, swaggerUi.setup(specs));
 
 // middlewares
 app.use(morgan('dev'));
-app.use(cors({ origin: '*' }));
+//app.use(cors({ origin: '*' }));
+app.use(cors());
+
 app.use(
   '/',
   bodyParser.json({
@@ -66,11 +70,11 @@ app.use(
   })
 ); // Parse application/x-www-form-urlencoded
 app.use(bodyParser.json()); // Parse application/json
-app.use(
-  bodyParser.json({
-    type: 'application/vnd.api+json',
-  })
-); // Parse application/vnd.api+json as json
+// app.use(
+//   bodyParser.json({
+//     type: 'application/vnd.api+json',
+//   })
+// ); // Parse application/vnd.api+json as json
 
 // Listen (start app with node server.js)
 var options = {
@@ -98,6 +102,10 @@ const roomRouter = require('./routes/room');
 const tutolRouter = require('./routes/tutorial');
 
 app.use('/api', [userRouter, roomRouter, tutolRouter]);
+// Collection to pair session names with OpenVidu Session objects
+var mapSessions = {};
+// Collection to pair session names with tokens
+var mapSessionNamesTokens = {};
 
 // Get token (add new user to session)
 app.post('/session', async function (req, res) {
@@ -107,22 +115,28 @@ app.post('/session', async function (req, res) {
   } else {
     // The video-call to connect
     var sessionName = req.body.sessionName;
-
+    let nickname = req.session.loggedUser.nickname;
+    console.log(nickname);
     // Role associated to this user
-    let user = User.findOne({ where: { nickname } });
-    var role = user.find((u) => u.user === req.session.loggedUser).role;
+    //let user = User.findAll({ where: { nickname } });
+    //var role = User.findOne((u) => u.nickname === req.session.loggedUser).role;
+    // var role = User.findOne({ where: { nickname } });
 
     // Optional data to be passed to other users when this user connects to the video-call
     // In this case, a JSON with the value we stored in the req.session object on login
-    var serverData = JSON.stringify({ serverData: req.session.loggedUser });
+    var serverData = JSON.stringify({
+      serverData: req.session.loggedUser.nickname,
+    });
+    console.log(serverData);
 
     console.log('Getting a token | {sessionName}={' + sessionName + '}');
 
     // Build connectionProperties object with the serverData and the role
     var connectionProperties = {
       data: serverData,
-      role: role,
+      role: OpenViduRole.PUBLISHER,
     };
+    console.log(connectionProperties);
 
     if (mapSessions[sessionName]) {
       // Session already exists
@@ -238,6 +252,7 @@ app.post('/api-sessions/remove-user', function (req, res) {
 // }
 
 function isLogged(session) {
+  console.log(session.loggedUser);
   return session.loggedUser != null;
 }
 

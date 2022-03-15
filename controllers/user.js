@@ -7,8 +7,9 @@ module.exports = {
     user: ControllerAsyncWrapper(async (req, res) => {
       const { nickname } = req.body;
       const user = await userService.create.user({ nickname });
+      //세션에 유저 정보 저장
       req.session.loggedUser = user;
-      console.log(`Logging in | ${user}`);
+      console.log(`Logging in | ${user.nickname}`);
       return res.status(201).json({ user });
     }),
   },

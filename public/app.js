@@ -54,7 +54,7 @@ function joinSession() {
       .then(() => {
         // --- 5) Set page layout for active call ---
 
-        var userName = $('#user').val();
+        var nickname = $('#nickname').val();
         $('#session-title').text(sessionName);
         $('#join').hide();
         $('#session').show();
@@ -63,7 +63,7 @@ function joinSession() {
         // trying to publish its stream. Even if someone modified the client's code and
         // published the stream, it wouldn't work if the token sent in Session.connect
         // method is not recognized as 'PUBLIHSER' role by OpenVidu Server
-        if (isPublisher(userName)) {
+        if (isPublisher(nickname)) {
           // --- 6) Get your own camera stream ---
 
           var publisher = OV.initPublisher('video-container', {
@@ -232,7 +232,7 @@ function appendUserData(videoElement, connection) {
   if (connection.nickName) {
     // Appending local video data
     clientData = connection.nickName;
-    serverData = connection.userName;
+    serverData = connection.nickname;
     nodeId = 'main-videodata';
   } else {
     clientData = JSON.parse(connection.data.split('%/%')[0]).clientData;
