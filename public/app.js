@@ -63,7 +63,7 @@ function joinSession() {
         // trying to publish its stream. Even if someone modified the client's code and
         // published the stream, it wouldn't work if the token sent in Session.connect
         // method is not recognized as 'PUBLIHSER' role by OpenVidu Server
-        if (isPublisher(nickname)) {
+        if (isPublisher(serverData)) {
           // --- 6) Get your own camera stream ---
 
           var publisher = OV.initPublisher('video-container', {
@@ -92,11 +92,12 @@ function joinSession() {
 
           // --- 8) Publish your stream ---
 
-          session.publish(publisher);
-        } else {
-          console.warn("You don't have permissions to publish");
-          initMainVideoThumbnail(); // Show SUBSCRIBER message in main video
+          session.publish(PUBLISHER);
         }
+        // } else {
+        //   console.warn("You don't have permissions to publish");
+        //   initMainVideoThumbnail(); // Show SUBSCRIBER message in main video
+        // }
       })
       .catch((error) => {
         console.warn(
@@ -170,7 +171,9 @@ function getToken(callback) {
     { sessionName: sessionName },
     'Request of TOKEN gone WRONG:',
     (response) => {
+      console.log(response[0]);
       token = response[0]; // Get token from response
+      console.log(token);
       console.warn('Request of TOKEN gone WELL (TOKEN:' + token + ')');
       callback(token); // Continue the join operation
     }
@@ -231,20 +234,22 @@ function appendUserData(videoElement, connection) {
   if (connection.nickName) {
     // Appending local video data
     clientData = connection.nickName;
-    serverData = connection.userName;
+    serverData = connection.nickname;
     nodeId = 'main-videodata';
   } else {
     clientData = JSON.parse(connection.data.split('%/%')[0]).clientData;
+    //serverData = JSON.parse(connection.data.split('%/%')[1]).serverData;
     serverData = JSON.parse(connection.data.split('%/%')[1]).serverData;
+
     nodeId = connection.connectionId;
   }
   var dataNode = document.createElement('div');
   dataNode.className = 'data-node';
   dataNode.id = 'data-' + nodeId;
   dataNode.innerHTML =
-    "<p class='nickName'>" +
+    "<p class='nickname'>" +
     clientData +
-    "</p><p class='userName'>" +
+    "</p><p class='nickname'>" +
     serverData +
     '</p>';
   videoElement.parentNode.insertBefore(dataNode, videoElement.nextSibling);
@@ -301,10 +306,20 @@ function initMainVideoThumbnail() {
   );
 }
 
-function isPublisher(userName) {
-  return userName.includes('publisher');
-}
+// function isPublisher(data, nickname) {
+//   console.log(data);
+//   console.log(nickname);
+//   console.log(role);
 
+//   return data.includes('PUBLISHER');
+// }
+function isPublisher(serverData) {
+  console.log(data);
+  console.log(data.role);
+  console.log(role);
+
+  return serverData.includes('publisher');
+}
 function cleanSessionView() {
   removeAllUserData();
   cleanMainVideo();

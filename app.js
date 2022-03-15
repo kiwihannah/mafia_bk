@@ -124,18 +124,20 @@ app.post('/session', async function (req, res) {
 
     // Optional data to be passed to other users when this user connects to the video-call
     // In this case, a JSON with the value we stored in the req.session object on login
-    var serverData = JSON.stringify({
-      serverData: req.session.loggedUser.nickname,
-    });
+    // var serverData = JSON.stringify({
+    //   serverData: req.session.loggedUser.nickname,
+    // });
+    var serverData = JSON.stringify(req.session.loggedUser.nickname);
     console.log(serverData);
-    let role = OpenViduRole.PUBLISHER;
+    //let role = OpenViduRole.PUBLISHER;
     console.log('Getting a token | {sessionName}={' + sessionName + '}');
 
     // Build connectionProperties object with the serverData and the role
     var connectionProperties = {
       data: serverData,
-      role: role,
+      role: OpenViduRole.PUBLISHER,
     };
+    //console.log(role.toLowerCase());
     console.log(connectionProperties);
 
     if (mapSessions[sessionName]) {
@@ -254,6 +256,11 @@ app.post('/api-sessions/remove-user', function (req, res) {
 function isLogged(session) {
   console.log(session.loggedUser);
   return session.loggedUser != null;
+}
+function getBasicAuth() {
+  return (
+    'Basic ' + new Buffer('OPENVIDUAPP:' + OPENVIDU_SECRET).toString('base64')
+  );
 }
 
 app.listen(port, () => {
