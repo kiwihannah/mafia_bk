@@ -31,8 +31,8 @@ module.exports = {
 
     aiPlayer: ControllerAsyncWrapper(async (req, res) => {
       const { roomId } = req.params;
-      await gameService.create.aiPlayer({ roomId });
-      return res.status(200);
+      const users = await gameService.create.aiPlayer({ roomId });
+      return res.status(200).json({ users });
     }),
   },
 
@@ -46,8 +46,16 @@ module.exports = {
 
   start: {
     game: ControllerAsyncWrapper(async (req, res) => {
+      const { roomId } = req.params;
+      const room = await gameService.start.game({ roomId });
+      return res.status(200).json({ room });
+    }),
+  },
+
+  sendMsg: {
+    start: ControllerAsyncWrapper(async (req, res) => {
       const { roomId, userId } = req.params;
-      const msg = await gameService.start.game({ roomId, userId });
+      const msg = await gameService.SendMsg.start({ roomId, userId });
       return res.status(200).json({ msg });
     }),
   },
@@ -67,40 +75,28 @@ module.exports = {
   gamePlay: {
     giveRole: ControllerAsyncWrapper(async (req, res) => {
       const { roomId } = req.params;
-      await gameService.gamePlay.giveRole({ roomId });
-      return res.status(201);
+      const users = await gameService.gamePlay.giveRole({ roomId });
+      return res.status(201).json({ users });
     }),
 
     lawyerAct: ControllerAsyncWrapper(async (req, res) => {
       const { roomId } = req.params;
       const { userId } = req.body;
-      await gameService.gamePlay.lawyerAct({ roomId, userId });
-      return res.status(200).json({ game });
+      const msg = await gameService.gamePlay.lawyerAct({ roomId, userId });
+      return res.status(200).json({ msg });
     }),
 
     detectiveAct: ControllerAsyncWrapper(async (req, res) => {
-      const { roomId } = req.params;
-      const { userId } = req.body;
-      const game = await gameService.gamePlay.detectiveAct({ roomId, userId });
-      return res.status(200).json({ game });
+      const { roomId, userId } = req.params;
+      const msg = await gameService.gamePlay.detectiveAct({ roomId, userId });
+      return res.status(200).json({ msg });
     }),
 
     spyAct: ControllerAsyncWrapper(async (req, res) => {
       const { roomId } = req.params;
       const { userId } = req.body;
-      const game = await gameService.gamePlay.spyAct({ roomId, userId });
-      return res.status(200).json({ game });
-    }),
-
-    dayTimeVote: ControllerAsyncWrapper(async (req, res) => {
-      const { roomId, userId } = req.params;
-      const { candidacy } = req.body;
-      const game = await gameService.gamePlay.dayTimeVoteArr({
-        roomId,
-        userId,
-        candidacy
-      });
-      return res.status(200).json({ game });
+      const msg = await gameService.gamePlay.spyAct({ roomId, userId });
+      return res.status(200).json({ msg });
     }),
 
     dayTimeVoteArr: ControllerAsyncWrapper(async (req, res) => {
@@ -110,18 +106,29 @@ module.exports = {
         roomId,
         userId,
         candidacy,
-        roundNo
+        roundNo,
       });
       return res.status(200).json({ voteUserId });
     }),
   },
 
-  get: {
-    dayTimeVoteResult: ControllerAsyncWrapper(async (req, res) => {
+  getResult: {
+    vote: ControllerAsyncWrapper(async (req, res) => {
       const { roomId, roundNo } = req.params;
-      const msg = await gameService.gamePlay.getVoteResult({ roomId, roundNo });
-      return res.status(200).json({ msg });
+      const result = await gameService.gamePlay.getVoteResult({ roomId, roundNo });
+      return res.status(200).json({ result });
     }),
+  },
+
+  get: {
+    // dayTimeVoteResult: ControllerAsyncWrapper(async (req, res) => {
+    //   // const { roomId, roundNo } = req.params;
+    //   // const result = await gameService.gamePlay.getVoteResult({
+    //   //   roomId,
+    //   //   roundNo,
+    //   // });
+    //   return res.status(200).json({ 123:1 });
+    // }),
 
     status: ControllerAsyncWrapper(async (req, res) => {
       const { roomId } = req.params;
@@ -135,9 +142,9 @@ module.exports = {
       return res.status(200).json({ roundNo });
     }),
 
-    result: ControllerAsyncWrapper(async (req, res) => {
-      const { roomId } = req.params;
-      const result = await gameService.getGame.result({ roomId });
+    voteResult: ControllerAsyncWrapper(async (req, res) => {
+      const { roomId, roundNo } = req.params;
+      const result = await gameService.gamePlay.dayTimeVoteArr({ roomId, roundNo });
       return res.status(200).json({ result });
     }),
 

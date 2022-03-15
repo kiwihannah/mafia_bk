@@ -21,7 +21,7 @@ module.exports = (sequelize, DataTypes) => {
 
   GameStatus.associate = (db) => {
     db.GameStatus.belongsTo(db.Room, { onDelete: 'CASCADE' });
-    db.GameStatus.hasMany(db.Vote, { onDelete: 'CASCADE' });
+    db.GameStatus.hasMany(db.Vote);
   };
 
   return GameStatus;
