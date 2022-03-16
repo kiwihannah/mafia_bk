@@ -49,6 +49,11 @@ router.patch(
   '/room/:roomId/voter/:userId/vote',
   GameController.gamePlay.dayTimeVoteArr
 );
+// 무효표 확인
+router.put(
+  '/room/:roomId/round/:roundNo/invalidVote',
+  GameController.gamePlay.sendInvalidVote
+);
 // 라운드 별 사원 투표 결과 확인
 router.get(
   '/room/:roomId/round/:roundNo',

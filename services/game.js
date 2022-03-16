@@ -286,7 +286,7 @@ module.exports = {
       }
 
       const roleArr = tempRoleArr.sort(() => Math.random() - 0.5);
-      console.log(roleArr);
+      // console.log(roleArr);
 
       for (let i = 0; i < roleArr.length; i++) {
         const updateUser = await GameGroup.findOne({
@@ -372,6 +372,26 @@ module.exports = {
 
         return vote.voter;
       }
+    }),
+
+    // 시민 낮 투표 부결표 처리
+    sendInvalidVote: ServiceAsyncWrapper(async (data) => {
+      const {roomId, roundNo } = data;
+      const prevVote = await Vote.findAll({ where: { roomId, roundNo } });
+      const prevGameGroup = await GameGroup.findAll({ where: { roomId } });
+
+      if ((prevVote.length || 0) !== prevGameGroup.length) {
+        for (let i = 0; i <prevGameGroup.length-(prevVote.length || 0); i++) {
+          await Vote.create({
+            voter: 0,
+            candidacy: 0,
+            roomId: roomId,
+            roundNo: roundNo,
+            gameStatus: 0,
+          });
+        }
+      }
+      return `${prevGameGroup.length-prevVote.length} 개의 무효표`;
     }),
 
     // 시민 낮 투표 결과 반환

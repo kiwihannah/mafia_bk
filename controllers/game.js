@@ -110,6 +110,13 @@ module.exports = {
       });
       return res.status(200).json({ voteUserId });
     }),
+
+    sendInvalidVote: ControllerAsyncWrapper(async (req, res) => {
+      const { roomId, roundNo } = req.params;
+      const msg = await gameService.gamePlay.sendInvalidVote({ roomId, roundNo });
+      return res.status(200).json({ msg });
+    }),
+
   },
 
   getResult: {
