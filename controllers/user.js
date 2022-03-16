@@ -1,6 +1,7 @@
 const userService = require('../services/user');
 const { ControllerAsyncWrapper } = require('../utils/wrapper');
 const session = require('express-session');
+const nickname = require('../middlewares/nicknameMaker');
 
 module.exports = {
   create: {
@@ -14,25 +15,6 @@ module.exports = {
     }),
   },
 
-  update: {
-    userEnter: async (req, res) => {
-      const { roomId, userId } = req.params;
-      const { roomPwd } = req.body;
-      const user = await userService.update.userEnter({
-        roomId,
-        userId,
-        roomPwd,
-      });
-      return res.status(200).json({ user });
-    },
-
-    userOut: async (req, res) => {
-      const { roomId, userId } = req.params;
-      const user = await userService.update.userOut({ roomId, userId });
-      return res.status(200).json({ user });
-    },
-  },
-
   get: {
     users: async (req, res) => {
       const { roomId } = req.params;
@@ -40,7 +22,10 @@ module.exports = {
       return res.status(200).json({ users });
     },
 
-    randomNick: async (req, res) => {},
+    randomNick: ControllerAsyncWrapper(async (_, res) => {
+      const nick = nickname();
+      return res.status(200).json({ nick });
+    }),
   },
 
   delete: {
