@@ -116,7 +116,6 @@ const userRouter = require('./routes/user');
 const roomRouter = require('./routes/room');
 const gameRouter = require('./routes/game');
 
-app.use('/api', [userRouter, roomRouter, tutolRouter]);
 // Collection to pair session names with OpenVidu Session objects
 var mapSessions = {};
 // Collection to pair session names with tokens
