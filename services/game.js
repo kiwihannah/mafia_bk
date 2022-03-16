@@ -272,7 +272,7 @@ module.exports = {
           tempRoleArr.push(1, 1, 1, 2, 3, 4, 4);
           break;
         case 8: // 사원4, 탐정1, 변호사1, 스파이2
-          tempRoleArr.pushy(1, 1, 1, 1, 2, 3, 4, 4);
+          tempRoleArr.push(1, 1, 1, 1, 2, 3, 4, 4);
           break;
         case 9: // 사원4, 탐정1, 변호사1, 스파이3
           tempRoleArr.push(1, 1, 1, 1, 2, 3, 4, 4, 4);
@@ -334,17 +334,16 @@ module.exports = {
       const prevGameGroup = await GameGroup.findOne({
         where: { userId: data.userId },
       });
-
       if (!prevGameGroup) {
         throw { msg: '존재하지 않는 유저입니다.' };
       } else {
-        if (!prevGameGroup.isProtected === 'Y') {
-          await prevGameGroup.update({ isEliminated: 'Y' });
-          return `선량한 시민 [ ${prevGameGroup.nickname} ] (이)가 간 밤에 해고 당했습니다.`;
-        } else {
+        if (prevGameGroup.isProtected === 'Y') {
           // 1회 만 보호
           await prevGameGroup.update({ isProtected: 'N' });
           return `현명한 변호사가 일개미 [ ${prevGameGroup.nickname} ] (이)의 부당 해고를 막았습니다.`;
+        } else {
+          await prevGameGroup.update({ isEliminated: 'Y' });
+          return `선량한 시민 [ ${prevGameGroup.nickname} ] (이)가 간 밤에 해고 당했습니다.`;
         }
       }
     }),
@@ -424,10 +423,18 @@ module.exports = {
           where: { userId: Number(sorted[0][0]) },
         });
 
-        await prevGameGroup.update({ isEliminated: 'Y' });
-        return prevGameGroup.role === 4
-          ? `산업 스파이 [ ${prevGameGroup.nickname} ] (이)가 붙잡혔습니다.`
-          : `선량한 시민 [ ${prevGameGroup.nickname} ] (이)가 해고 당했습니다.`;
+        if (sorted[0][1] === sorted[1][1]) {
+          return '동표이므로 다음 라운드로 갑니다.';
+        } else {
+          if (sorted[0][0] === '0') {
+            return '무효표가 가장 많으므로 다음 라운드로 갑니다.';
+          } else {
+            await prevGameGroup.update({ isEliminated: 'Y' });
+            return prevGameGroup.role === 4
+              ? `산업 스파이 [ ${prevGameGroup.nickname} ] (이)가 붙잡혔습니다.`
+              : `선량한 시민 [ ${prevGameGroup.nickname} ] (이)가 해고 당했습니다.`;
+          }
+        }
       }
     }),
   },
@@ -439,7 +446,7 @@ module.exports = {
         order: [['createdAt', 'DESC']],
       });
       if (!gameStatus) {
-        throw { msg: '게임 정보가 존재하지 않습니다.' };
+        throw { msg: '게임 라운드 정보가 존재하지 않습니다.' };
       } else {
         return gameStatus.roundNo;
       }
@@ -450,6 +457,14 @@ module.exports = {
       const prevGameStatus = await GameStatus.findAll({
         where: { roomId: data.roomId },
       });
+
+      // 라운드 추가
+      GameStatus.sequelize.query(
+        `UPDATE rooms SET roundNo = roundNo + 1 WHERE id=${data.roomId};`,
+        (err) => {
+          if (err) throw err;
+        }
+      );
 
       if (!prevGameStatus) {
         throw {
@@ -464,13 +479,7 @@ module.exports = {
           where: { roomId: data.roomId, isEliminated: 'N', role: 1 || 2 || 3 },
         });
 
-        // 라운드 추가
-        GameStatus.sequelize.query(
-          `UPDATE rooms SET roundNo = roundNo + 1 WHERE id=${data.roomId};`,
-          (err) => {
-            if (err) throw err;
-          }
-        );
+
 
         // 결과 추가
         if (emplArr.length <= spyArr.length) {

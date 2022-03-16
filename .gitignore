@@ -2,3 +2,9 @@ node_modules/
 config/
 .env
 images/
+app.js
+app.bk.js
+app.bkkk.js
+ecosystem.config.js
+nginx.conf
+.well-known/
