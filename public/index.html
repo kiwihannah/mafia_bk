@@ -90,10 +90,15 @@
             ><input class="form-control" type="password" id="pass" required />
           </p> -->
           <p class="text-center">
+            <!-- <button
+              class="btn btn-lg btn-info"
+              type="submit"
+              onclick="logIn( document.getElementById('nickname').value)"
+            > -->
             <button
               class="btn btn-lg btn-info"
               type="submit"
-              onclick="logIn(document.getElementById('nickname').value )"
+              onclick="logIn(document.getElementById('nickname'))"
             >
               Log in
             </button>
@@ -139,15 +144,15 @@
           <div id="join-dialog" class="jumbotron">
             <h1>Join a video session</h1>
             <form class="form-group" onsubmit="return false">
-              <!-- <p>
+              <p>
                 <label>nickname</label>
                 <input
                   class="form-control"
                   type="text"
-                  id="nickname"
+                  id="nickName"
                   required
                 />
-              </p> -->
+              </p>
               <p>
                 <label>Session</label>
                 <input
@@ -205,11 +210,6 @@
     <footer class="footer">
       <div class="container">
         <div class="text-muted">OpenVidu © 2021</div>
-        <a href="http://www.openvidu.io/" target="_blank"
-          ><img
-            class="openvidu-logo"
-            src="images/openvidu_globe_bg_transp_cropped.png"
-        /></a>
       </div>
     </footer>
   </body>

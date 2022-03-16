@@ -117,6 +117,9 @@ app.post('/session', async function (req, res) {
     var sessionName = req.body.sessionName;
     let nickname = req.session.loggedUser.nickname;
     console.log(nickname);
+
+    var role = [{ user: `${nickname}`, role: OpenViduRole.PUBLISHER }];
+    console.log(role);
     // Role associated to this user
     //let user = User.findAll({ where: { nickname } });
     //var role = User.findOne((u) => u.nickname === req.session.loggedUser).role;
@@ -127,7 +130,7 @@ app.post('/session', async function (req, res) {
     // var serverData = JSON.stringify({
     //   serverData: req.session.loggedUser.nickname,
     // });
-    var serverData = JSON.stringify(req.session.loggedUser.nickname);
+    var serverData = JSON.stringify(nickname);
     console.log(serverData);
     //let role = OpenViduRole.PUBLISHER;
     console.log('Getting a token | {sessionName}={' + sessionName + '}');
