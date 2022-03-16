@@ -21,6 +21,7 @@ var OV = new OpenVidu(OPENVIDU_URL, OPENVIDU_SECRET);
 const express = require('express');
 const router = express.Router();
 var OpenViduRole = require('openvidu-node-client').OpenViduRole;
+const { Room } = require('../models/');
 
 // Collection to pair session names with OpenVidu Session objects
 var mapSessions = {};
@@ -34,9 +35,14 @@ router.post('/session', async function (req, res) {
     res.status(401).send('User not logged');
   } else {
     // The video-call to connect
+    let sessionName = req.body.sessionName;
 
-    var sessionName = req.body.sessionName;
-
+    //var sessionName = req.body.sessionName;
+    let findDBsessionName = await Room.findAll({
+      raw: true,
+      attributes: ['id'],
+    });
+    console.log(findDBsessionName);
     let nickname = req.session.loggedUser.nickname;
     //console.log(nickname);
 
@@ -64,37 +70,32 @@ router.post('/session', async function (req, res) {
     };
     //console.log(role.toLowerCase());
     console.log(connectionProperties);
+    if (findDBsessionName === sessionName) {
+      if (mapSessions[sessionName]) {
+        console.log(sessionName);
+        // Session already exists
+        console.log('Existing session ' + sessionName);
 
-    if (mapSessions[sessionName]) {
-      if (mapSessions[sessionName].includes('id')) {
-        let sessionName = await Room.findOne({
-          raw: true,
-          attributes: ['id'],
-        });
+        // Get the existing Session from the collection
+        var mySession = mapSessions[sessionName];
+
+        // Generate a new token asynchronously with the recently created connectionProperties
+        mySession
+          .createConnection(connectionProperties)
+          .then((connection) => {
+            // Store the new token in the collection of tokens
+            mapSessionNamesTokens[sessionName].push(connection.token);
+
+            // Return the token to the client
+            res.status(200).send({
+              0: connection.token,
+            });
+          })
+          .catch((error) => {
+            console.error(error);
+          });
         console.log(mapSessions[sessionName]);
       }
-      console.log(sessionName);
-      // Session already exists
-      console.log('Existing session ' + sessionName);
-
-      // Get the existing Session from the collection
-      var mySession = mapSessions[sessionName];
-
-      // Generate a new token asynchronously with the recently created connectionProperties
-      mySession
-        .createConnection(connectionProperties)
-        .then((connection) => {
-          // Store the new token in the collection of tokens
-          mapSessionNamesTokens[sessionName].push(connection.token);
-
-          // Return the token to the client
-          res.status(200).send({
-            0: connection.token,
-          });
-        })
-        .catch((error) => {
-          console.error(error);
-        });
     } else {
       // New session
       console.log('New session ' + sessionName);
