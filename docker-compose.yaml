@@ -6,5 +6,5 @@ services:
     ports:
       - '4443:4443'
     environment:
-      - DOMAIN_OR_PUBLIC_IP=DOMAIN_OR_PUBLIC_IP
+      - DOMAIN_OR_PUBLIC_IP=`${DOMAIN_OR_PUBLIC_IP}`
       - OPENVIDU_SECRET=OPENVIDU_SECRET
