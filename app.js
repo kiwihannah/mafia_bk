@@ -17,7 +17,6 @@ const FileStore = require('session-file-store')(session);
 const app = express();
 const router = express.Router();
 var fs = require('fs');
-var session = require('express-session');
 var https = require('https');
 // 캡쳐 이미지 경로
 // app.use('/', express.static(path.join(__dirname, 'images')));
@@ -36,7 +35,7 @@ app.use('/swagger', swaggerUi.serve, swaggerUi.setup(specs));
 app.use(morgan('dev'));
 //app.use(cors({ origin: '*' }));
 app.use(cors());
-
+// Parse application/vnd.api+json as json
 app.use(
   '/',
   bodyParser.json({
@@ -51,18 +50,13 @@ app.use(
   })
 ); // Parse application/x-www-form-urlencoded
 app.use(bodyParser.json()); // Parse application/json
-// app.use(
-//   bodyParser.json({
-//     type: 'application/vnd.api+json',
-//   })
-// ); // Parse application/vnd.api+json as json
 
 // Listen (start app with node server.js)
 var options = {
   key: fs.readFileSync('openvidukey.pem'),
   cert: fs.readFileSync('openviducert.pem'),
 };
-https.createServer(options, app).listen(5000);
+https.createServer(options, app);
 
 // connect DataBase
 const db = require('./models');
