@@ -31,7 +31,7 @@ const port = process.env.PORT; // 4000
 
 var session = require('express-session');
 const FileStore = require('session-file-store')(session);
-const { User } = require('./models');
+const { User, Room } = require('./models');
 
 const app = express();
 const router = express.Router();
@@ -114,12 +114,14 @@ app.post('/session', async function (req, res) {
     res.status(401).send('User not logged');
   } else {
     // The video-call to connect
+
     var sessionName = req.body.sessionName;
+
     let nickname = req.session.loggedUser.nickname;
-    console.log(nickname);
+    //console.log(nickname);
 
     var role = [{ user: `${nickname}`, role: OpenViduRole.PUBLISHER }];
-    console.log(role);
+    //console.log(role);
     // Role associated to this user
     //let user = User.findAll({ where: { nickname } });
     //var role = User.findOne((u) => u.nickname === req.session.loggedUser).role;
@@ -144,6 +146,14 @@ app.post('/session', async function (req, res) {
     console.log(connectionProperties);
 
     if (mapSessions[sessionName]) {
+      if (mapSessions[sessionName].includes('id')) {
+        let sessionName = await Room.findOne({
+          raw: true,
+          attributes: ['id'],
+        });
+        console.log(mapSessions[sessionName]);
+      }
+      console.log(sessionName);
       // Session already exists
       console.log('Existing session ' + sessionName);
 
