@@ -67,9 +67,9 @@ db.sequelize
   })
   .catch(console.error);
 app.use(express.static(__dirname + '/public')); // Set the static files location
-router.get('/', (req, res) => {
-  res.send('#4 main proj mafia_bk sever open test');
-});
+// router.get('/', (req, res) => {
+//   res.send('#4 main proj mafia_bk sever open test');
+// });
 
 //socket.io connect
 const httpserver = http.createServer(app);

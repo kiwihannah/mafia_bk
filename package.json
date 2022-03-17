@@ -8,7 +8,7 @@
     "prettify": "prettier --write *.js **/*.js",
     "test": "jest",
     "start": "cross-env NODE_ENV=production pm2 start app.js",
-    "web": "nodemon app.js https://localhost:4443 MY_SECRET"
+    "web": "nodemon app.js https://wawoong.shop/ INDUSTRIAL_SPY"
   },
   "repository": {
     "type": "git",

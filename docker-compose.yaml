@@ -1,10 +1,10 @@
 version: '3.9'
 services:
   openvidu-kms:
-    image: openvidu/openvidu-server-kms:2.14.0
+    image: openvidu/openvidu-server-kms:2.21.0
     restart: on-failure
     ports:
       - '4443:4443'
     environment:
       - DOMAIN_OR_PUBLIC_IP=`${DOMAIN_OR_PUBLIC_IP}`
-      - OPENVIDU_SECRET=OPENVIDU_SECRET
+      - OPENVIDU_SECRET=`${OPENVIDU_SECRET}`
