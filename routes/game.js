@@ -55,10 +55,7 @@ router.put(
   GameController.gamePlay.sendInvalidVote
 );
 // 라운드 별 사원 투표 결과 확인
-router.get(
-  '/room/:roomId/round/:roundNo',
-  GameController.getResult.vote
-);
+router.get('/room/:roomId/round/:roundNo', GameController.getResult.vote);
 
 // 게임 스테이지 라운드 번호 가져오기
 router.get('/room/:roomId/roundNo', GameController.get.roundNo);
