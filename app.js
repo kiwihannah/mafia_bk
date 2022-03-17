@@ -11,19 +11,52 @@ dotenv.config();
 
 const port = process.env.PORT || 3000; // 소켓 웹 통합 포트
 
+var session = require('express-session');
+const FileStore = require('session-file-store')(session);
+
 const app = express();
 const router = express.Router();
-
+var fs = require('fs');
+var https = require('https');
 // 캡쳐 이미지 경로
 // app.use('/', express.static(path.join(__dirname, 'images')));
-
+app.use(
+  session({
+    saveUninitialized: true,
+    resave: false,
+    secret: 'MY_SECRET',
+    store: new FileStore(),
+  })
+);
 //swagger
 app.use('/swagger', swaggerUi.serve, swaggerUi.setup(specs));
 
 // middlewares
 app.use(morgan('dev'));
-app.use(cors({ origin: '*' }));
-app.use('/api', bodyParser.json(), router);
+//app.use(cors({ origin: '*' }));
+app.use(cors());
+// Parse application/vnd.api+json as json
+app.use(
+  '/',
+  bodyParser.json({
+    type: 'application/vnd.api+json',
+  }),
+  router
+);
+
+app.use(
+  bodyParser.urlencoded({
+    extended: 'true',
+  })
+); // Parse application/x-www-form-urlencoded
+app.use(bodyParser.json()); // Parse application/json
+
+// Listen (start app with node server.js)
+var options = {
+  key: fs.readFileSync('openvidukey.pem'),
+  cert: fs.readFileSync('openviducert.pem'),
+};
+https.createServer(options, app);
 
 // connect DataBase
 const db = require('./models');
@@ -33,8 +66,8 @@ db.sequelize
     console.log('mafia app DB connected');
   })
   .catch(console.error);
-
-router.get('/', (_, res) => {
+app.use(express.static(__dirname + '/public')); // Set the static files location
+router.get('/', (req, res) => {
   res.send('#4 main proj mafia_bk sever open test');
 });
 
@@ -50,8 +83,10 @@ const io = SocketIO(httpserver, {
 const userRouter = require('./routes/user');
 const roomRouter = require('./routes/room');
 const gameRouter = require('./routes/game');
+const webcamRouter = require('./routes/webRTC');
 
 app.use('/api', [userRouter, roomRouter, gameRouter]);
+app.use('/', webcamRouter);
 
 //web, socket port running
 httpserver.listen(port, () => {
