@@ -26,6 +26,10 @@ router.patch(
 router.get('/room/:roomId/user/:userId/msg', GameController.sendMsg.start);
 // 게임 시작하기
 router.patch('/room/:roomId/start', GameController.start.game);
+// 게임 조건 확인용
+// router.get('/room/:roomId/status_1', GameController.getStatus.msg);
+// 게임 조건 업데이트 및 확인용
+router.get('/room/:roomId/status_2', GameController.getStatus.update);
 // 조건 : maxPlayer > currPlayer, aiPlayer = N, downgradePlayer = Y
 router.patch(
   '/room/:roomId/changeMaxPlayer',
@@ -34,7 +38,6 @@ router.patch(
 
 // 역할 부여
 router.patch('/room/:roomId/role', GameController.gamePlay.giveRole);
-
 // 변호사가 일개미 지키기
 router.patch('/room/:roomId/lawyerAct', GameController.gamePlay.lawyerAct);
 // 탐정이 스파이 알아보기
