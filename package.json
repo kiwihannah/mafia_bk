@@ -47,6 +47,7 @@
   "devDependencies": {
     "jest": "^27.5.1",
     "morgan": "^1.10.0",
+    "node-mocks-http": "^1.11.0",
     "nodemon": "^2.0.15",
     "prettier": "^2.5.1",
     "sequelize-cli": "^6.4.1",

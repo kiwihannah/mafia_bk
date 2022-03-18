@@ -15,7 +15,7 @@ module.exports = (sequelize, DataTypes) => {
       status: {
         type: DataTypes.STRING(100),
         allowNull: true,
-      }
+      },
     },
     {
       charset: 'utf8mb4',

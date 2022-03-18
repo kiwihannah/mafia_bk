@@ -27,7 +27,7 @@ router.get('/room/:roomId/user/:userId/msg', GameController.sendMsg.start);
 // 게임 시작하기
 router.patch('/room/:roomId/start', GameController.start.game);
 // 게임 조건 확인용
-// router.get('/room/:roomId/status_1', GameController.getStatus.msg);
+router.get('/room/:roomId/status_1', GameController.getStatus.msg);
 // 게임 조건 업데이트 및 확인용
 router.get('/room/:roomId/status_2', GameController.getStatus.update);
 // 조건 : maxPlayer > currPlayer, aiPlayer = N, downgradePlayer = Y
@@ -58,10 +58,7 @@ router.put(
   GameController.gamePlay.sendInvalidVote
 );
 // 라운드 별 사원 투표 결과 확인
-router.get(
-  '/room/:roomId/round/:roundNo',
-  GameController.getResult.vote
-);
+router.get('/room/:roomId/round/:roundNo', GameController.getResult.vote);
 
 // 게임 스테이지 라운드 번호 가져오기
 router.get('/room/:roomId/roundNo', GameController.get.roundNo);
