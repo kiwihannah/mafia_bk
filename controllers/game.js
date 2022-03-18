@@ -1,5 +1,6 @@
 const gameService = require('../services/game');
 const { ControllerAsyncWrapper } = require('../utils/wrapper');
+const { socket } = require('../middlewares/socket.io');
 
 module.exports = {
   entryAndExit: {
@@ -57,6 +58,20 @@ module.exports = {
       const { roomId, userId } = req.params;
       const msg = await gameService.SendMsg.start({ roomId, userId });
       return res.status(200).json({ msg });
+    }),
+  },
+
+  getStatus: {
+    msg: ControllerAsyncWrapper(socket, async (req, res) => {
+      const { roomId } = req.params;
+      const status = await gameService.getStatus.msg({ roomId });
+      return res.status(200).json({ status });
+    }),
+
+    update: ControllerAsyncWrapper(async (req, res) => {
+      const { roomId } = req.params;
+      const status = await gameService.getStatus.update({ roomId });
+      return res.status(200).json({ status });
     }),
   },
 

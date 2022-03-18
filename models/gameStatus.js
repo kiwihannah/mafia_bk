@@ -12,6 +12,10 @@ module.exports = (sequelize, DataTypes) => {
         allowNull: true,
         default: 0, // 2 : spy win | 1 : empl win
       },
+      status: {
+        type: DataTypes.STRING(100),
+        allowNull: true,
+      }
     },
     {
       charset: 'utf8mb4',

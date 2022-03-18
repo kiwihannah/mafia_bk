@@ -141,13 +141,13 @@ module.exports = {
         const gap = prevRoom.maxPlayer - prevGameGroup.length;
 
         for (let i = 1; i <= gap; i++) {
-          let user = await GameGroup.findOne({
-            where: { roomId: data.roomId },
-            order: [['createdAt', 'DESC']],
+          const aiUser = await User.create({
+            nickname: `AIPLAYER_${data.roomId}_${i}`,
+            roomId: data.roomId,
           });
 
           let gameGroup = await GameGroup.create({
-            userId: user.userId + 1,
+            userId: aiUser.id,
             nickname: `Ai P_${data.roomId}_${i}`,
             isReady: 'Y',
             role: null,
@@ -157,11 +157,7 @@ module.exports = {
             roomId: data.roomId,
           });
 
-          await User.create({
-            nickname: `AIPLAYER_${data.roomId}_${i}`,
-            gameGroupId: gameGroup.id,
-            roomId: data.roomId,
-          });
+          await aiUser.update({ gameGroupId : gameGroup.id });
         }
 
         const users = await GameGroup.findAll({
@@ -190,6 +186,30 @@ module.exports = {
     }),
   },
 
+  getStatus: {
+    msg: ServiceAsyncWrapper(async (data) => {
+      const game = await GameStatus.findOne({ where: { roomId : data.roomId } });
+      return game.status;
+    }),
+
+    update: ServiceAsyncWrapper(async (data) => {
+      const statusArr = [ // 11
+        'showRole', 'voteDay', 'showResultDay', 'isGameResult_1', 'voteNightLawyer',
+        'showMsgLawyer', 'voteNightDetective', 'showMsgDetective', 'voteNightSpy',
+        'showResultNight', 'isGameResult_2'
+      ];
+      const game = await GameStatus.findOne({ where: { roomId : data.roomId } });
+      const currIdx = statusArr.indexOf(game.status);
+      if (statusArr[statusArr.length-1] === statusArr[currIdx]) {
+        const nextStatus = await game.update({ status: statusArr[0] });
+        return nextStatus.status; 
+      } else {
+        const nextStatus = await game.update({ status: statusArr[currIdx +1] });
+        return nextStatus.status;
+      }
+    }),
+  },
+
   SendMsg: {
     start: ServiceAsyncWrapper(async (data) => {
       const prevRoom = await Room.findOne({ where: { id: data.roomId } });
@@ -213,6 +233,14 @@ module.exports = {
           if (prevGameGroup.length !== prevRoom.currPlayer) {
             throw { msg: '모두 준비가 완료되지 않았습니다.' };
           } else {
+            // status 생성
+            await GameStatus.create({
+              roundNo: 1,
+              isResult: 0,
+              status: 'isStart',
+              roomId: data.roomId,
+            });
+
             // ai 사용 여부
             return prevRoom.currPlayer < prevRoom.maxPlayer
               ? `부족한 인원은 인공지능 플레이어로 대체 하시겠습니까?\n미리 말씀드리자면, 인공지능은 상당히 멍청합니다.`
@@ -226,17 +254,14 @@ module.exports = {
   start: {
     // 게임 시작하기
     game: ServiceAsyncWrapper(async (data) => {
-      const prevRoom = await Room.findOne({ where: { id: data.roomId } });
+      const { roomId } = data;
+      // 상태 업데이트
+      const status = await GameStatus.findOne({ where: { roomId } });
+      await status.update({ status: 'roleGive' });
+
+      const prevRoom = await Room.findOne({ where: { id: roomId } });
       // 게임 시작 상태로 돌림
       const room = await prevRoom.update({ onPlay: 'Y' });
-
-      // status 생성
-      await GameStatus.create({
-        roundNo: 1,
-        isResult: 0,
-        roomId: data.roomId,
-      });
-
       return room;
     }),
   },
@@ -262,6 +287,10 @@ module.exports = {
       const { roomId } = data;
       const prevGameGroup = await GameGroup.findAll({ where: { roomId } });
 
+      // 상태 업데이트
+      const status = await GameStatus.findOne({ where: { roomId } });
+      await status.update({ status: 'showRole' });
+
       const tempRoleArr = [];
       // [{ 1: 'employee' },  { 2: 'lawyer' },  { 3: 'detective' },  { 4: 'spy' }]
       switch (prevGameGroup.length) {
@@ -272,7 +301,7 @@ module.exports = {
           tempRoleArr.push(1, 1, 1, 2, 3, 4, 4);
           break;
         case 8: // 사원4, 탐정1, 변호사1, 스파이2
-          tempRoleArr.pushy(1, 1, 1, 1, 2, 3, 4, 4);
+          tempRoleArr.push(1, 1, 1, 1, 2, 3, 4, 4);
           break;
         case 9: // 사원4, 탐정1, 변호사1, 스파이3
           tempRoleArr.push(1, 1, 1, 1, 2, 3, 4, 4, 4);
@@ -334,17 +363,16 @@ module.exports = {
       const prevGameGroup = await GameGroup.findOne({
         where: { userId: data.userId },
       });
-
       if (!prevGameGroup) {
         throw { msg: '존재하지 않는 유저입니다.' };
       } else {
-        if (!prevGameGroup.isProtected === 'Y') {
-          await prevGameGroup.update({ isEliminated: 'Y' });
-          return `선량한 시민 [ ${prevGameGroup.nickname} ] (이)가 간 밤에 해고 당했습니다.`;
-        } else {
+        if (prevGameGroup.isProtected === 'Y') {
           // 1회 만 보호
           await prevGameGroup.update({ isProtected: 'N' });
           return `현명한 변호사가 일개미 [ ${prevGameGroup.nickname} ] (이)의 부당 해고를 막았습니다.`;
+        } else {
+          await prevGameGroup.update({ isEliminated: 'Y' });
+          return `선량한 시민 [ ${prevGameGroup.nickname} ] (이)가 간 밤에 해고 당했습니다.`;
         }
       }
     }),
@@ -372,6 +400,7 @@ module.exports = {
 
         return vote.voter;
       }
+
     }),
 
     // 시민 낮 투표 부결표 처리
@@ -396,8 +425,9 @@ module.exports = {
 
     // 시민 낮 투표 결과 반환
     getVoteResult: ServiceAsyncWrapper(async (data) => {
+      const { roomId, roundNo } = data;
       const prevVote = await Vote.findAll({
-        where: { roomId: data.roomId, roundNo: data.roundNo },
+        where: { roomId, roundNo },
       });
 
       if (!prevVote) {
@@ -406,7 +436,7 @@ module.exports = {
         let tempVoteArr = [];
         for (let i = 0; i < prevVote.length; i++) {
           const votes = await Vote.findOne({
-            where: { roomId: data.roomId, roundNo: data.roundNo },
+            where: { roomId, roundNo },
             order: [[ 'createdAt', 'DESC' ]]
           });
           tempVoteArr.push(votes.candidacy);
@@ -424,10 +454,18 @@ module.exports = {
           where: { userId: Number(sorted[0][0]) },
         });
 
-        await prevGameGroup.update({ isEliminated: 'Y' });
-        return prevGameGroup.role === 4
-          ? `산업 스파이 [ ${prevGameGroup.nickname} ] (이)가 붙잡혔습니다.`
-          : `선량한 시민 [ ${prevGameGroup.nickname} ] (이)가 해고 당했습니다.`;
+        if (sorted[0][1] === sorted[1][1]) {
+          return '동표이므로 다음 라운드로 갑니다.';
+        } else {
+          if (sorted[0][0] === '0') {
+            return '무효표가 가장 많으므로 다음 라운드로 갑니다.';
+          } else {
+            await prevGameGroup.update({ isEliminated: 'Y' });
+            return prevGameGroup.role === 4
+              ? `산업 스파이 [ ${prevGameGroup.nickname} ] (이)가 붙잡혔습니다.`
+              : `선량한 시민 [ ${prevGameGroup.nickname} ] (이)가 해고 당했습니다.`;
+          }
+        }
       }
     }),
   },
@@ -439,7 +477,7 @@ module.exports = {
         order: [['createdAt', 'DESC']],
       });
       if (!gameStatus) {
-        throw { msg: '게임 정보가 존재하지 않습니다.' };
+        throw { msg: '게임 라운드 정보가 존재하지 않습니다.' };
       } else {
         return gameStatus.roundNo;
       }
@@ -450,6 +488,14 @@ module.exports = {
       const prevGameStatus = await GameStatus.findAll({
         where: { roomId: data.roomId },
       });
+
+      // 라운드 추가
+      GameStatus.sequelize.query(
+        `UPDATE rooms SET roundNo = roundNo + 1 WHERE id=${data.roomId};`,
+        (err) => {
+          if (err) throw err;
+        }
+      );
 
       if (!prevGameStatus) {
         throw {
@@ -464,13 +510,7 @@ module.exports = {
           where: { roomId: data.roomId, isEliminated: 'N', role: 1 || 2 || 3 },
         });
 
-        // 라운드 추가
-        GameStatus.sequelize.query(
-          `UPDATE rooms SET roundNo = roundNo + 1 WHERE id=${data.roomId};`,
-          (err) => {
-            if (err) throw err;
-          }
-        );
+
 
         // 결과 추가
         if (emplArr.length <= spyArr.length) {
@@ -494,7 +534,7 @@ module.exports = {
         where: { roomId: data.roomId, isResult: 1 || 2 },
       });
       if (!isResult) throw { msg: '아직 게임 결과가 없습니다.' };
-      else return isResult;
+      else return isResult.isResult;
     }),
 
     // 유저 배열 반환
