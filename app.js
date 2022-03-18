@@ -2,35 +2,17 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const morgan = require('morgan');
 const cors = require('cors');
-const fs = require('fs');
 const http = require('http');
-const https = require('https');
-const path = require('path');
 const { swaggerUi, specs } = require('./swagger');
 const SocketIO = require('socket.io');
-const session = require('express-session');
-const FileStore = require('session-file-store')(session);
 const dotenv = require('dotenv');
-dotenv.config();
-
 const { GameStatus } = require('./models');
+dotenv.config();
 
 const port = process.env.PORT || 3000; // 소켓 웹 통합 포트
 
 const app = express();
 const router = express.Router();
-
-// 캡쳐 이미지 경로
-// app.use('/', express.static(path.join(__dirname, 'images')));
-
-app.use(
-  session({
-    saveUninitialized: true,
-    resave: false,
-    secret: 'MY_SECRET',
-    store: new FileStore(),
-  })
-);
 
 //swagger
 app.use('/swagger', swaggerUi.serve, swaggerUi.setup(specs));
@@ -39,44 +21,17 @@ app.use('/swagger', swaggerUi.serve, swaggerUi.setup(specs));
 app.use(morgan('dev'));
 app.use(cors({ origin: '*' }));
 app.use('/api', bodyParser.json(), router);
-app.use(express.static('public'));
+// app.use(express.static('public'));
+app.use(express.static(__dirname + '/public')); // Set the static files location
 
-// https redirect
-app.get('*', (req, res, next) => {
-  console.log('req.secure == ' + req.secure);
-  if (req.secure) {
-    next();
-  } else {
-    let to = 'https://' + req.headers.host + req.url;
-    console.log('to ==> ' + to);
-    return res.redirect('https://' + req.headers.host + req.url);
-  }
+const httpserver = http.createServer(app);
+
+// socket.io connect
+const io = SocketIO(httpserver, {
+  cors: {
+    origin: '*',
+  },
 });
-
-// letsencrypt 로 받은 인증서 경로를 입력 ssl
-const options = {
-  ca: fs.readFileSync(
-    '/etc/letsencrypt/live/mafia.milagros.shop/fullchain.pem'
-  ),
-  key: fs.readFileSync('/etc/letsencrypt/live/mafia.milagros.shop/privkey.pem'),
-  cert: fs.readFileSync('/etc/letsencrypt/live/mafia.milagros.shop/cert.pem'),
-};
-
-// const httpserver = http.createServer(app);
-const httpserver = https.createServer(options, app).listen(443);
-
-//socket.io connect
-const io = SocketIO(httpserver, { cors: { origin: '*' } });
-
-// Parse application/vnd.api+json as json
-app.use('/', bodyParser.json({ type: 'application/vnd.api+json' }), router);
-
-// Parse application/x-www-form-urlencoded url | 요청시, 이중 json 가능?
-app.use(
-  bodyParser.urlencoded({
-    extended: 'true',
-  })
-);
 
 // connect DataBase
 const db = require('./models');
@@ -87,23 +42,16 @@ db.sequelize
   })
   .catch(console.error);
 
-// Set the static files location
-app.use(express.static(__dirname + '/public'));
-
-router.get('/', (req, res) => {
-  res.send('#4 main proj mafia_bk sever open test');
-});
+// router.get('/', (_, res) => {
+//   res.send('#4 main proj mafia_bk sever open test');
+// });
 
 // routes
 const userRouter = require('./routes/user');
 const roomRouter = require('./routes/room');
 const gameRouter = require('./routes/game');
-const webcamRouter = require('./routes/webRTC');
 
 app.use('/api', [userRouter, roomRouter, gameRouter]);
-
-// 패키지내 특정 url 요청 이용을 위해 '/'로 지정
-app.use('/', webcamRouter);
 
 // web, socket port running
 httpserver.listen(port, () => {
@@ -112,11 +60,12 @@ httpserver.listen(port, () => {
 
 module.exports = app;
 
-// 향후 모듈화 예정 (세웅 & 창용)
 io.on('connection', (socket) => {
   console.log('socket connected');
   socket['nickname'] = `Anon`;
-  // console.log(socket)
+
+  // socket.emit;
+  // console.log(socket);
   // console.log(`User Connected: ${socket.nickname}`);
 
   socket.on('join_room', (data, nickname) => {
@@ -124,15 +73,14 @@ io.on('connection', (socket) => {
     // console.log(io.sockets.adapter.rooms.get(roomName)?.size)
     socket.nickname = `${nickname}`;
     // socket.emit('join_room', `roomId : ${data}`, `nickname: ${socket.nickname}`, socket.id)
-    // const room = await GameStatus.findOne({ where: {roomId: data} });
-    socket.to(data).emit(
-      'join_room',
-      `roomId : ${data}`,
-      `nickname: ${socket.nickname}`,
-      socket.id
-      // `[system]: ${ room.status }`
-    );
-    console.log(`[system]: ${room.status}`);
+    socket
+      .to(data)
+      .emit(
+        'join_room',
+        `roomId : ${data}`,
+        `nickname: ${socket.nickname}`,
+        socket.id
+      );
     console.log(`유저아이디 : ${socket.nickname} 방이름 : ${data}`, socket.id);
   });
   socket.on('send_message', (data) => {
@@ -143,12 +91,18 @@ io.on('connection', (socket) => {
     socket.to(data.room).to(socket.id).emit('private message', data);
   });
 
-  socket.on('getStatus', async (data) => {
-    console.log(data.roomId);
-    let game = await GameStatus.findOne({ where: { roomId: data.roomId } });
-    console.log(game);
-    console.log(game.status);
-    socket.to(socket.id).emit('getStatus', game.status);
+  socket.on('test', (msg) => {
+    console.log(msg);
+  });
+
+  socket.on('getStatus', async (roomNum) => {
+    console.log(roomNum);
+    let game = await GameStatus.findOne({
+      where: { roomId: roomNum },
+      attributes: ['status'],
+      raw: true,
+    });
+    socket.emit('getStatus', game.status);
   });
 
   socket.on('disconnect', () => {

@@ -1,3 +1,7 @@
+import { io } from 'socket.io-client';
+
+const socket = io.connect('http://localhost:3000');
+
 var OV;
 var session;
 
@@ -258,6 +262,10 @@ window.onbeforeunload = () => {
   }
   logOut();
 };
+
+socket.on('connectoin');
+
+socket.emit('test', 'hello');
 
 function appendUserData(videoElement, connection) {
   var clientData;
