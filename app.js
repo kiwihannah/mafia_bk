@@ -91,10 +91,6 @@ io.on('connection', (socket) => {
     socket.to(data.room).to(socket.id).emit('private message', data);
   });
 
-  socket.on('test', (msg) => {
-    console.log(msg);
-  });
-
   socket.on('getStatus', async (roomNum) => {
     console.log(roomNum);
     let game = await GameStatus.findOne({
