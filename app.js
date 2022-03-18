@@ -2,12 +2,16 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const morgan = require('morgan');
 const cors = require('cors');
-const http = require('http');
+const fs = require('fs');
+const http = require("http");
+const https = require("https");
 const path = require('path');
 const { swaggerUi, specs } = require('./swagger');
 const SocketIO = require('socket.io');
 const dotenv = require('dotenv');
 dotenv.config();
+
+const { GameStatus } = require('./models');
 
 const port = process.env.PORT || 3000; // 소켓 웹 통합 포트
 
@@ -24,6 +28,37 @@ app.use('/swagger', swaggerUi.serve, swaggerUi.setup(specs));
 app.use(morgan('dev'));
 app.use(cors({ origin: '*' }));
 app.use('/api', bodyParser.json(), router);
+app.use(express.static('public'));
+
+// https redirect
+// app.get("*", (req, res, next) => {
+//   console.log("req.secure == " + req.secure);
+//   if(req.secure){
+//       next();
+//   } else {
+//       let to = "https://" + req.headers.host + req.url;
+//       console.log("to ==> " + to);
+//       return res.redirect("https://" + req.headers.host + req.url);
+//   }
+// });
+
+// letsencrypt 로 받은 인증서 경로를 입력
+// const options = { 
+//   ca: fs.readFileSync('/etc/letsencrypt/live/mafia.milagros.shop/fullchain.pem'),
+//   key: fs.readFileSync('/etc/letsencrypt/live/mafia.milagros.shop/privkey.pem'),
+//   cert: fs.readFileSync('/etc/letsencrypt/live/mafia.milagros.shop/cert.pem')
+//   };
+const httpserver = http.createServer(app);
+
+// http.createServer(app).listen(3000);
+// const httpserver = https.createServer(options, app).listen(443);
+
+//socket.io connect
+const io = SocketIO(httpserver, {
+  cors: {
+    origin: '*',
+  },
+});
 
 // connect DataBase
 const db = require('./models');
@@ -38,14 +73,6 @@ router.get('/', (_, res) => {
   res.send('#4 main proj mafia_bk sever open test');
 });
 
-//socket.io connect
-const httpserver = http.createServer(app);
-const io = SocketIO(httpserver, {
-  cors: {
-    origin: '*',
-  },
-});
-
 // routes
 const userRouter = require('./routes/user');
 const roomRouter = require('./routes/room');
@@ -53,7 +80,7 @@ const gameRouter = require('./routes/game');
 
 app.use('/api', [userRouter, roomRouter, gameRouter]);
 
-//web, socket port running
+// web, socket port running
 httpserver.listen(port, () => {
   console.log(`server listening on ${port}`);
 });
@@ -71,14 +98,17 @@ io.on('connection', (socket) => {
     // console.log(io.sockets.adapter.rooms.get(roomName)?.size)
     socket.nickname = `${nickname}`;
     // socket.emit('join_room', `roomId : ${data}`, `nickname: ${socket.nickname}`, socket.id)
+    const room = await GameStatus.findOne({ where: {roomId: data} });
     socket
       .to(data)
       .emit(
         'join_room',
         `roomId : ${data}`,
         `nickname: ${socket.nickname}`,
-        socket.id
+        socket.id,
+        `[system]: ${ room.status }`
       );
+    console.log(`[system]: ${ room.status }`);
     console.log(`유저아이디 : ${socket.nickname} 방이름 : ${data}`, socket.id);
   });
   socket.on('send_message', (data) => {
