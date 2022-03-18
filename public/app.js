@@ -49,8 +49,11 @@ function joinSession() {
     //        the client (in this case a JSON with the nickname chosen by the user) ---
 
     var nickName = $('#nickName').val();
-    session
-      .connect(token, { clientData: nickName })
+    session.connect(token, { clientData: nickName });
+    console.log(session.connect);
+    console.log(clientData);
+    console
+      .log(token)
       .then(() => {
         // --- 5) Set page layout for active call ---
 

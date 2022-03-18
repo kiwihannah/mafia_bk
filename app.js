@@ -58,15 +58,17 @@ var options = {
 };
 https.createServer(options, app);
 
-// connect DataBase
-const db = require('./models');
-db.sequelize
-  .sync()
-  .then(() => {
-    console.log('mafia app DB connected');
-  })
-  .catch(console.error);
+// // connect DataBase
+// const db = require('./models');
+// db.sequelize
+//   .sync()
+//   .then(() => {
+//     console.log('mafia app DB connected');
+//   })
+//   .catch(console.error);
+
 app.use(express.static(__dirname + '/public')); // Set the static files location
+
 // router.get('/', (req, res) => {
 //   res.send('#4 main proj mafia_bk sever open test');
 // });
