@@ -9,13 +9,22 @@ const socket = io();
 
 // test();
 
+let roomId = '1';
+
 function sendRoomId() {
-  roomId = '1';
   return socket.emit('getStatus', roomId);
 }
 
 socket.on('getStatus', (status) => {
   console.log(status);
 });
+
+// socket.on('lawyAct', (msg) => {
+//   console.log(msg);
+// });
+
+// socket.on('news', (msg) => {
+//   console.log(msg);
+// });
 
 sendRoomId();
