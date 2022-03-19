@@ -1,6 +1,5 @@
 const gameService = require('../services/game');
 const { ControllerAsyncWrapper } = require('../utils/wrapper');
-const { socket } = require('../middlewares/socket.io');
 
 module.exports = {
   entryAndExit: {
