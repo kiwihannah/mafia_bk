@@ -8,3 +8,6 @@ app.bkkk.js
 ecosystem.config.js
 nginx.conf
 .well-known/
+
+public/
+public1/
