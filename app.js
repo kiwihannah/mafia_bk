@@ -6,6 +6,7 @@ const http = require('http');
 const { swaggerUi, specs } = require('./swagger');
 const SocketIO = require('socket.io');
 const dotenv = require('dotenv');
+const { GameStatus } = require('./models');
 dotenv.config();
 
 const port = process.env.PORT || 3000; // 소켓 웹 통합 포트
