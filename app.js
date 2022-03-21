@@ -23,6 +23,7 @@ app.use('/api', bodyParser.json(), router);
 app.use(express.static('public'));
 app.use('/swagger', swaggerUi.serve, swaggerUi.setup(specs));
 
+//port listen
 const httpserver = http.createServer(app).listen(port, () => {
   console.log(`[ web & socket server ] listening on ${port}`);
 });

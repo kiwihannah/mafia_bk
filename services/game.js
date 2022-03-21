@@ -1,13 +1,53 @@
 const { User, Room, GameGroup, GameStatus, Vote } = require('../models');
 const { ServiceAsyncWrapper } = require('../utils/wrapper');
 
-// 사용하지 않는 role 배열, 보여주기 용
-const Roles = [
-  { 1: 'employee' },
-  { 2: 'lawyer' },
-  { 3: 'detective' },
-  { 4: 'spy' },
-];
+// // 사용하지 않는 role 배열, 보여주기 용
+// const Roles = [
+//   { 1: 'employee' },
+//   { 2: 'lawyer' },
+//   { 3: 'detective' },
+//   { 4: 'spy' },
+// ];
+
+// const statusArr = [
+//   'showRole',
+//   'dayTime',
+//   'voteDay',
+//   'invailedVoteCnt',
+//   'showResultDay',
+//   'isGameResult_1',
+//   'voteNightLawyer',
+//   'voteNightDetective',
+//   'showMsgDetective',
+//   'voteNightSpy',
+//   'showResultNight',
+//   'isGameResult_2',
+// ];
+// function setStatus(sec, status) {
+//   const next = setTimeout(() => {
+//     console.log(status);
+//   }, sec);
+
+//   if (status === 'end') {
+//     for (let status of statusArr) {
+//       clearTimeout(status);
+//     }
+//   }
+// }
+
+// const dayTime = setStatus(1000, 'dayTime');
+// const voteDay = setStatus(2000, 'voteDay');
+// const invailedVoteCnt = setStatus(3000, 'invailedVoteCnt');
+// const showResultDay = setStatus(4000, 'showResultDay');
+// const isGameResult_1 = setStatus(5000, 'isGameResult_1');
+// const voteNightLawyer = setStatus(6000, 'voteNightLawyer');
+// const voteNightDetective = setStatus(7000, 'voteNightDetective');
+// const showMsgDetective = setStatus(8000, 'showMsgDetective');
+// const voteNightSpy = setStatus(9000, 'voteNightSpy');
+// const showResultNight = setStatus(10000, 'showResultNight');
+// const isGameResult_2 = setStatus(11000, 'isGameResult_2');
+
+//////////////////////////////////////////////////////////////////////////////////
 
 module.exports = {
   entryAndExit: {
