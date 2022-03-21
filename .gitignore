@@ -10,3 +10,4 @@ nginx.conf
 .well-known/
 sessions/
 test/
+socketEx.js

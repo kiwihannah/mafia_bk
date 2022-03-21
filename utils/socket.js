@@ -1,4 +1,5 @@
 const SocketIO = require('socket.io');
+const gameService = require('../services/game');
 const { GameStatus } = require('../models');
 
 module.exports = (server) => {
@@ -31,14 +32,14 @@ module.exports = (server) => {
     });
 
     // socket.interval = setInterval(() => {
-    //   // 3초마다 클라이언트로 메시지 전송
-    //   socket.emit('news', 'Hello Socket.IO');
-    // }, 3000);
-    
+    //   console.log('한나소켓인터벌');
+    //   // socket.emit('news', '한나소켓인터벌');
+    // }, 1000);
+
     // status 발송
     socket.on('getStatus', async (roomId) => {
-      const game = await GameStatus.findOne({ where: { roomId } });
-      socket.emit('getStatus', game.status);
+      const game = await GameStatus.findOne({ roomId });
+      socket.to(roomId).emit('getStatus', game.status);
       console.log('getStatus', game.status);
     });
 
