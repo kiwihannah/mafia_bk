@@ -16,7 +16,7 @@ router.patch('/room/:roomId/user/:userId/ready', GameController.create.ready);
 router.put('/room/:roomId/ai', GameController.create.aiPlayer);
 
 // 레디 취소
-router.patch('/room/:roomId/user/:userId/cancelReady', GameController.cancel.ready);
+router.patch('./room/:roomId/user/:userId/cancelReady', GameController.cancel.ready);
 
 // 방 최대인원 줄이리 -> 조건 : maxPlayer > currPlayer, aiPlayer = N, downgradePlayer = Y
 router.patch('/room/:roomId/changeMaxPlayer', GameController.update.changeMaxPlayer);
@@ -50,6 +50,9 @@ router.patch('/room/:roomId/voter/:userId/vote', GameController.gamePlay.dayTime
 router.put('/room/:roomId/round/:roundNo/invalidVote', GameController.gamePlay.sendInvalidVote);
 // 라운드 별 사원 투표 결과 확인
 router.get('/room/:roomId/round/:roundNo', GameController.gamePlay.getVoteResult);
+// 라운드 넘버 구하기
+router.get('/room/:roomId/roundNo', GameController.getGame.roundNo);
+
 
 /**
  * 게임정보 메세지 받기

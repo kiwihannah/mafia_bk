@@ -18,6 +18,7 @@ module.exports = {
         'showResultNight',
         'isGameResult_2',
       ];
+      
       function setStatus(sec, status) {
         const next = setTimeout(()=>{
           console.log(status);
@@ -194,6 +195,12 @@ module.exports = {
       const { roomId } = req.params;
       const status = await gameService.getGame.status({ roomId });
       return res.status(200).json({ status });
+    }),
+
+    roundNo: ControllerAsyncWrapper(async (req, res) => {
+      const { roomId } = req.params;
+      const gameRoundNo = await gameService.getGame.roundNo({ roomId });
+      return res.status(200).json({ roundNo: gameRoundNo });
     }),
 
     result: ControllerAsyncWrapper(async (req, res) => {

@@ -204,7 +204,6 @@ module.exports = {
 
       const game = await GameStatus.findOne({ where: { roomId } });
       const isHost = await GameGroup.findOne({ where: { userId } });
-      console.log(isHost);
       const currIdx = statusArr.indexOf(game.status);
       if (isHost.isHost === 'Y') {
         if (statusArr[statusArr.length - 1] === statusArr[currIdx]) {
@@ -212,6 +211,8 @@ module.exports = {
           return nextStatus.status;
         } else {
           const nextStatus = await game.update({ status: statusArr[currIdx + 1] });
+          
+          console.log(`@@@@@ ${ isHost } try to update current status to ${nextStatus.status}`);
           return nextStatus.status;
         }
       } else {
@@ -516,6 +517,13 @@ module.exports = {
           return prevGameStatus.isResult;
         }
       }
+    }),
+
+    roundNo: ServiceAsyncWrapper(async (data) => {
+      const { roomId } = data;
+      const game = await GameStatus.findOne({ where: { roomId } });
+      if (!game) throw { msg: '게임 정보가 존재하지 않습니다.' };
+      else return game.roundNo; 
     }),
 
     // 유저 배열 반환
