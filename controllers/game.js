@@ -69,10 +69,10 @@ module.exports = {
   },
 
   create: {
-    readyGroup: ControllerAsyncWrapper(async (req, res) => {
-      const { roomId, userId, isReady } = req.params;
-      const ready = await gameService.create.readyGroup({ roomId, userId, isReady });
-      return res.status(201).json({ userId : Number(userId), isReady : ready });
+    ready: ControllerAsyncWrapper(async (req, res) => {
+      const { roomId, userId } = req.params;
+      const isReady = await gameService.create.ready({ roomId, userId });
+      return res.status(201).json({ isReady });
     }),
 
     aiPlayer: ControllerAsyncWrapper(async (req, res) => {
@@ -85,8 +85,8 @@ module.exports = {
   cancel: {
     ready: ControllerAsyncWrapper(async (req, res) => {
       const { roomId, userId } = req.params;
-      const isReady = await gameService.cancel.ready({ userId });
-      return res.status(200).json({ userId, isReady });
+      const isReady = await gameService.cancel.ready({ roomId, userId });
+      return res.status(200).json({ isReady });
     }),
   },
   
