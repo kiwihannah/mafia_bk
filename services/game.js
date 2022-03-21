@@ -1,64 +1,18 @@
 const { User, Room, GameGroup, GameStatus, Vote } = require('../models');
 const { ServiceAsyncWrapper } = require('../utils/wrapper');
 
-// // 사용하지 않는 role 배열, 보여주기 용
-// const Roles = [
-//   { 1: 'employee' },
-//   { 2: 'lawyer' },
-//   { 3: 'detective' },
-//   { 4: 'spy' },
-// ];
-
-// const statusArr = [
-//   'showRole',
-//   'dayTime',
-//   'voteDay',
-//   'invailedVoteCnt',
-//   'showResultDay',
-//   'isGameResult_1',
-//   'voteNightLawyer',
-//   'voteNightDetective',
-//   'showMsgDetective',
-//   'voteNightSpy',
-//   'showResultNight',
-//   'isGameResult_2',
-// ];
-// function setStatus(sec, status) {
-//   const next = setTimeout(() => {
-//     console.log(status);
-//   }, sec);
-
-//   if (status === 'end') {
-//     for (let status of statusArr) {
-//       clearTimeout(status);
-//     }
-//   }
-// }
-
-// const dayTime = setStatus(1000, 'dayTime');
-// const voteDay = setStatus(2000, 'voteDay');
-// const invailedVoteCnt = setStatus(3000, 'invailedVoteCnt');
-// const showResultDay = setStatus(4000, 'showResultDay');
-// const isGameResult_1 = setStatus(5000, 'isGameResult_1');
-// const voteNightLawyer = setStatus(6000, 'voteNightLawyer');
-// const voteNightDetective = setStatus(7000, 'voteNightDetective');
-// const showMsgDetective = setStatus(8000, 'showMsgDetective');
-// const voteNightSpy = setStatus(9000, 'voteNightSpy');
-// const showResultNight = setStatus(10000, 'showResultNight');
-// const isGameResult_2 = setStatus(11000, 'isGameResult_2');
-
-//////////////////////////////////////////////////////////////////////////////////
-
 module.exports = {
   entryAndExit: {
     // 방 입장
     enterRoom: ServiceAsyncWrapper(async (data) => {
-      const prevUser = await User.findOne({ where: { id: data.userId } });
-      const prevRoom = await Room.findOne({ where: { id: data.roomId } });
+      const { userId, roomId, roomPwd } = data;
+      const prevUser = await User.findOne({ where: { id: userId } });
+      const prevRoom = await Room.findOne({ where: { id: roomId } });
+      const idDupUser = await GameGroup.findOne({ where: { userId } });
 
-      if (!prevUser) {
-        // 유저 예외처리
-        throw { msg: '게임을 시작하기 전 닉네임을 지정해야 합니다.' };
+      if (!prevUser || idDupUser) {
+        // 유저 두번 입장 예외처리
+        throw { msg: '방에 진입할 수 없는 유저 입니다.' };
       } else if (
         // 방 정보 예외처리
         !prevRoom ||
@@ -68,33 +22,33 @@ module.exports = {
         throw { msg: '이미 게임이 시작되었거나, 입장 불가능한 방입니다.' };
       } else {
         // 입장 직전 예외처리
-        if (prevRoom.roomPwd !== data.roomPwd) {
+        if (prevRoom.roomPwd !== roomPwd) {
           throw { msg: '방 비밀번호가 일치하지 않습니다.' };
         } else {
           // 방 입장 로직 : 현재 인원 1++, 유저 리스트에 추가
           User.sequelize.query(
-            `UPDATE rooms SET currPlayer = currPlayer + 1 WHERE id=${data.roomId};`,
+            `UPDATE rooms SET currPlayer = currPlayer + 1 WHERE id=${roomId};`,
             (err) => {
               if (err) throw err;
             }
           );
 
-          await prevUser.update({ roomId: data.roomId });
+          await prevUser.update({ roomId });
 
           const gameGroup = await GameGroup.create({
-            userId: data.userId,
+            userId,
             nickname: prevUser.nickname,
             isReady: 'N',
             role: null,
             isEliminated: 'N',
             isAi: 'N',
             isHost: 'N',
-            roomId: data.roomId,
+            roomId,
           });
 
           // 유저 게임 그룹 테이블 연결
           User.sequelize.query(
-            `UPDATE users SET gameGroupId = ${gameGroup.id} WHERE id=${data.userId};`,
+            `UPDATE users SET gameGroupId = ${gameGroup.id} WHERE id=${userId};`,
             (err) => {
               if (err) throw err;
             }
@@ -108,8 +62,9 @@ module.exports = {
 
     // 방 나가기
     exitRoom: ServiceAsyncWrapper(async (data) => {
-      const prevUser = await User.findOne({ where: { id: data.userId } });
-      const prevRoom = await Room.findOne({ where: { id: data.roomId } });
+      const { userId, roomId } = data;
+      const prevUser = await User.findOne({ where: { id: userId } });
+      const prevRoom = await Room.findOne({ where: { id: roomId } });
 
       if (!prevUser) {
         // 유저 예외 처리
@@ -123,11 +78,11 @@ module.exports = {
       } else {
         // 방 나가기 로직
         const user = await prevUser.update({ roomId: null }); // 유저 테이블 유지
-        await GameGroup.destroy({ where: { userId: data.userId } }); // 게임 그룹 테이블 삭제
+        await GameGroup.destroy({ where: { userId } }); // 게임 그룹 테이블 삭제
 
         // 방장이 나가면 두번째로 오래된 멤버가 방장
         const nextHost = await User.findOne({
-          where: { roomId: data.roomId },
+          where: { roomId },
           order: [['createdAt', 'ASC']],
         });
         if (prevUser.id === prevRoom.hostId) {
@@ -136,16 +91,16 @@ module.exports = {
 
         // 현재 인원 1--
         User.sequelize.query(
-          `UPDATE rooms SET currPlayer = currPlayer - 1 WHERE id=${data.roomId};`,
+          `UPDATE rooms SET currPlayer = currPlayer - 1 WHERE id=${roomId};`,
           (err) => {
             if (err) throw err;
           }
         );
 
         // 현재인원 < 0 방 자동 삭제
-        const afterRoom = await Room.findOne({ where: { id: data.roomId } });
+        const afterRoom = await Room.findOne({ where: { id: roomId } });
         if (afterRoom.currPlayer === 0) {
-          await afterRoom.destroy({ where: { id: data.roomId } });
+          await afterRoom.destroy({ where: { id: roomId } });
         }
 
         return user.id;
@@ -154,26 +109,24 @@ module.exports = {
   },
 
   create: {
-    // 레디 하기
+    // 레디 하기 & 레디 취소 하기
     readyGroup: ServiceAsyncWrapper(async (data) => {
-      const prevGameGroupUser = await GameGroup.findOne({
-        where: { userId: data.userId },
-      });
+      const { userId, isReady } = data;
+      const prevGameGroupUser = await GameGroup.findOne({ where: { userId } });
+      const readyUser = await prevGameGroupUser.update({ isReady });
 
       if (!prevGameGroupUser) {
         throw { msg: '존재하지 않는 유저입니다.' };
       } else {
-        const gameGroup = await prevGameGroupUser.update({ isReady: 'Y' });
-        return gameGroup.userId;
+        return readyUser.isReady;
       }
     }),
 
     // 부족 인원 ai로 채우기
     aiPlayer: ServiceAsyncWrapper(async (data) => {
-      const prevRoom = await Room.findOne({ where: { id: data.roomId } });
-      const prevGameGroup = await GameGroup.findAll({
-        where: { roomId: data.roomId },
-      });
+      const { roomId } = data;
+      const prevRoom = await Room.findOne({ where: { id: roomId } });
+      const prevGameGroup = await GameGroup.findAll({ where: { roomId } });
 
       if (!prevRoom || !prevGameGroup) {
         throw { msg: '게임 할 방이 삭제되었거나, 유저가 없습니다.' };
@@ -182,87 +135,83 @@ module.exports = {
 
         for (let i = 1; i <= gap; i++) {
           const aiUser = await User.create({
-            nickname: `AIPLAYER_${data.roomId}_${i}`,
-            roomId: data.roomId,
+            nickname: `AIPLAYER_${roomId}_${i}`,
+            roomId,
           });
 
           let gameGroup = await GameGroup.create({
             userId: aiUser.id,
-            nickname: `Ai P_${data.roomId}_${i}`,
+            nickname: `Ai P_${roomId}_${i}`,
             isReady: 'Y',
             role: null,
             isEliminated: 'N',
             isAi: 'Y',
             isHost: 'N',
-            roomId: data.roomId,
+            roomId,
           });
 
           await aiUser.update({ gameGroupId: gameGroup.id });
         }
 
-        const users = await GameGroup.findAll({
-          where: { roomId: data.roomId },
-        });
+        const users = await GameGroup.findAll({ where: { roomId } });
         return users;
       }
     }),
   },
 
-  cancel: {
-    // 레디 취소 하기
-    ready: ServiceAsyncWrapper(async (data) => {
-      const prevGameGroup = await GameGroup.findOne({
-        where: { userId: data.userId },
-      });
-
-      console.log(prevGameGroup);
-
-      if (!prevGameGroup) {
-        throw { msg: '존재하지 않는 유저입니다.' };
+  update: {
+    // 부족한 인원 인공지능으로 시작X , 현재인원 6명 이상인 경우 -> 방 인원 설정 변경
+    changeMaxPlayer: ServiceAsyncWrapper(async (data) => {
+      if (data.maxPlayer < 6) {
+        throw {
+          msg: '바꾸려는 인원이 최소인원을 충족하지 못했습니다.\n( 최소인원 : 6 )',
+        };
       } else {
-        const gameGroup = await prevGameGroup.update({ isReady: 'N' });
-        return gameGroup.userId;
+        const prevRoom = await Room.findOne({ where: { id: data.roomId } });
+        const room = await prevRoom.update({ maxPlayer: data.maxPlayer });
+        return room;
       }
     }),
-  },
 
-  getStatus: {
-    msg: ServiceAsyncWrapper(async (data) => {
-      const game = await GameStatus.findOne({ where: { roomId: data.roomId } });
-      if (!game) throw { msg: '게임이 시작하지 않았거나, 정보가 없습니다.' };
-      else return game.status;
-    }),
-
-    update: ServiceAsyncWrapper(async (data) => {
+    // 요청마다 다음 스테이터스 db에 삽입 후 반환
+    status: ServiceAsyncWrapper(async (data) => {
+      const { roomId, userId } = data;
       const statusArr = [
-        // 11
-        'showRole',
+        'dayTime',
         'voteDay',
+        'invailedVoteCnt',
         'showResultDay',
         'isGameResult_1',
         'voteNightLawyer',
-        'showMsgLawyer',
         'voteNightDetective',
         'showMsgDetective',
         'voteNightSpy',
         'showResultNight',
         'isGameResult_2',
       ];
-      const game = await GameStatus.findOne({ where: { roomId: data.roomId } });
+
+      const game = await GameStatus.findOne({ where: { roomId } });
+      const isHost = await GameGroup.findOne({ where: { userId } });
+      console.log(isHost);
       const currIdx = statusArr.indexOf(game.status);
-      if (statusArr[statusArr.length - 1] === statusArr[currIdx]) {
-        const nextStatus = await game.update({ status: statusArr[0] });
-        return nextStatus.status;
+      if (isHost.isHost === 'Y') {
+        if (statusArr[statusArr.length - 1] === statusArr[currIdx]) {
+          const nextStatus = await game.update({ status: statusArr[0] });
+          return nextStatus.status;
+        } else {
+          const nextStatus = await game.update({
+            status: statusArr[currIdx + 1],
+          });
+          return nextStatus.status;
+        }
       } else {
-        const nextStatus = await game.update({
-          status: statusArr[currIdx + 1],
-        });
-        return nextStatus.status;
+        return game.status;
       }
     }),
   },
 
   SendMsg: {
+    // 시작 요청한 방장에게만 보내는 메세지
     start: ServiceAsyncWrapper(async (data) => {
       const prevRoom = await Room.findOne({ where: { id: data.roomId } });
       const prevGameGroup = await GameGroup.findAll({
@@ -285,7 +234,7 @@ module.exports = {
           if (prevGameGroup.length !== prevRoom.currPlayer) {
             throw { msg: '모두 준비가 완료되지 않았습니다.' };
           } else {
-            // status 생성
+            // status 생성 -> 시작부터
             await GameStatus.create({
               roundNo: 1,
               isResult: 0,
@@ -310,26 +259,10 @@ module.exports = {
       // 상태 업데이트
       const status = await GameStatus.findOne({ where: { roomId } });
       await status.update({ status: 'roleGive' });
-
+      // 게임 시작 상태로 업데이트
       const prevRoom = await Room.findOne({ where: { id: roomId } });
-      // 게임 시작 상태로 돌림
       const room = await prevRoom.update({ onPlay: 'Y' });
       return room;
-    }),
-  },
-
-  update: {
-    // 부족한 인원 인공지능으로 시작X , 현재인원 6명 이상인 경우 -> 방 인원 설정 변경
-    changeMaxPlayer: ServiceAsyncWrapper(async (data) => {
-      if (data.maxPlayer < 6) {
-        throw {
-          msg: '바꾸려는 인원이 최소인원을 충족하지 못했습니다.\n( 최소인원 : 6 )',
-        };
-      } else {
-        const prevRoom = await Room.findOne({ where: { id: data.roomId } });
-        const room = await prevRoom.update({ maxPlayer: data.maxPlayer });
-        return room;
-      }
     }),
   },
 
@@ -423,6 +356,14 @@ module.exports = {
           await prevGameGroup.update({ isProtected: 'N' });
           return `현명한 변호사가 일개미 [ ${prevGameGroup.nickname} ] (이)의 부당 해고를 막았습니다.`;
         } else {
+          // 라운드 추가
+          GameStatus.sequelize.query(
+            `UPDATE rooms SET roundNo = roundNo + 1 WHERE id=${data.roomId};`,
+            (err) => {
+              if (err) throw err;
+            }
+          );
+
           await prevGameGroup.update({ isEliminated: 'Y' });
           return `선량한 시민 [ ${prevGameGroup.nickname} ] (이)가 간 밤에 해고 당했습니다.`;
         }
@@ -503,55 +444,45 @@ module.exports = {
           result[vote] = (result[vote] || 0) + 1;
         });
         let sorted = Object.entries(result).sort((a, b) => b[1] - a[1]);
+        console.log(sorted);
 
-        // console.log(sorted[0][0]);
         const prevGameGroup = await GameGroup.findOne({
           where: { userId: Number(sorted[0][0]) },
         });
 
-        if (sorted[0][1] === sorted[1][1]) {
+        if (sorted[0][0] === '0') {
+          return '무효표가 가장 많으므로 다음 라운드로 갑니다.';
+        } else if (sorted[0][1] === sorted[1][1]) {
           return '동표이므로 다음 라운드로 갑니다.';
         } else {
-          if (sorted[0][0] === '0') {
-            return '무효표가 가장 많으므로 다음 라운드로 갑니다.';
-          } else {
-            await prevGameGroup.update({ isEliminated: 'Y' });
-            return prevGameGroup.role === 4
-              ? `산업 스파이 [ ${prevGameGroup.nickname} ] (이)가 붙잡혔습니다.`
-              : `선량한 시민 [ ${prevGameGroup.nickname} ] (이)가 해고 당했습니다.`;
-          }
+          await prevGameGroup.update({ isEliminated: 'Y' });
+          return prevGameGroup.role === 4
+            ? `산업 스파이 [ ${prevGameGroup.nickname} ] (이)가 붙잡혔습니다.`
+            : `선량한 시민 [ ${prevGameGroup.nickname} ] (이)가 해고 당했습니다.`;
         }
       }
     }),
   },
 
   getGame: {
-    roundNo: ServiceAsyncWrapper(async (data) => {
+    status: ServiceAsyncWrapper(async (data) => {
       const gameStatus = await GameStatus.findOne({
         where: { roomId: data.roomId },
         order: [['createdAt', 'DESC']],
       });
       if (!gameStatus) {
-        throw { msg: '게임 라운드 정보가 존재하지 않습니다.' };
+        throw { msg: '게임이 시작하지 않았거나, 정보가 없습니다.' };
       } else {
-        return gameStatus.roundNo;
+        console.log('roundNo: ', gameStatus.status);
+        return gameStatus.status;
       }
     }),
 
     // 회차, 결과 반환
-    status: ServiceAsyncWrapper(async (data) => {
+    result: ServiceAsyncWrapper(async (data) => {
       const prevGameStatus = await GameStatus.findAll({
         where: { roomId: data.roomId },
       });
-
-      // 라운드 추가
-      GameStatus.sequelize.query(
-        `UPDATE rooms SET roundNo = roundNo + 1 WHERE id=${data.roomId};`,
-        (err) => {
-          if (err) throw err;
-        }
-      );
-
       if (!prevGameStatus) {
         throw {
           msg: '정보가 저장되지 않아, 게임 스테이지 불러오지 못했습니다.',
@@ -565,29 +496,18 @@ module.exports = {
           where: { roomId: data.roomId, isEliminated: 'N', role: 1 || 2 || 3 },
         });
 
-        // 결과 추가
+        // 결과 추가 & 반환
         if (emplArr.length <= spyArr.length) {
           const spyWin = prevGameStatus.update({ isResult: 2 });
-          return spyWin;
+          return spyWin.isResult;
         } else if (spyArr.length === 0) {
           const emplWin = prevGameStatus.update({ isResult: 1 });
-          return emplWin;
+          return emplWin.isResult;
         } else {
-          const gameStatus = await GameStatus.findAll({
-            where: { roomId: data.roomId },
-          });
-          return gameStatus;
+          // 결과 없음
+          return prevGameStatus.isResult;
         }
       }
-    }),
-
-    // 결과 조회
-    getResult: ServiceAsyncWrapper(async (data) => {
-      const isResult = await GameStatus.findAll({
-        where: { roomId: data.roomId, isResult: 1 || 2 },
-      });
-      if (!isResult) throw { msg: '아직 게임 결과가 없습니다.' };
-      else return isResult.isResult;
     }),
 
     // 유저 배열 반환
