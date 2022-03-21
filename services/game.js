@@ -109,16 +109,15 @@ module.exports = {
   },
 
   create: {
-    // 레디 하기 & 레디 취소 하기
-    readyGroup: ServiceAsyncWrapper(async (data) => {
-      const { userId, isReady } = data;
-      const prevGameGroupUser = await GameGroup.findOne({ where: { userId } });
-      const readyUser = await prevGameGroupUser.update({ isReady });
+    // 레디 하기 
+    ready: ServiceAsyncWrapper(async (data) => {
+      const prevGameGroupUser = await GameGroup.findOne({ where: { userId: data.userId } });
 
       if (!prevGameGroupUser) {
         throw { msg: '존재하지 않는 유저입니다.' };
       } else {
-        return readyUser.isReady;
+        const isReady = await prevGameGroupUser.update({ isReady: 'Y' });
+        return isReady;
       }
     }),
 
@@ -155,6 +154,19 @@ module.exports = {
 
         const users = await GameGroup.findAll({ where: { roomId } });
         return users;
+      }
+    }),
+  },
+
+  cancel: {
+    ready: ServiceAsyncWrapper(async (data) => {
+      const prevGameGroupUser = await GameGroup.findOne({ where: { userId: data.userId } });
+
+      if (!prevGameGroupUser) {
+        throw { msg: '존재하지 않는 유저입니다.' };
+      } else {
+        const isReady = await prevGameGroupUser.update({ isReady: 'N' });
+        return isReady;
       }
     }),
   },
