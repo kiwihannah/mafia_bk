@@ -101,9 +101,9 @@ module.exports = {
       return res.status(200).json({ room });
     }),
 
-    gameStatus: ControllerAsyncWrapper(async (req, res) => {
-      const { roomId } = req.params;
-      const nextStatus = await gameService.update.gameStatus({ roomId });
+    status: ControllerAsyncWrapper(async (req, res) => {
+      const { roomId, userId } = req.params;
+      const nextStatus = await gameService.update.status({ roomId, userId });
       return res.status(200).json({ nextStatus });
     }),
   },

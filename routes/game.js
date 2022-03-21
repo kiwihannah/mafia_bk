@@ -18,7 +18,7 @@ router.put('/room/:roomId/ai', GameController.create.aiPlayer);
 // 방 최대인원 줄이리 -> 조건 : maxPlayer > currPlayer, aiPlayer = N, downgradePlayer = Y
 router.patch('/room/:roomId/changeMaxPlayer', GameController.update.changeMaxPlayer);
 // 게임 조건 업데이트 및 확인용
-router.get('/room/:roomId/status_2', GameController.update.gameStatus);
+router.get('/room/:roomId/user/:userId/status', GameController.update.status);
 
 // 게임 시작 전 시작 조건 메세지 확인
 router.get('/room/:roomId/user/:userId/msg', GameController.sendMsg.start);

@@ -8,14 +8,11 @@ module.exports = {
       const { userId, roomId, roomPwd } = data;
       const prevUser = await User.findOne({ where: { id: userId } });
       const prevRoom = await Room.findOne({ where: { id: roomId } });
-      const idDupUser = await GameGroup.findOne({ where: { userId, roomId } });
+      const idDupUser = await GameGroup.findOne({ where: { userId } });
 
-      if (!prevUser) {
-        // 유저 예외처리
-        throw { msg: '게임을 시작하기 전 닉네임을 지정해야 합니다.' };
-      } else if (idDupUser) {
+      if (!prevUser || idDupUser) {
         // 유저 두번 입장 예외처리
-        throw { msg: '이미 게임방에 입장한 유저입니다.' };
+        throw { msg: '방에 진입할 수 없는 유저 입니다.' };
       } else if (
         // 방 정보 예외처리
         !prevRoom ||
@@ -177,9 +174,9 @@ module.exports = {
     }),
 
     // 요청마다 다음 스테이터스 db에 삽입 후 반환
-    gameStatus: ServiceAsyncWrapper(async (data) => {
+    status: ServiceAsyncWrapper(async (data) => {
+      const { roomId, userId } = data;
       const statusArr = [
-        'showRole',
         'dayTime',
         'voteDay',
         'invailedVoteCnt',
@@ -192,16 +189,21 @@ module.exports = {
         'showResultNight',
         'isGameResult_2',
       ];
-      const game = await GameStatus.findOne({ where: { roomId: data.roomId } });
+
+      const game = await GameStatus.findOne({ where: { roomId } });
+      const isHost = await GameGroup.findOne({ where: { userId } });
+      console.log(isHost);
       const currIdx = statusArr.indexOf(game.status);
-      if (statusArr[statusArr.length - 1] === statusArr[currIdx]) {
-        const nextStatus = await game.update({ status: statusArr[0] });
-        return nextStatus.status;
+      if (isHost.isHost === 'Y') {
+        if (statusArr[statusArr.length - 1] === statusArr[currIdx]) {
+          const nextStatus = await game.update({ status: statusArr[0] });
+          return nextStatus.status;
+        } else {
+          const nextStatus = await game.update({ status: statusArr[currIdx + 1] });
+          return nextStatus.status;
+        }
       } else {
-        const nextStatus = await game.update({
-          status: statusArr[currIdx + 1],
-        });
-        return nextStatus.status;
+        return game.status;
       }
     }),
   },
@@ -439,8 +441,8 @@ module.exports = {
           result[vote] = (result[vote] || 0) + 1;
         });
         let sorted = Object.entries(result).sort((a, b) => b[1] - a[1]);
-
-        // console.log(sorted[0][0]);
+        console.log(sorted);
+        
         const prevGameGroup = await GameGroup.findOne({
           where: { userId: Number(sorted[0][0]) },
         });
