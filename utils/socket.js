@@ -43,6 +43,20 @@ module.exports = (server) => {
       console.log('getStatus', game.status);
     });
 
+    //레디(준비)
+    socket.on('ready', async (req) => {
+      const { roomId, userId } = req;
+      const isReady = await gameService.create.ready({ roomId, userId });
+      socket.emit('ready', { isReady: isReady });
+    });
+
+    //레디(취소)
+    socket.on('cancelReady', async (req) => {
+      const { roomId, userId } = req;
+      const isReady = await gameService.create.ready({ roomId, userId });
+      socket.emit('ready', { isReady: isReady });
+    });
+
     socket.on('send_message', (data) => {
       socket.to(data.room).emit('receive_message', data);
     });

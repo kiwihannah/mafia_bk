@@ -31,21 +31,22 @@ module.exports = {
         }
       }
 
-      const dayTime = setStatus(1000, 'dayTime');
-      const voteDay = setStatus(2000, 'voteDay');
-      const invailedVoteCnt = setStatus(3000, 'invailedVoteCnt');
-      const showResultDay = setStatus(4000, 'showResultDay');
-      const isGameResult_1 = setStatus(5000, 'isGameResult_1');
-      const voteNightLawyer = setStatus(6000, 'voteNightLawyer');
-      const voteNightDetective = setStatus(7000, 'voteNightDetective');
-      const showMsgDetective = setStatus(8000, 'showMsgDetective');
-      const voteNightSpy = setStatus(9000, 'voteNightSpy');
-      const showResultNight = setStatus(10000, 'showResultNight');
-      const isGameResult_2 = setStatus(11000, 'isGameResult_2');
+      const dayTime             = setStatus(1000, 'dayTime');
+      const voteDay             = setStatus(2000, 'voteDay');
+      const invailedVoteCnt     = setStatus(3000, 'invailedVoteCnt');
+      const showResultDay       = setStatus(4000, 'showResultDay');
+      const isGameResult_1      = setStatus(5000, 'isGameResult_1');
+
+      const voteNightLawyer     = setStatus(6000, 'voteNightLawyer');
+      const voteNightDetective  = setStatus(7000, 'voteNightDetective');
+      const showMsgDetective    = setStatus(8000, 'showMsgDetective');
+      const voteNightSpy        = setStatus(9000, 'voteNightSpy');
+      const showResultNight     = setStatus(10000, 'showResultNight');
+      
+      const isGameResult_2      = setStatus(11000, 'isGameResult_2');
 
       return 'endStatus';
     }),
-
   },
 
   entryAndExit: {
@@ -165,9 +166,9 @@ module.exports = {
       return res.status(200).json({ voteUserId });
     }),
 
-    sendInvalidVote: ControllerAsyncWrapper(async (req, res) => {
+    invalidAndAiVote: ControllerAsyncWrapper(async (req, res) => {
       const { roomId, roundNo } = req.params;
-      const msg = await gameService.gamePlay.sendInvalidVote({
+      const msg = await gameService.gamePlay.invalidAndAiVote({
         roomId,
         roundNo,
       });
@@ -205,7 +206,7 @@ module.exports = {
 
     result: ControllerAsyncWrapper(async (req, res) => {
       const { roomId } = req.params;
-      const result = await gameService.getGame.status({ roomId });
+      const result = await gameService.getGame.result({ roomId });
       return res.status(200).json({ result });
     }),
   },

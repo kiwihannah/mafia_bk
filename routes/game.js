@@ -20,7 +20,7 @@ router.patch('./room/:roomId/user/:userId/cancelReady', GameController.cancel.re
 
 // 방 최대인원 줄이리 -> 조건 : maxPlayer > currPlayer, aiPlayer = N, downgradePlayer = Y
 router.patch('/room/:roomId/changeMaxPlayer', GameController.update.changeMaxPlayer);
-// 게임 조건 업데이트 및 확인용
+// 게임 조건 업데이트 및 확인용 // 원래 status_2
 router.get('/room/:roomId/user/:userId/status', GameController.update.status);
 
 // 게임 시작 전 시작 조건 메세지 확인
@@ -46,18 +46,17 @@ router.get('/room/:roomId/detectiveAct/:userId', GameController.gamePlay.detecti
 router.patch('/room/:roomId/spyAct', GameController.gamePlay.spyAct);
 // 유저 낮 투표 저장
 router.patch('/room/:roomId/voter/:userId/vote', GameController.gamePlay.dayTimeVoteArr);
-// 무효표 확인
-router.put('/room/:roomId/round/:roundNo/invalidVote', GameController.gamePlay.sendInvalidVote);
+// 무효표 처리 & ai 랜덤 낮투표
+router.put('/room/:roomId/round/:roundNo/invalidAndAiVote', GameController.gamePlay.invalidAndAiVote);
 // 라운드 별 사원 투표 결과 확인
 router.get('/room/:roomId/round/:roundNo', GameController.gamePlay.getVoteResult);
 // 라운드 넘버 구하기
 router.get('/room/:roomId/roundNo', GameController.getGame.roundNo);
 
-
 /**
  * 게임정보 메세지 받기
  **/ 
-// 방 안 유저 리스트 조회
+// 방 안 유저 리스트 조회roomId
 router.get('/room/:roomId/users', GameController.getGame.users);
 // 게임 스테이터스 조건 확인용
 router.get('/room/:roomId/status_1', GameController.getGame.status);
