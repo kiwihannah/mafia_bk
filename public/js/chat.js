@@ -9,14 +9,20 @@ const socket = io();
 
 // test();
 
-let roomId = '1';
+// function sendRoomId() {
+//   return socket.emit('getStatus', roomId);
+// }
 
-function sendRoomId() {
-  return socket.emit('getStatus', roomId);
+function sendready() {
+  return socket.emit('ready', { roomId: '1', userId: '1', isReady: 'Y' });
 }
 
-socket.on('getStatus', (status) => {
-  console.log(status);
+// socket.on('getStatus', (status) => {
+//   console.log(status);
+// });
+
+socket.on('ready', (req) => {
+  console.log(req);
 });
 
 // socket.on('lawyAct', (msg) => {
@@ -27,4 +33,5 @@ socket.on('getStatus', (status) => {
 //   console.log(msg);
 // });
 
-sendRoomId();
+// sendRoomId();
+sendready();

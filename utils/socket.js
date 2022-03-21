@@ -45,8 +45,16 @@ module.exports = (server) => {
 
     //레디
     socket.on('ready', async (req) => {
-      const { roomId, userId } = req.params;
-      await gameService.create.readyGroup({ roomId, userId });
+      console.log('ready start');
+      const { roomId, userId, isReady } = req;
+      const ready = await gameService.create.readyGroup({
+        roomId,
+        userId,
+        isReady,
+      });
+      console.log(ready);
+      socket.emit('ready', { userId: Number(userId), isReady: ready });
+      // return res.status(201).json({ userId : Number(userId), isReady : ready });
     });
 
     //귓속말 전달(미구현)
