@@ -14,7 +14,7 @@ const socket = io();
 // }
 
 function sendready() {
-  return socket.emit('ready', { roomId: '1', userId: '1', isReady: 'Y' });
+  return socket.emit('ready', { roomId: '1', userId: '1' });
 }
 
 // socket.on('getStatus', (status) => {

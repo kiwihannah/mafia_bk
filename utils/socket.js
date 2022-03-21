@@ -43,18 +43,14 @@ module.exports = (server) => {
       socket.to(data.room).emit('receive_message', data);
     });
 
-    //레디
+    //레디(준비, 취소)
     socket.on('ready', async (req) => {
-      console.log('ready start');
-      const { roomId, userId, isReady } = req;
-      const ready = await gameService.create.readyGroup({
-        roomId,
-        userId,
-        isReady,
-      });
-      console.log(ready);
-      socket.emit('ready', { userId: Number(userId), isReady: ready });
-      // return res.status(201).json({ userId : Number(userId), isReady : ready });
+      // console.log('ready start');
+      const { roomId, userId } = req;
+      const isReady = await gameService.create.ready({ roomId, userId });
+      // console.log(isReady);
+      socket.emit('ready', { isReady: isReady });
+      // return res.status(201).json({ isReady });
     });
 
     //귓속말 전달(미구현)
