@@ -44,6 +44,9 @@ router.patch('/room/:roomId/lawyerAct', GameController.gamePlay.lawyerAct);
 router.get('/room/:roomId/detectiveAct/:userId', GameController.gamePlay.detectiveAct);
 // 스파이가 일개미 해고시키기 일개미 id body로 받음
 router.patch('/room/:roomId/spyAct', GameController.gamePlay.spyAct);
+// ai개미가 하는 투표 
+router.patch('/room/:roomId/aiLawyerAct', GameController.gamePlay.aiLawyerAct);
+router.patch('/room/:roomId/aiSpyAct', GameController.gamePlay.aiSpyAct);
 // 유저 낮 투표 저장
 router.patch('/room/:roomId/voter/:userId/vote', GameController.gamePlay.dayTimeVoteArr);
 // 무효표 처리 & ai 랜덤 낮투표

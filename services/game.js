@@ -9,7 +9,7 @@ module.exports = {
       const { userId, roomId, roomPwd } = data;
       const prevUser = await User.findOne({ where: { id: userId } });
       const prevRoom = await Room.findOne({ where: { id: roomId } });
-      const idDupUser = await GameGroup.findOne({ where: { userId } });
+      const idDupUser = await GameGroup.findOne({ where: { userId } }); 
 
       if (!prevUser || idDupUser) {
         // 유저 두번 입장 예외처리
@@ -135,13 +135,13 @@ module.exports = {
 
         for (let i = 1; i <= gap; i++) {
           const aiUser = await User.create({
-            nickname: `AIPLAYER_${roomId}_${i}`,
+            nickname: `AI_${roomId}_${i}`,
             roomId,
           });
 
           let gameGroup = await GameGroup.create({
             userId: aiUser.id,
-            nickname: `Ai P_${roomId}_${i}`,
+            nickname: `AI_${roomId}_${i}`,
             isReady: 'Y',
             role: null,
             isEliminated: 'N',
@@ -219,7 +219,7 @@ module.exports = {
         } else {
           const nextStatus = await game.update({ status: statusArr[currIdx + 1] });
           
-          console.log(`@@@@@ ${ isHost } try to update current status to ${nextStatus.status}`);
+          console.log(`@@@@@ ${ isHost.nickname } try to update the status to ${nextStatus.status}`);
           return nextStatus.status;
         }
       } else {
@@ -228,7 +228,8 @@ module.exports = {
     }),
   },
 
-  SendMsg: { // 시작 요청한 방장에게만 보내는 메세지
+  SendMsg: { 
+    // 시작 요청한 방장에게만 보내는 메세지
     start: ServiceAsyncWrapper(async (data) => {
       const { userId, roomId } = data;
       const prevRoom = await Room.findOne({ where: { id: roomId } });
@@ -272,6 +273,7 @@ module.exports = {
 
       // 상태 업데이트
       await status.update({ status: 'roleGive' });
+      await status.update({ msg: '게임이 시작되었습니다.\n게임 시작 후, 퇴장이 불가합니다.' });
       return room;
     }),
   },
@@ -325,25 +327,80 @@ module.exports = {
       return users;
     }),
 
+    // ai 변호사 다른 시간대에 실행 되므로 spy랑 통합될 수 없음
+    aiLawyerAct: ServiceAsyncWrapper(async (data) => {
+      const { roomId } = data;
+      const prevGameGroup = await GameGroup.findAll({ where: { roomId, isEliminated: 'N' } });
+      const isAiLawyer = await GameGroup.findOne({ where: { roomId, role: 2, isAi: 'Y', isEliminated: 'N' } });
+
+      const status = await GameStatus.findOne({ where: { roomId } });
+      await status.update({ status: 'voteNightDetective' }); 
+
+      let userArr = [];
+      for (let i=0; i<prevGameGroup.length; i++) { userArr.push(prevGameGroup[i].userId); }
+      const userId = userArr[Math.floor(Math.random() * userArr.length)];
+      const prevUser = await GameGroup.findOne({ where: { userId, isEliminated: 'N' } });
+
+      if (isAiLawyer) {
+        const protectedUser = await prevUser.update({ isProtected: 'Y' });
+        return `[삭제예정문구 ai act] ${protectedUser.nickname} (이)가 보호받았습니다.`;
+      } else {
+        return `행동할 ai 유저가 없습니다.`;
+      }
+    }),
+
+    // ai 스파이
+    aiSpyAct: ServiceAsyncWrapper(async (data) => {
+      const { roomId } = data;
+      const prevGameGroup = await GameGroup.findAll({ where: { roomId, isEliminated: 'N' } });
+      const isAiSpy = await GameGroup.findOne({ where: { roomId, role: 4, isAi: 'Y', isEliminated: 'N' } });
+      const isPlayerSpy = await GameGroup.findOne({ where: { roomId, role: 4, isAi: 'N', isEliminated: 'N' } });
+
+      const prevGameStatus = await GameStatus.findOne({ where: { roomId } });
+      // 게임 상태 한번만 업데이트
+      await prevGameStatus.update({ status: 'showResultNight' });
+
+      let userArr = [];
+      for (let i=0; i<prevGameGroup.length; i++) { userArr.push(prevGameGroup[i].userId); }
+      const userId = userArr[Math.floor(Math.random() * userArr.length)];
+      const prevUser = await GameGroup.findOne({ where: { userId } });
+
+      if (isAiSpy && !isPlayerSpy) {
+        if (prevUser.isProtected === 'Y') {
+          // 1회 만 보호
+          const firedUser = await prevUser.update({ isProtected: 'N' });
+          await prevGameStatus.update({ msg: `현명한 변호사가 일개미 [ ${firedUser.nickname} ] (이)의 부당 해고를 막았습니다.` });
+          return `현명한 변호사가 일개미 [ ${firedUser.nickname} ] (이)의 부당 해고를 막았습니다.`;
+        } else {
+          const firedUser = await beingUser.update({ isEliminated: 'Y' });
+          await prevGameStatus.update({ msg: `선량한 시민 [ ${firedUser.nickname} ] (이)가 간 밤에 해고 당했습니다.` });
+          return `선량한 시민 [ ${firedUser.nickname} ] (이)가 간 밤에 해고 당했습니다.`;
+        }
+      } else {
+        return `행동할 ai 유저가 없습니다.`;
+      }
+    }),
+
     // 의사 기능 -> 마피아에게 죽을 것 같은 사람 1회 방어
     lawyerAct: ServiceAsyncWrapper(async (data) => {
       const { userId, roomId } = data;
-      const prevGameGroup = await GameGroup.findAll({ where: { roomId } });
+      const prevGameGroup = await GameGroup.findAll({ where: { roomId, isEliminated: 'N' } });
+      const isLawyerAlive = await GameGroup.findOne({ where: { roomId, role: '2', isEliminated: 'N' } });
       const prevGameStatus = await GameStatus.findOne({ where: { roomId } });
 
-      // 랜덤투표 로직
+      // 사람 랜덤투표 로직
       let userArr = [];
       let selectedUserId = 0;
       for (let i=0; i<prevGameGroup.length; i++) { userArr.push(prevGameGroup[i].userId); }
       userId ? selectedUserId = userId : selectedUserId = userArr[Math.floor(Math.random() * userArr.length)];
-      const protectedUser = await GameGroup.findOne({ where: { userId: selectedUserId } });
+      const prevdUser = await GameGroup.findOne({ where: { userId: selectedUserId } });
 
-      if (!protectedUser) {
-        throw { msg : '존재하지 않는 유저를 선택했습니다.' };
+      if (!prevdUser || !isLawyerAlive) {
+        throw { msg : '존재하지 않는 유저를 선택했거나, 변호사가 이미 해고당했습니다.' };
       } else {
         // 게임 상태 업데이트
         await prevGameStatus.update({ status: 'voteNightDetective' });
-        await protectedUser.update({ isProtected: 'Y' });
+        const protectedUser = await prevdUser.update({ isProtected: 'Y' });
         return `[ ${protectedUser.nickname} ] (이)를 스파이로 부터 1회 보호합니다.`;
       }
     }),
@@ -351,25 +408,27 @@ module.exports = {
     // 경찰 기능 -> 스파이 찾아서 본인만 알기
     detectiveAct: ServiceAsyncWrapper(async (data) => {
       const { userId, roomId } = data;
-      const prevGameGroup = await GameGroup.findOne({ where: { userId } });
+      const prevGameUser = await GameGroup.findOne({ where: { userId, isEliminated: 'N' } });
+      const isDetectiveAlive = await GameGroup.findOne({ where: { roomId, role: '3', isEliminated: 'N' } });
       const prevGameStatus = await GameStatus.findOne({ where: { roomId } });
 
-      if (!prevGameGroup) {
-        throw { msg: '존재하지 않는 유저이거나, 선택하지 않았습니다.' };
+      if (!prevGameUser || !isDetectiveAlive) {
+        throw { msg: '존재하지 않는 유저이거나, 탐정이 이미 해고되었습니다.' };
       } else {
         // 게임 상태 한번만 업데이트
         await prevGameStatus.update({ status: 'voteNightSpy' });
 
-        return prevGameGroup.role === 4
-          ? `[ ${prevGameGroup.nickname} ] (은)는 스파이 입니다.`
-          : `[ ${prevGameGroup.nickname} ] (은)는 스파이가 아닙니다.`;
+        return prevGameUser.role === 4
+          ? `[ ${prevGameUser.nickname} ] (은)는 스파이 입니다.`
+          : `[ ${prevGameUser.nickname} ] (은)는 스파이가 아닙니다.`;
       }
     }),
 
     // 마피아 기능
     spyAct: ServiceAsyncWrapper(async (data) => {
       const { userId, roomId } = data;
-      const prevGameGroup = await GameGroup.findAll({ where: { roomId } });
+      const prevGameGroup = await GameGroup.findAll({ where: { roomId, isEliminated: 'N' } });
+      const isSpyAlive = await GameGroup.findOne({ where: { roomId, role: '4', isEliminated: 'N' } });
       const prevGameStatus = await GameStatus.findOne({ where: { roomId } });
 
       // 랜덤투표 로직
@@ -377,28 +436,22 @@ module.exports = {
       let selectedUserId = 0;
       for (let i=0; i<prevGameGroup.length; i++) { userArr.push(prevGameGroup[i].userId); }
       userId ? selectedUserId = userId : selectedUserId = userArr[Math.floor(Math.random() * userArr.length)];
-      const firedUser = await GameGroup.findOne({ where: { userId: selectedUserId } });
+      const prevUser = await GameGroup.findOne({ where: { userId: selectedUserId } });
 
-      if (!firedUser) {
-        throw { msg: '존재하지 않는 유저를 선택했습니다.' };
-      } else {
-        // 라운드 추가
-        GameStatus.sequelize.query(
-          `UPDATE gameStatuses SET roundNo = roundNo + 1 WHERE id=${roomId};`,
-          (err) => {
-            if (err) throw err;
-          }
-        );
-
+      if (!firedUser || !isSpyAlive) {
+        throw { msg: '존재하지 않는 유저를 선택했거나 마피아가 모두 붙잡혔습니다.' };
+      } else { 
         // 게임 상태 한번만 업데이트
         await prevGameStatus.update({ status: 'showResultNight' });
 
-        if (firedUser.isProtected === 'Y') {
+        if (prevUser.isProtected === 'Y') {
           // 1회 만 보호
-          await firedUser.update({ isProtected: 'N' });
+          const firedUser = await prevUser.update({ isProtected: 'N' });
+          await prevGameStatus.update({ msg: `현명한 변호사가 일개미 [ ${firedUser.nickname} ] (이)의 부당 해고를 막았습니다.` });
           return `현명한 변호사가 일개미 [ ${firedUser.nickname} ] (이)의 부당 해고를 막았습니다.`;
         } else {
-          await firedUser.update({ isEliminated: 'Y' });
+          const firedUser = await prevUser.update({ isEliminated: 'Y' });
+          await prevGameStatus.update({ msg: `선량한 시민 [ ${firedUser.nickname} ] (이)가 간 밤에 해고 당했습니다.` });
           return `선량한 시민 [ ${firedUser.nickname} ] (이)가 간 밤에 해고 당했습니다.`;
         }
       }
@@ -410,7 +463,6 @@ module.exports = {
       const prevGameStatus = await GameStatus.findOne({ where: { roomId } });
       const prevGameGroup = await GameGroup.findOne({ where: { userId } });
 
-      console.log(prevGameStatus);
       if (!prevGameStatus) {
         throw { msg: '게임의 상태 정보가 존재하지 않습니다.' };
       } else if (!candidacy) {
@@ -436,8 +488,8 @@ module.exports = {
     invalidAndAiVote: ServiceAsyncWrapper(async (data) => {
       const { roomId, roundNo, userId } = data;
 
-      const ai = await GameGroup.findAll({ where: { roomId, isAi: 'Y' } });
-      const prevGameGroup = await GameGroup.findAll({ where: { roomId } });
+      const ai = await GameGroup.findAll({ where: { roomId, isAi: 'Y', isEliminated: 'N' } });
+      const prevGameGroup = await GameGroup.findAll({ where: { roomId, isEliminated: 'N' } });
       const host = await GameGroup.findOne({ where: { userId } });
       const userArr = [], aiArr = [];
 
@@ -471,19 +523,20 @@ module.exports = {
             i < prevGameGroup.length - (prevVote.length || 0);
             i++
           ) {
-            await Vote.create({
+            const user = await Vote.create({
               voter: 0,
               candidacy: 0,
               roomId: roomId,
               roundNo: roundNo,
               gameStatus: 0,
             });
+            console.log(user.userId);
           }
         } 
         await prevGameStatus.update({ status: 'showResultDay' });
         return `${prevGameGroup.length - prevVote.length} 개의 무효표 처리가 완료되었습니다.\n${ai.length} 명의 ai가 투표를 완료 했습니다.`;
       } else {
-        return 'host가 아닌 요청';
+        return '방장이 아닌 유저는 요청할 수 없습니다.';
       }
     }),
 
@@ -491,6 +544,7 @@ module.exports = {
     getVoteResult: ServiceAsyncWrapper(async (data) => {
       const { roomId, roundNo } = data;
       const prevVote = await Vote.findAll({ where: { roomId, roundNo } });
+      const prevGameStatus = await GameStatus.findOne({ where: { roomId } });
 
       if (!prevVote) {
         throw { msg: '투표 정보가 존재하지 않습니다.' };
@@ -521,16 +575,20 @@ module.exports = {
         console.log(`######세계최고 개표 시스템이 말한다 : ${sorted}`);
 
         if (sorted[0][0] === '0') {
+          await prevGameStatus.update({ msg: '무효표가 가장 많으므로 다음 라운드로 갑니다.' });
           return `${sorted}, 무효표가 가장 많으므로 다음 라운드로 갑니다.`;
         } else if (sorted[0][1] === sorted[1][1]) {
+          await prevGameStatus.update({ msg: '동표이므로 다음 라운드로 갑니다.' });
           return `${sorted}, 동표이므로 다음 라운드로 갑니다.`;
         } else {
           // isGameResult_1 를 프론트에서 사용 안하므로 여기선 상태 업데이트 스킵
 
           await prevGameGroup.update({ isEliminated: 'Y' });
-          return prevGameGroup.role === 4
+          const msg =  prevGameGroup.role === 4
             ? `산업 스파이 [ ${prevGameGroup.nickname} ] (이)가 붙잡혔습니다.`
             : `선량한 시민 [ ${prevGameGroup.nickname} ] (이)가 해고 당했습니다.`;
+          await prevGameStatus.update({ msg });
+          return msg;
         }
       }
     }),
@@ -545,7 +603,7 @@ module.exports = {
       if (!gameStatus) {
         throw { msg: '게임이 시작하지 않았거나, 정보가 없습니다.' };
       } else {
-        console.log('roundNo: ', gameStatus.status);
+        console.log('[system_status]: ', gameStatus.status);
         return gameStatus.status;
       }
     }),
@@ -562,6 +620,14 @@ module.exports = {
           msg: '정보가 저장되지 않아, 게임 스테이지 불러오지 못했습니다.',
         };
       } else {
+        // 라운드 추가
+        GameStatus.sequelize.query(
+          `UPDATE gameStatuses SET roundNo = roundNo + 1 WHERE id=${roomId};`,
+          (err) => {
+            if (err) throw err;
+          }
+        );
+
         let tempSpyArr = [], tempEmplArr = [];
         for (let i=0; i<leftUsers.length; i++) {
           leftUsers[i].role === 4 ? tempSpyArr.push(leftUsers[i].userId) : tempEmplArr.push(leftUsers[i].userId);
@@ -570,10 +636,13 @@ module.exports = {
 
         // 결과 추가 & 반환
         if (tempEmplArr.length === tempSpyArr.length) {
+          await prevGameStatus.update({ msg: '스파이의 승리 입니다!' });
           await prevGameStatus.update({ isResult: 2 });
         } else if (tempSpyArr.length === 0) {
+          await prevGameStatus.update({ msg: '사원들의 승리 입니다!' });
           await prevGameStatus.update({ isResult: 1 });
         } else { // 승부 없음
+          await prevGameStatus.update({ msg: '다음라운드로 넘어갑니다!' });
           let updateStatus = prevGameStatus.status !== 'showResultNight' ? 'voteNightLawyer' : 'dayTime';
           await prevGameStatus.update({ status: `${updateStatus}` });
         }

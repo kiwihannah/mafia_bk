@@ -39,8 +39,8 @@ module.exports = (server) => {
     // status 발송
     socket.on('getStatus', async (roomId) => {
       const game = await GameStatus.findOne({ roomId });
-      socket.to(roomId).emit('getStatus', game.status);
-      console.log('getStatus', game.status);
+      socket.to(roomId).emit('getStatus', game.status, game.msg);
+      console.log('getStatus', game.status, game.msg);
     });
 
     //레디(준비)
@@ -60,8 +60,8 @@ module.exports = (server) => {
     // msg 발송
     socket.on('getMsg', async (roomId) => {
       const game = await GameStatus.findOne({ roomId });
-      socket.to(roomId).emit('getStatus', game.status);
-      console.log('getStatus', game.status);
+      socket.to(roomId).emit('getMsg', game.msg);
+      console.log('getMsg', game.status);
     });
 
     socket.on('send_message', (data) => {

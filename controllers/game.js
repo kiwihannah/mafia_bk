@@ -1,5 +1,6 @@
 const gameService = require('../services/game');
 const { ControllerAsyncWrapper } = require('../utils/wrapper');
+const { socketWrapper } = require('../utils/socket');
 
 module.exports = {
   test: {
@@ -151,6 +152,19 @@ module.exports = {
       const { roomId } = req.params;
       const { userId } = req.body;
       const msg = await gameService.gamePlay.spyAct({ roomId, userId });
+      return res.status(200).json({ msg });
+    }),
+
+    // 시간차로 ai 유저가 활동해야 하므로 다르게 받음
+    aiLawyerAct: ControllerAsyncWrapper(async (req, res) => {
+      const { roomId } = req.params;
+      const msg = await gameService.gamePlay.aiLawyerAct({ roomId });
+      return res.status(200).json({ msg });
+    }),
+
+    aiSpyAct: ControllerAsyncWrapper(async (req, res) => {
+      const { roomId } = req.params;
+      const msg = await gameService.gamePlay.aiSpyAct({ roomId });
       return res.status(200).json({ msg });
     }),
 
