@@ -3,15 +3,16 @@ const roomService = require('../services/room');
 module.exports = {
   create: {
     room: async (req, res) => {
-      const { roomName, maxPlayer, roomPwd, onPlay, currPlayer } = req.body;
+      const { roomName, maxPlayer, roomPwd } = req.body;
       const { userId } = req.params;
+
       const room = await roomService.create.room({
+        userId,
         roomName,
         maxPlayer,
         roomPwd,
         onPlay: 'N',
         currPlayer: 1,
-        userId
       });
       return res.status(201).json({ room });
     },

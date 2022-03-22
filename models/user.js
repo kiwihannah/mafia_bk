@@ -1,3 +1,5 @@
+var OpenViduRole = require('openvidu-node-client').OpenViduRole;
+
 module.exports = (sequelize, DataTypes) => {
   const User = sequelize.define(
     'user',

@@ -7,7 +7,7 @@
     "dev": "nodemon app",
     "prettify": "prettier --write *.js **/*.js",
     "test": "jest",
-    "start": "cross-env NODE_ENV=production pm2 start app.js"
+    "start": "pm2 start app.js "
   },
   "repository": {
     "type": "git",
@@ -22,25 +22,34 @@
   "homepage": "https://github.com/kiwihannah/alarm_bk#readme",
   "dependencies": {
     "append-field": "^2.0.0",
+    "axios": "^0.26.1",
     "bcrypt": "^5.0.1",
+    "certbot": "^5.0.3",
     "cors": "^2.8.5",
     "cross-env": "^7.0.3",
     "dotenv": "^16.0.0",
     "express": "^4.17.3",
+    "express-session": "^1.17.2",
+    "helmet": "^5.0.2",
     "joi": "^17.6.0",
     "jsonwebtoken": "^8.5.1",
+    "letsencrypt": "^2.1.10",
     "moment": "^2.29.1",
     "multer": "^1.4.4",
     "mysql2": "^2.3.3",
+    "openvidu-node-client": "^2.21.0",
     "pm2": "^5.2.0",
     "sequelize": "^6.16.1",
+    "session-file-store": "^1.5.0",
+    "socket.io": "^4.4.1",
     "swagger-jsdoc": "^6.1.0",
     "swagger-ui-express": "^4.3.0",
-    "unique-names-generator": "^4.7.1"
+    "waait": "^1.0.5"
   },
   "devDependencies": {
     "jest": "^27.5.1",
     "morgan": "^1.10.0",
+    "node-mocks-http": "^1.11.0",
     "nodemon": "^2.0.15",
     "prettier": "^2.5.1",
     "sequelize-cli": "^6.4.1",
