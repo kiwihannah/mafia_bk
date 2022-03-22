@@ -167,10 +167,11 @@ module.exports = {
     }),
 
     invalidAndAiVote: ControllerAsyncWrapper(async (req, res) => {
-      const { roomId, roundNo } = req.params;
+      const { roomId, roundNo, userId } = req.params;
       const msg = await gameService.gamePlay.invalidAndAiVote({
         roomId,
         roundNo,
+        userId
       });
       return res.status(200).json({ msg });
     }),

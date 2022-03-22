@@ -47,7 +47,7 @@ router.patch('/room/:roomId/spyAct', GameController.gamePlay.spyAct);
 // 유저 낮 투표 저장
 router.patch('/room/:roomId/voter/:userId/vote', GameController.gamePlay.dayTimeVoteArr);
 // 무효표 처리 & ai 랜덤 낮투표
-router.put('/room/:roomId/round/:roundNo/invalidAndAiVote', GameController.gamePlay.invalidAndAiVote);
+router.put('/room/:roomId/round/:roundNo/user/:userId/invalidAndAiVote', GameController.gamePlay.invalidAndAiVote);
 // 라운드 별 사원 투표 결과 확인
 router.get('/room/:roomId/round/:roundNo', GameController.gamePlay.getVoteResult);
 // 라운드 넘버 구하기

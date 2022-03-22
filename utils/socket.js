@@ -47,14 +47,21 @@ module.exports = (server) => {
     socket.on('ready', async (req) => {
       const { roomId, userId } = req;
       const isReady = await gameService.create.ready({ roomId, userId });
-      socket.emit('ready', { isReady: isReady });
+      socket.to(roomId).emit('ready', { isReady: isReady });
     });
 
     //레디(취소)
     socket.on('cancelReady', async (req) => {
       const { roomId, userId } = req;
       const isReady = await gameService.create.ready({ roomId, userId });
-      socket.emit('ready', { isReady: isReady });
+      socket.to(roomId).emit('cancelReady', { isReady: isReady });
+    });
+
+    // msg 발송
+    socket.on('getMsg', async (roomId) => {
+      const game = await GameStatus.findOne({ roomId });
+      socket.to(roomId).emit('getStatus', game.status);
+      console.log('getStatus', game.status);
     });
 
     socket.on('send_message', (data) => {
