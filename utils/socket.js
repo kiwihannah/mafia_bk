@@ -4,7 +4,7 @@ const { GameStatus } = require('../models');
 
 module.exports = (server) => {
   console.log('[ socket util on ] : 한나소켓시작');
-  const io = SocketIO(server, { path: '/socket.io' });
+  const io = SocketIO(server, { cors: { origin: "*" } });
   io.on('connection', (socket) => {
     console.log('socket connected');
     socket['nickname'] = `Anon`;

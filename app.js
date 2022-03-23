@@ -31,6 +31,7 @@ app.use('/api', bodyParser.json(), router);
 app.use(express.static('public'));
 
 app.use('/swagger', swaggerUi.serve, swaggerUi.setup(specs));
+
 app.use(helmet());
 app.use(
   session({
@@ -55,9 +56,7 @@ app.get('*', (req, res, next) => {
 
 // letsencrypt 로 받은 인증서 경로를 입력 ssl
 const options = {
-  ca: fs.readFileSync(
-    '/etc/letsencrypt/live/mafia.milagros.shop/fullchain.pem'
-  ),
+  ca: fs.readFileSync( '/etc/letsencrypt/live/mafia.milagros.shop/fullchain.pem'),
   key: fs.readFileSync('/etc/letsencrypt/live/mafia.milagros.shop/privkey.pem'),
   cert: fs.readFileSync('/etc/letsencrypt/live/mafia.milagros.shop/cert.pem'),
 };
@@ -66,9 +65,10 @@ const options = {
 http.createServer(app).listen(port);
 const httpserver = https.createServer(options, app).listen(443, () => {
   console.log(`[ web & socket server ] listening on ${port}`);
-});;
-//socket.io connect
-SocketIO(httpserver, { cors: { origin: '*' } });
+});
+
+//socket.io connect 
+SocketIO(httpserver, cors({ origin: '*' }));
 
 // Parse application/vnd.api+json as json
 app.use('/', bodyParser.json({ type: 'application/vnd.api+json' }), router);
@@ -100,7 +100,7 @@ const webcamRouter = require('./routes/webRTC');
 
 app.use('/api', [userRouter, roomRouter, gameRouter]);
 
-// 패키지내 특정 url 요청 이용을 위해 '/'로 지정
+// openVidU 패키지내 특정 url 요청 이용을 위해 '/'로 지정
 app.use('/', webcamRouter);
 
 module.exports = app;
