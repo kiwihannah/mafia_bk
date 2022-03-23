@@ -163,9 +163,9 @@ module.exports = {
       return res.status(200).json({ voteUserId });
     }),
 
-    sendInvalidVote: ControllerAsyncWrapper(async (req, res) => {
+    invalidAndAiVote: ControllerAsyncWrapper(async (req, res) => {
       const { roomId, roundNo } = req.params;
-      const msg = await gameService.gamePlay.sendInvalidVote({
+      const msg = await gameService.gamePlay.invalidAndAiVote({
         roomId,
         roundNo,
       });
@@ -197,7 +197,13 @@ module.exports = {
 
     result: ControllerAsyncWrapper(async (req, res) => {
       const { roomId } = req.params;
-      const result = await gameService.getGame.status({ roomId });
+      const gameRoundNo = await gameService.getGame.roundNo({ roomId });
+      return res.status(200).json({ roundNo: gameRoundNo });
+    }),
+
+    result: ControllerAsyncWrapper(async (req, res) => {
+      const { roomId } = req.params;
+      const result = await gameService.getGame.result({ roomId });
       return res.status(200).json({ result });
     }),
   },

@@ -34,8 +34,8 @@ module.exports = (server) => {
     // status 전달
     socket.on('getStatus', async (roomId) => {
       const game = await GameStatus.findOne({ roomId });
-      socket.to(roomId).emit('getStatus', game.status /*game.msg*/);
-      console.log('getStatus', game.status);
+      socket.to(roomId).emit('getStatus', game.status, game.msg);
+      console.log('getStatus', game.status, game.msg);
     });
 
     //채팅 메세지 전달
@@ -45,23 +45,29 @@ module.exports = (server) => {
 
     //레디(준비)
     socket.on('ready', async (req) => {
-      // console.log('ready start');
       const { roomId, userId } = req;
       const isReady = await gameService.create.ready({ roomId, userId });
-      // console.log(isReady);
-      socket.emit('ready', { isReady: isReady });
+      socket.to(roomId).emit('ready', { isReady: isReady });
     });
 
     //레디(취소)
-    socket.on('cancleReady', async (req) => {
-      // console.log('ready start');
+    socket.on('cancelReady', async (req) => {
       const { roomId, userId } = req;
       const isReady = await gameService.create.ready({ roomId, userId });
-      // console.log(isReady);
-      socket.emit('ready', { isReady: isReady });
+      socket.to(roomId).emit('cancelReady', { isReady: isReady });
     });
 
-    //귓속말 전달(미구현)
+    // msg 발송
+    socket.on('getMsg', async (roomId) => {
+      const game = await GameStatus.findOne({ roomId });
+      socket.to(roomId).emit('getMsg', game.msg);
+      console.log('getMsg', game.status);
+    });
+
+    socket.on('send_message', (data) => {
+      socket.to(data.room).emit('receive_message', data);
+    });
+
     socket.on('private message', (data) => {
       socket.to(data.room).to(socket.id).emit('private message', data);
     });
