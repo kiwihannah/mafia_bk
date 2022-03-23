@@ -1,6 +1,5 @@
 const gameService = require('../services/game');
 const { ControllerAsyncWrapper } = require('../utils/wrapper');
-const { socketWrapper } = require('../utils/socket');
 
 module.exports = {
   test: {
@@ -19,12 +18,12 @@ module.exports = {
         'showResultNight',
         'isGameResult_2',
       ];
-      
+
       function setStatus(sec, status) {
-        const next = setTimeout(()=>{
+        const next = setTimeout(() => {
           console.log(status);
-        }, sec);   
-        
+        }, sec);
+
         if (status === 'end') {
           for (let status of statusArr) {
             clearTimeout(status);
@@ -32,19 +31,19 @@ module.exports = {
         }
       }
 
-      const dayTime             = setStatus(1000, 'dayTime');
-      const voteDay             = setStatus(2000, 'voteDay');
-      const invailedVoteCnt     = setStatus(3000, 'invailedVoteCnt');
-      const showResultDay       = setStatus(4000, 'showResultDay');
-      const isGameResult_1      = setStatus(5000, 'isGameResult_1');
+      const dayTime = setStatus(1000, 'dayTime');
+      const voteDay = setStatus(2000, 'voteDay');
+      const invailedVoteCnt = setStatus(3000, 'invailedVoteCnt');
+      const showResultDay = setStatus(4000, 'showResultDay');
+      const isGameResult_1 = setStatus(5000, 'isGameResult_1');
 
-      const voteNightLawyer     = setStatus(6000, 'voteNightLawyer');
-      const voteNightDetective  = setStatus(7000, 'voteNightDetective');
-      const showMsgDetective    = setStatus(8000, 'showMsgDetective');
-      const voteNightSpy        = setStatus(9000, 'voteNightSpy');
-      const showResultNight     = setStatus(10000, 'showResultNight');
-      
-      const isGameResult_2      = setStatus(11000, 'isGameResult_2');
+      const voteNightLawyer = setStatus(6000, 'voteNightLawyer');
+      const voteNightDetective = setStatus(7000, 'voteNightDetective');
+      const showMsgDetective = setStatus(8000, 'showMsgDetective');
+      const voteNightSpy = setStatus(9000, 'voteNightSpy');
+      const showResultNight = setStatus(10000, 'showResultNight');
+
+      const isGameResult_2 = setStatus(11000, 'isGameResult_2');
 
       return 'endStatus';
     }),
@@ -60,7 +59,7 @@ module.exports = {
         userId,
         roomPwd,
       });
-      
+
       return res.status(200).json({ userId });
     }),
 
@@ -92,7 +91,7 @@ module.exports = {
       return res.status(200).json({ isReady });
     }),
   },
-  
+
   update: {
     changeMaxPlayer: ControllerAsyncWrapper(async (req, res) => {
       const { roomId } = req.params;
@@ -155,19 +154,6 @@ module.exports = {
       return res.status(200).json({ msg });
     }),
 
-    // 시간차로 ai 유저가 활동해야 하므로 다르게 받음
-    aiLawyerAct: ControllerAsyncWrapper(async (req, res) => {
-      const { roomId } = req.params;
-      const msg = await gameService.gamePlay.aiLawyerAct({ roomId });
-      return res.status(200).json({ msg });
-    }),
-
-    aiSpyAct: ControllerAsyncWrapper(async (req, res) => {
-      const { roomId } = req.params;
-      const msg = await gameService.gamePlay.aiSpyAct({ roomId });
-      return res.status(200).json({ msg });
-    }),
-
     dayTimeVoteArr: ControllerAsyncWrapper(async (req, res) => {
       const { roomId, userId } = req.params;
       const { candidacy, roundNo } = req.body;
@@ -181,11 +167,10 @@ module.exports = {
     }),
 
     invalidAndAiVote: ControllerAsyncWrapper(async (req, res) => {
-      const { roomId, roundNo, userId } = req.params;
+      const { roomId, roundNo } = req.params;
       const msg = await gameService.gamePlay.invalidAndAiVote({
         roomId,
         roundNo,
-        userId
       });
       return res.status(200).json({ msg });
     }),
