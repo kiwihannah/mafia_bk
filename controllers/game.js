@@ -1,6 +1,7 @@
 const gameService = require('../services/game');
 const { ControllerAsyncWrapper } = require('../utils/wrapper');
 
+
 module.exports = {
   test: {
     statusSchedule: ControllerAsyncWrapper(async () => {
@@ -59,6 +60,9 @@ module.exports = {
         userId,
         roomPwd,
       });
+      const io = req.app.get("io");
+      io.send('한나 소켓 라우터 테스트');
+      console.log('한나 소켓 라우터 테스트')
 
       return res.status(200).json({ userId });
     }),
@@ -131,6 +135,18 @@ module.exports = {
       const { roomId } = req.params;
       const users = await gameService.gamePlay.giveRole({ roomId });
       return res.status(201).json({ users });
+    }),
+
+    aiLawyerAct: ControllerAsyncWrapper(async (req, res) => {
+      const { roomId } = req.params;
+      const msg = await gameService.gamePlay.lawyerAct({ roomId });
+      return res.status(200).json({ msg });
+    }),
+
+    aiSpyAct: ControllerAsyncWrapper(async (req, res) => {
+      const { roomId } = req.params;
+      const msg = await gameService.gamePlay.aiSpyAct({ roomId });
+      return res.status(200).json({ msg });
     }),
 
     lawyerAct: ControllerAsyncWrapper(async (req, res) => {

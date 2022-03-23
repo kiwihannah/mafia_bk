@@ -153,15 +153,6 @@ module.exports = {
           });
           await aiUser.update({ gameGroupId: gameGroup.id });
         }
-
-        // status 생성 -> 시작부터
-        await GameStatus.create({
-          roundNo: 1,
-          isResult: 0,
-          status: 'isStart',
-          roomId: data.roomId,
-        });
-
         const users = await GameGroup.findAll({ where: { roomId } });
         return users;
       }
@@ -259,9 +250,18 @@ module.exports = {
           if (prevGameGroup.length !== prevRoom.currPlayer) {
             throw { msg: '모두 준비가 완료되지 않았습니다.' };
           } else {
-            // ai 사용 여부
+            
+            // status 생성 -> 시작부터
+            await GameStatus.create({
+              roundNo: 1,
+              isResult: 0,
+              status: 'isStart',
+              roomId: data.roomId,
+            });
+
+            // ai 사용해서 바로 시작
             return prevRoom.currPlayer < prevRoom.maxPlayer
-              ? `부족한 인원은 인공지능 플레이어로 대체 하시겠습니까?\n미리 말씀드리자면, 인공지능은 상당히 멍청합니다.`
+              ? `부족한 인원은 인공지능 플레이어로 대체합니다.\n미리 말씀드리자면, 인공지능은 상당히 멍청합니다.`
               : '시작!';
           }
         }
@@ -293,6 +293,7 @@ module.exports = {
     giveRole: ServiceAsyncWrapper(async (data) => {
       const { roomId } = data;
       const prevGameGroup = await GameGroup.findAll({ where: { roomId } });
+      const status = await GameStatus.findOne({ where: { roomId } });
 
       const tempRoleArr = [];
       // [{ 1: 'employee' },  { 2: 'lawyer' },  { 3: 'detective' },  { 4: 'spy' }]
@@ -330,7 +331,6 @@ module.exports = {
       }
 
       // 상태 업데이트
-      const status = await GameStatus.findOne({ where: { roomId } });
       await status.update({ status: 'showRole' });
 
       const users = await GameGroup.findAll({ where: { roomId } });

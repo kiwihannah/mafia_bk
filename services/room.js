@@ -54,7 +54,7 @@ module.exports = {
   },
 
   get: {
-    rooms: async () => {
+    rooms: async (req, _) => {
       const room = await Room.findAll({
         include: {
           model: User,
@@ -62,6 +62,7 @@ module.exports = {
         },
         order: [['currPlayer', 'DESC']],
       });
+
       return room;
     },
   },
