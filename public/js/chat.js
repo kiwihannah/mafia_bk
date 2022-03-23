@@ -13,17 +13,25 @@ const socket = io();
 //   return socket.emit('getStatus', roomId);
 // }
 
-function sendready() {
-  return socket.emit('ready', { roomId: '1', userId: '1' });
-}
+a = [];
+
+socket.on('test', (msg) => {
+  a.push(msg);
+});
+
+console.log(a);
+
+// function sendready() {
+//   return socket.emit('ready', { roomId: '1', userId: '1' });
+// }
 
 // socket.on('getStatus', (status) => {
 //   console.log(status);
 // });
 
-socket.on('ready', (req) => {
-  console.log(req);
-});
+// socket.on('ready', (req) => {
+//   a.push(req);
+// });
 
 // socket.on('lawyAct', (msg) => {
 //   console.log(msg);

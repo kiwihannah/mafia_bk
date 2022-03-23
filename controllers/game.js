@@ -19,10 +19,10 @@ module.exports = {
         'isGameResult_2',
       ];
       function setStatus(sec, status) {
-        const next = setTimeout(()=>{
+        const next = setTimeout(() => {
           console.log(status);
-        }, sec);   
-        
+        }, sec);
+
         if (status === 'end') {
           for (let status of statusArr) {
             clearTimeout(status);
@@ -44,7 +44,6 @@ module.exports = {
 
       return 'endStatus';
     }),
-
   },
 
   entryAndExit: {
@@ -57,7 +56,7 @@ module.exports = {
         userId,
         roomPwd,
       });
-      
+
       return res.status(200).json({ userId });
     }),
 
@@ -89,7 +88,7 @@ module.exports = {
       return res.status(200).json({ isReady });
     }),
   },
-  
+
   update: {
     changeMaxPlayer: ControllerAsyncWrapper(async (req, res) => {
       const { roomId } = req.params;

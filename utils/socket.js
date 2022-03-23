@@ -43,14 +43,22 @@ module.exports = (server) => {
       socket.to(data.room).emit('receive_message', data);
     });
 
-    //레디(준비, 취소)
+    //레디(준비)
     socket.on('ready', async (req) => {
       // console.log('ready start');
       const { roomId, userId } = req;
       const isReady = await gameService.create.ready({ roomId, userId });
       // console.log(isReady);
       socket.emit('ready', { isReady: isReady });
-      // return res.status(201).json({ isReady });
+    });
+
+    //레디(취소)
+    socket.on('cancleReady', async (req) => {
+      // console.log('ready start');
+      const { roomId, userId } = req;
+      const isReady = await gameService.create.ready({ roomId, userId });
+      // console.log(isReady);
+      socket.emit('ready', { isReady: isReady });
     });
 
     //귓속말 전달(미구현)
@@ -62,6 +70,17 @@ module.exports = (server) => {
     socket.on('disconnect', () => {
       console.log('User Disconnected', socket.id);
     });
+
+    // socket.on('test', (req) => {
+    //   socket.to(req.roomId).emit('test', req.msg);
+    // });
+
+    function test(msg) {
+      socket.emit('test', { msg: msg });
+      socket.emit('test', { msg: msg });
+    }
+
+    test('test');
 
     // socket.interval = setInterval(() => {
     //   // 3초마다 클라이언트로 메시지 전송
