@@ -12,8 +12,10 @@ const session = require('express-session');
 const FileStore = require('session-file-store')(session);
 const helmet = require('helmet');
 const dotenv = require('dotenv');
-dotenv.config();
 
+const { swaggerUi, specs } = require('./swagger');
+
+dotenv.config();
 const port = process.env.PORT || 3000; // 소켓 웹 통합 포트
 
 const app = express();
@@ -23,6 +25,7 @@ const router = express.Router();
 // app.use('/', express.static(path.join(__dirname, 'images')));
 
 // middlewares
+app.use(helmet());
 app.use(morgan('dev'));
 app.use(morgan('combined')); // 접속자 ip
 
