@@ -1,6 +1,6 @@
 const gameService = require('../services/game');
 const { ControllerAsyncWrapper } = require('../utils/wrapper');
-const { socket } = require('../middlewares/socket.io');
+const io = require('../utils/socket');
 
 module.exports = {
   entryAndExit: {
@@ -62,9 +62,21 @@ module.exports = {
   },
 
   getStatus: {
-    msg: ControllerAsyncWrapper(socket, async (req, res) => {
+    msg: ControllerAsyncWrapper(async (req, res) => {
       const { roomId } = req.params;
       const status = await gameService.getStatus.msg({ roomId });
+      io.getIO().emit('getStatus', async (roomNum) => {
+        console.log(roomNum);
+        let game = await GameStatus.findOne({
+          where: { roomId: roomNum },
+          attributes: ['status'],
+          raw: true,
+        });
+        console.log(game);
+        socket.emit('getStatus', game.status);
+        console.log(game.status);
+      });
+
       return res.status(200).json({ status });
     }),
 
@@ -128,16 +140,21 @@ module.exports = {
 
     sendInvalidVote: ControllerAsyncWrapper(async (req, res) => {
       const { roomId, roundNo } = req.params;
-      const msg = await gameService.gamePlay.sendInvalidVote({ roomId, roundNo });
+      const msg = await gameService.gamePlay.sendInvalidVote({
+        roomId,
+        roundNo,
+      });
       return res.status(200).json({ msg });
     }),
-
   },
 
   getResult: {
     vote: ControllerAsyncWrapper(async (req, res) => {
       const { roomId, roundNo } = req.params;
-      const result = await gameService.gamePlay.getVoteResult({ roomId, roundNo });
+      const result = await gameService.gamePlay.getVoteResult({
+        roomId,
+        roundNo,
+      });
       return res.status(200).json({ result });
     }),
   },
@@ -166,7 +183,10 @@ module.exports = {
 
     voteResult: ControllerAsyncWrapper(async (req, res) => {
       const { roomId, roundNo } = req.params;
-      const result = await gameService.gamePlay.dayTimeVoteArr({ roomId, roundNo });
+      const result = await gameService.gamePlay.dayTimeVoteArr({
+        roomId,
+        roundNo,
+      });
       return res.status(200).json({ result });
     }),
 

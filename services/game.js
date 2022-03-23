@@ -1,6 +1,8 @@
 const { User, Room, GameGroup, GameStatus, Vote } = require('../models');
 const { ServiceAsyncWrapper } = require('../utils/wrapper');
 
+const io = require('../utils/socket');
+
 // 사용하지 않는 role 배열, 보여주기 용
 const Roles = [
   { 1: 'employee' },
@@ -157,7 +159,7 @@ module.exports = {
             roomId: data.roomId,
           });
 
-          await aiUser.update({ gameGroupId : gameGroup.id });
+          await aiUser.update({ gameGroupId: gameGroup.id });
         }
 
         const users = await GameGroup.findAll({
@@ -188,23 +190,34 @@ module.exports = {
 
   getStatus: {
     msg: ServiceAsyncWrapper(async (data) => {
-      const game = await GameStatus.findOne({ where: { roomId : data.roomId } });
+      const game = await GameStatus.findOne({ where: { roomId: data.roomId } });
       return game.status;
     }),
 
     update: ServiceAsyncWrapper(async (data) => {
-      const statusArr = [ // 11
-        'showRole', 'voteDay', 'showResultDay', 'isGameResult_1', 'voteNightLawyer',
-        'showMsgLawyer', 'voteNightDetective', 'showMsgDetective', 'voteNightSpy',
-        'showResultNight', 'isGameResult_2'
+      const statusArr = [
+        // 11
+        'showRole',
+        'voteDay',
+        'showResultDay',
+        'isGameResult_1',
+        'voteNightLawyer',
+        'showMsgLawyer',
+        'voteNightDetective',
+        'showMsgDetective',
+        'voteNightSpy',
+        'showResultNight',
+        'isGameResult_2',
       ];
-      const game = await GameStatus.findOne({ where: { roomId : data.roomId } });
+      const game = await GameStatus.findOne({ where: { roomId: data.roomId } });
       const currIdx = statusArr.indexOf(game.status);
-      if (statusArr[statusArr.length-1] === statusArr[currIdx]) {
+      if (statusArr[statusArr.length - 1] === statusArr[currIdx]) {
         const nextStatus = await game.update({ status: statusArr[0] });
-        return nextStatus.status; 
+        return nextStatus.status;
       } else {
-        const nextStatus = await game.update({ status: statusArr[currIdx +1] });
+        const nextStatus = await game.update({
+          status: statusArr[currIdx + 1],
+        });
         return nextStatus.status;
       }
     }),
@@ -400,17 +413,20 @@ module.exports = {
 
         return vote.voter;
       }
-
     }),
 
     // 시민 낮 투표 부결표 처리
     sendInvalidVote: ServiceAsyncWrapper(async (data) => {
-      const {roomId, roundNo } = data;
+      const { roomId, roundNo } = data;
       const prevVote = await Vote.findAll({ where: { roomId, roundNo } });
       const prevGameGroup = await GameGroup.findAll({ where: { roomId } });
 
       if ((prevVote.length || 0) !== prevGameGroup.length) {
-        for (let i = 0; i <prevGameGroup.length-(prevVote.length || 0); i++) {
+        for (
+          let i = 0;
+          i < prevGameGroup.length - (prevVote.length || 0);
+          i++
+        ) {
           await Vote.create({
             voter: 0,
             candidacy: 0,
@@ -420,7 +436,7 @@ module.exports = {
           });
         }
       }
-      return `${prevGameGroup.length-prevVote.length} 개의 무효표`;
+      return `${prevGameGroup.length - prevVote.length} 개의 무효표`;
     }),
 
     // 시민 낮 투표 결과 반환
@@ -437,10 +453,10 @@ module.exports = {
         for (let i = 0; i < prevVote.length; i++) {
           const votes = await Vote.findOne({
             where: { roomId, roundNo },
-            order: [[ 'createdAt', 'DESC' ]]
+            order: [['createdAt', 'DESC']],
           });
           tempVoteArr.push(votes.candidacy);
-          await Vote.destroy({ where: {id: votes.id} })
+          await Vote.destroy({ where: { id: votes.id } });
         }
 
         let result = {};
@@ -509,8 +525,6 @@ module.exports = {
         const emplArr = await GameGroup.findAll({
           where: { roomId: data.roomId, isEliminated: 'N', role: 1 || 2 || 3 },
         });
-
-
 
         // 결과 추가
         if (emplArr.length <= spyArr.length) {
