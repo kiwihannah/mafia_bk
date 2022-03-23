@@ -43,13 +43,13 @@ const options = {
   cert: fs.readFileSync('/etc/letsencrypt/live/mafia.milagros.shop/cert.pem'),
 };
 
-// const httpserver = http.createServer(app);
-http.createServer(app).listen(port);
-const httpserver = https.createServer(options, app).listen(443, () => {
-  console.log(`[ web & socket server ] listening on ${port}`);
-});
-//socket.io connect
-SocketIO(httpserver, { cors: { origin: '*' } });
+// // const httpserver = http.createServer(app);
+// http.createServer(app).listen(port);
+// const httpserver = https.createServer(options, app).listen(443, () => {
+//   console.log(`[ web & socket server ] listening on ${port}`);
+// });
+// //socket.io connect
+// SocketIO(httpserver, { cors: { origin: '*' } });
 
 // Parse application/vnd.api+json as json
 app.use('/', bodyParser.json({ type: 'application/vnd.api+json' }), router);
