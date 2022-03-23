@@ -1,6 +1,3 @@
-const SocketIO = require('socket.io');
-const { GameStatus } = require('../models');
-
 // module.exports = {
 //   // io: SocketIO(server, { path: '/socket.io' });
 //   init:socket.on('connection', (socket, io) => {
@@ -113,6 +110,7 @@ module.exports = {
 //     });
 //   });
 // };
+const SocketIO = require('socket.io');
 const gameService = require('../services/game');
 const { GameStatus } = require('../models');
 

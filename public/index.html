@@ -1,4 +1,49 @@
-<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>:: 카카오톡 공유하기 ::</title>
+    <script
+      type="text/JavaScript"
+      src="https://developers.kakao.com/sdk/js/kakao.min.js"
+    ></script>
+    <script type="text/javascript">
+      function shareKakaotalk() {
+        Kakao.init('889a2555ed1ed3cfd6f80d9b187f256b'); // 사용할 앱의 JavaScript 키를 설정
+        Kakao.Link.sendDefault({
+          objectType: 'feed',
+          content: {
+            title: '다른 pc에서도 가능?', // 콘텐츠의 타이틀
+            description: '카카오톡 메시지 전송 연습용임', // 콘텐츠 상세설명
+            imageUrl: '', // 썸네일 이미지
+            link: {
+              mobileWebUrl: 'http://www.naver.com/', // 모바일 카카오톡에서 사용하는 웹 링크 URL
+              webUrl: 'http://www.naver.com/', // PC버전 카카오톡에서 사용하는 웹 링크 URL
+            },
+          },
+          buttons: [
+            {
+              title: '게시글 확인', // 버튼 제목
+              link: {
+                mobileWebUrl: 'http://www.naver.com/', // 모바일 카카오톡에서 사용하는 웹 링크 URL
+                webUrl: 'http://www.naver.com/', // PC버전 카카오톡에서 사용하는 웹 링크 URL
+              },
+            },
+          ],
+        });
+      }
+    </script>
+  </head>
+  <body>
+    <h1>카카오톡 공유하기</h1>
+    <input
+      type="button"
+      onClick="shareKakaotalk();"
+      value="kakao Talk으로 공유하기"
+    />
+  </body>
+</html>
+
+<!-- <!DOCTYPE html>
 <html>
   <head>
     <title>Chat App</title>
@@ -7,6 +52,7 @@
   </head>
 
   <body>
+    
     <div class="chat">
       <div id="sidebar" class="chat__sidebar"></div>
       <div class="chat__main">
@@ -64,7 +110,7 @@
     <script src="/js/chat.js"></script>
   </body>
 </html>
-
+ -->
 
 <!-- 오픈 비듀 테스트용 -->
 <!-- 
@@ -80,7 +126,7 @@
     <link rel="shortcut icon" href="/images/favicon.ico" type="image/x-icon" />
 
     <!-- Bootstrap -->
-    <!-- <script
+<!-- <script
       src="https://code.jquery.com/jquery-3.3.1.min.js"
       integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
       crossorigin="anonymous"
@@ -102,7 +148,7 @@
     />
     <!-- Bootstrap -->
 
-    <!-- <link rel="styleSheet" href="/style.css" type="text/css" media="screen" />
+<!-- <link rel="styleSheet" href="/style.css" type="text/css" media="screen" />
     <script src="openvidu-browser-2.21.0.js"></script>
     <script src="/app.js"></script>
     <script src="https://unpkg.com/axios/dist/axios.min.js"></script>

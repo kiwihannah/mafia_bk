@@ -1,21 +1,20 @@
-//const dotenv = require('dotenv');
-//dotenv.config();
+const dotenv = require('dotenv');
+dotenv.config();
 let { DOMAIN_OR_PUBLIC_IP, OPENVIDU_SECRET } = process.env;
 /* CONFIGURATION */
 
 var OpenVidu = require('openvidu-node-client').OpenVidu;
 
-// Check launch arguments: must receive openvidu-server URL and the secret
+// 테스트할때는 오픈비듀 서버를 함께 실행해야하기때문에 node app.js localhost:4443 mysecret 같이 4자리수 아니면 서버 실행 못하게 하는코드
 // if (process.argv.length != 4) {
 //   console.log('Usage: node ' + __filename + ' OPENVIDU_URL OPENVIDU_SECRET');
 //   process.exit(-1);
 // }
-// For demo purposes we ignore self-signed certificate
+//데모 테스트용(https등 무시)
 //process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
 
-// Environment variable: URL where our OpenVidu server is listening
+// 환경변수 OPENVIDU URL/SECRET 읽는 환경변수 (테스트용일때)
 // var OPENVIDU_URL = process.argv[2];
-// // Environment variable: secret shared with our OpenVidu server
 // var OPENVIDU_SECRET = process.argv[3];
 
 // Entrypoint to OpenVidu Node Client SDK
@@ -52,46 +51,37 @@ router.post('/session', async function (req, res) {
     //console.log(nickname);
 
     var role = [{ user: `${nickname}`, role: OpenViduRole.PUBLISHER }];
-    //console.log(role);
-    // Role associated to this user
-    //let user = User.findAll({ where: { nickname } });
-    //var role = User.findOne((u) => u.nickname === req.session.loggedUser).role;
-    // var role = User.findOne({ where: { nickname } });
-
-    // Optional data to be passed to other users when this user connects to the video-call
-    // In this case, a JSON with the value we stored in the req.session object on login
-    // var serverData = JSON.stringify({
-    //   serverData: req.session.loggedUser.nickname,
-    // });
+ 
+    // req.session에 사용자를 서버측에서 임의로 JSON화 하여 저장
     var serverData = JSON.stringify(nickname);
     console.log(serverData);
     //let role = OpenViduRole.PUBLISHER;
     console.log('Getting a token | {sessionName}={' + sessionName + '}');
 
-    // Build connectionProperties object with the serverData and the role
+    //세션에 참여한 사용자에게 역할부여 {사용자:이름,역할:publisher가 되는셈}
     var connectionProperties = {
       data: serverData,
       role: OpenViduRole.PUBLISHER,
     };
-    //console.log(role.toLowerCase());
+    
     console.log(connectionProperties);
     if (findDBsessionName === sessionName) {
       if (mapSessions[sessionName]) {
         console.log(sessionName);
-        // Session already exists
+        // 세션이존재하면
         console.log('Existing session ' + sessionName);
 
-        // Get the existing Session from the collection
+        // 기존있는 세션병합
         var mySession = mapSessions[sessionName];
 
-        // Generate a new token asynchronously with the recently created connectionProperties
+        // 새로운 토큰생성하여 병합된 세션에 던저주기
         mySession
           .createConnection(connectionProperties)
           .then((connection) => {
-            // Store the new token in the collection of tokens
+            //새로운 토큰을 세션이름과 토큰들 배열에 저장
             mapSessionNamesTokens[sessionName].push(connection.token);
 
-            // Return the token to the client
+            // 사용자에게 토큰넘김
             res.status(200).send({
               0: connection.token,
             });
@@ -186,20 +176,12 @@ router.post('/api-sessions/remove-user', function (req, res) {
 
 /* AUXILIARY METHODS */
 
-// async function login(user, pass) {
-//   user = await User.findOne({ where: { user }, raw: true });
-//   console.log(user);
-//   return user;
-// }
+
 
 function isLogged(session) {
   console.log(session.loggedUser);
   return session.loggedUser != null;
 }
-function getBasicAuth() {
-  return (
-    'Basic ' + new Buffer('OPENVIDUAPP:' + OPENVIDU_SECRET).toString('base64')
-  );
-}
+
 
 module.exports = router;

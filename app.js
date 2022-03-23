@@ -13,8 +13,6 @@ const FileStore = require('session-file-store')(session);
 const helmet = require('helmet');
 const dotenv = require('dotenv');
 
-const { swaggerUi, specs } = require('./swagger');
-
 dotenv.config();
 const port = process.env.PORT || 3000; // 소켓 웹 통합 포트
 
@@ -57,19 +55,23 @@ app.get('*', (req, res, next) => {
 });
 
 // letsencrypt 로 받은 인증서 경로를 입력 ssl
-const options = {
-  ca: fs.readFileSync(
-    '/etc/letsencrypt/live/mafia.milagros.shop/fullchain.pem'
-  ),
-  key: fs.readFileSync('/etc/letsencrypt/live/mafia.milagros.shop/privkey.pem'),
-  cert: fs.readFileSync('/etc/letsencrypt/live/mafia.milagros.shop/cert.pem'),
-};
+// const options = {
+//   ca: fs.readFileSync(
+//     '/etc/letsencrypt/live/mafia.milagros.shop/fullchain.pem'
+//   ),
+//   key: fs.readFileSync('/etc/letsencrypt/live/mafia.milagros.shop/privkey.pem'),
+//   cert: fs.readFileSync('/etc/letsencrypt/live/mafia.milagros.shop/cert.pem'),
+// };
 
 // const httpserver = http.createServer(app);
+// http.createServer(app).listen(port);
+// const httpserver = https.createServer(options, app).listen(443, () => {
+//   console.log(`[ web & socket server ] listening on ${port}`);
+// });
 http.createServer(app).listen(port);
-const httpserver = https.createServer(options, app).listen(443, () => {
+const httpserver = https.createServer(app).listen(443, () => {
   console.log(`[ web & socket server ] listening on ${port}`);
-});;
+});
 //socket.io connect
 SocketIO(httpserver, { cors: { origin: '*' } });
 
