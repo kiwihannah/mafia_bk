@@ -16,10 +16,12 @@ module.exports = (server) => {
     socket['nickname'] = `Anon`;
 
     socket.on('join_room', (data, nickname) => {
+      console.log('before join roooooooooooooooooooooooooooooooooom', socket.rooms);
       socket.join(data);
+      console.log('after join roooooooooooooooooooooooooooooooooom', socket.rooms);
       socket.nickname = `${nickname}`;
       socket
-        .to(data)
+        .to(data) // sting 형 int
         .emit(
           'join_room',
           `roomId : ${data}`,
@@ -31,15 +33,34 @@ module.exports = (server) => {
         socket.id
       );
     });
+    
+    socket.on('send_message', (data) => {
+      socket.to(data.room).emit('receive_message', data);
+    });
+
+    socket.on('private message', (data) => {
+      socket.to(data.room).to(socket.id).emit('private message', data);
+    });
+
+    socket.on('disconnect', () => {
+      console.log('User Disconnected', socket.id);
+    });
 
     // status, msg 발송
     socket.on('getStatus', async (roomId) => {
-      const game = await GameStatus.findOne({ roomId });
-      socket.to(roomId).emit('getStatus', game.status, game.msg);
-      console.log('getStatus', game.status, game.msg, 'roomId', roomId);
+      console.log('iddddddddddddddddddddddddddddddddddd',roomId)
+      const game = await GameStatus.findOne({ where: { roomId }  });
+      
+      if (!game) {
+        socket.to(roomId).emit('getStatus', '[socket] 게임이 시작되지 않았거나, 게임 정보가 없습니다.');
+      } else {
+        console.log(game);
+        socket.to(roomId).emit('getStatus', game.status, game.msg);
+        console.log('getStatus', game.status, game.msg, 'roomId', roomId);
+      }
     });
 
-    // 레디(준비)
+    // 레디(준비) 
     socket.on('ready', async (req) => {
       const { roomId, userId } = req;
       const isReady = await gameService.create.ready({ roomId, userId });
@@ -55,21 +76,10 @@ module.exports = (server) => {
 
     // msg 발송
     socket.on('getMsg', async (roomId) => {
-      const game = await GameStatus.findOne({ roomId });
+      const game = await GameStatus.findOne({ where: { roomId } });
       socket.to(roomId).emit('getMsg', game.msg);
-      console.log('getMsg', game.status);
+      console.log('getMsg', game);
     });
 
-    socket.on('send_message', (data) => {
-      socket.to(data.room).emit('receive_message', data);
-    });
-
-    socket.on('private message', (data) => {
-      socket.to(data.room).to(socket.id).emit('private message', data);
-    });
-
-    socket.on('disconnect', () => {
-      console.log('User Disconnected', socket.id);
-    });
   });
 };

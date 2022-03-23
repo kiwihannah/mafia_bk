@@ -187,14 +187,14 @@ module.exports = {
         return room;
       }
     }),
-
+    
     // 요청마다 다음 스테이터스 db에 삽입 후 반환
     status: ServiceAsyncWrapper(async (data) => {
       const { roomId, userId } = data;
       const statusArr = [
         'dayTime',
         'voteDay',
-        'invailedVoteCnt',
+        'invalidVoteCnt',
         'showResultDay',
         'voteNightLawyer',
         'voteNightDetective',
@@ -253,10 +253,10 @@ module.exports = {
             
             // status 생성 -> 시작부터
             await GameStatus.create({
-              roundNo: 1,
-              isResult: 0,
-              status: 'isStart',
-              roomId: data.roomId,
+                roundNo: 1,
+                isResult: 0,
+                status: 'isStart',
+                roomId: data.roomId,
             });
 
             // ai 사용해서 바로 시작
@@ -520,6 +520,12 @@ module.exports = {
         }
       }
     }),
+
+    isZeroVote: ServiceAsyncWrapper(async (data) => {
+      const { roomId } = data;
+      const isVote = await Vote.findAll({ where: { roomId } });
+      return isVote.length > 0 ? true : false;
+    }), 
 
     // 낮 투표 모음
     dayTimeVoteArr: ServiceAsyncWrapper(async (data) => {

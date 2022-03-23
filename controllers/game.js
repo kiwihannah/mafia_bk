@@ -60,9 +60,6 @@ module.exports = {
         userId,
         roomPwd,
       });
-      const io = req.app.get("io");
-      io.send('한나 소켓 라우터 테스트');
-      console.log('한나 소켓 라우터 테스트')
 
       return res.status(200).json({ userId });
     }),
@@ -181,6 +178,12 @@ module.exports = {
       });
       return res.status(200).json({ voteUserId });
     }),
+
+    isZeroVote: ControllerAsyncWrapper(async (req, res) => {
+      const { roomId } = req.params;
+      const isVote = await gameService.gamePlay.isZeroVote({ roomId });
+      return res.status(200).json({ isVote });
+    }), 
 
     invalidAndAiVote: ControllerAsyncWrapper(async (req, res) => {
       const { roomId, roundNo } = req.params;

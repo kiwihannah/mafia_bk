@@ -60,6 +60,9 @@ router.patch(
   '/room/:roomId/voter/:userId/vote',
   GameController.gamePlay.dayTimeVoteArr
 );
+// 유저가 투표를 하나도 하지 않을 경우 확인
+router.get('/room/:roomId/isZeroVote', GameController.gamePlay.isZeroVote);
+
 // 무효표 처리 & ai 랜덤 낮투표
 router.put(
   '/room/:roomId/round/:roundNo/user/:userId/invalidAndAiVote',
