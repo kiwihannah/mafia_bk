@@ -329,11 +329,14 @@ module.exports = {
           order: [['createdAt', 'DESC']],
         });
 
-        await updateUser.update({ role: roleArr[i] });
+        if (!updateUser || !status) {
+          throw { msg: '이미 유저에게 직업이 부여 되었거나, 게임정보를 불러오는데 실패 했습니다.' };
+        } else {
+          await updateUser.update({ role: roleArr[i] });
+          // 상태 업데이트
+          await status.update({ status: 'showRole' });
+        }
       }
-
-      // 상태 업데이트
-      await status.update({ status: 'showRole' });
 
       const users = await GameGroup.findAll({ where: { roomId } });
       return users;
@@ -684,12 +687,12 @@ module.exports = {
               ? tempSpyArr.push(leftUsers[i].userId)
               : tempEmplArr.push(leftUsers[i].userId);
           }
-          if (tempEmplArr.length <= tempSpyArr.length) tempResult = 2;
 
+          if (tempEmplArr.length <= tempSpyArr.length) tempResult = 2;
           else if (tempSpyArr.length === 0) tempResult = 1;
-          else tempResult = 2;
+          else tempResult = 0;
           await prevGameStatus.update({ isResult: tempResult });
-          
+
           console.log(
             `######스파이 수: ${tempSpyArr.length}\n사원 수: ${tempEmplArr.length}`
           );
