@@ -1,6 +1,6 @@
 const express = require('express');
 const SocketIO = require('socket.io');
-const { GameStatus } = require('../models');
+const { GameStatus, GameGroup } = require('../models');
 
 const app = express();
 
@@ -8,7 +8,7 @@ module.exports = (server) => {
   console.log('[ socket util on ] : 한나소켓시작');
   const io = SocketIO(server, { cors: { origin: '*' } });
 
-  // 라우터에서 io 객체를 쓸 수 있게 해줌. req.app.get('io')로 접근 
+  // 라우터에서 io 객체를 쓸 수 있게 해줌. req.app.get('io')로 접근
   app.set('io', io);
 
   io.on('connection', (socket) => {
@@ -16,9 +16,15 @@ module.exports = (server) => {
     socket['nickname'] = `Anon`;
 
     socket.on('join_room', (data, nickname) => {
-      console.log('before join roooooooooooooooooooooooooooooooooom', socket.rooms);
+      console.log(
+        'before join roooooooooooooooooooooooooooooooooom',
+        socket.rooms
+      );
       socket.join(data);
-      console.log('after join roooooooooooooooooooooooooooooooooom', socket.rooms);
+      console.log(
+        'after join roooooooooooooooooooooooooooooooooom',
+        socket.rooms
+      );
       socket.nickname = `${nickname}`;
       socket
         .to(data) // sting 형 int
@@ -33,7 +39,7 @@ module.exports = (server) => {
         socket.id
       );
     });
-    
+
     socket.on('send_message', (data) => {
       socket.to(data.room).emit('receive_message', data);
     });
@@ -48,30 +54,55 @@ module.exports = (server) => {
 
     // status, msg 발송
     socket.on('getStatus', async (roomId) => {
-      console.log('iddddddddddddddddddddddddddddddddddd',roomId)
-      const game = await GameStatus.findOne({ where: { roomId }  });
-      
-      if (!game) {
-        socket.to(roomId).emit('getStatus', '[socket] 게임이 시작되지 않았거나, 게임 정보가 없습니다.');
+      const gameStatus = await GameStatus.findOne({ where: { roomId } });
+
+      if (!gameStatus) {
+        socket
+          .to(roomId)
+          .emit(
+            'getStatus',
+            '[socket] 게임이 시작되지 않았거나, 게임 정보가 없습니다.'
+          );
       } else {
-        console.log(game);
-        socket.to(roomId).emit('getStatus', game.status, game.msg);
-        console.log('getStatus', game.status, game.msg, 'roomId', roomId);
+        socket.to(roomId).emit('getStatus', gameStatus);
+        console.log(gameStatus);
       }
     });
 
-    // 레디(준비) 
-    socket.on('ready', async (req) => {
-      const { roomId, userId } = req;
-      const isReady = await gameService.create.ready({ roomId, userId });
-      socket.to(roomId).emit('ready', { isReady: isReady });
+    // 레디(준비)
+    socket.on('ready', async (data) => {
+      const { roomId, userId } = data;
+      const readyUser = await GameGroup.findOne({ where: { roomId, userId } });
+      if (!readyUser) {
+        socket
+          .to(roomId)
+          .emit(
+            'ready',
+            '[socket] 게임이 시작되지 않았거나, 게임 정보가 없습니다.'
+          );
+      } else {
+        const ready = readyUser.update({ isReady: 'Y' });
+        socket.to(roomId).emit('ready', { isReady: ready.isReady });
+        console.log(ready);
+      }
     });
 
     // 레디(취소)
-    socket.on('cancelReady', async (req) => {
-      const { roomId, userId } = req;
-      const isReady = await gameService.create.ready({ roomId, userId });
-      socket.to(roomId).emit('cancelReady', { isReady: isReady });
+    socket.on('cancelReady', async (data) => {
+      const { roomId, userId } = data;
+      const readyUser = await GameGroup.findOne({ where: { roomId, userId } });
+      if (!readyUser) {
+        socket
+          .to(roomId)
+          .emit(
+            'cancelReady',
+            '[socket] 게임이 시작되지 않았거나, 게임 정보가 없습니다.'
+          );
+      } else {
+        const ready = readyUser.update({ isReady: 'N' });
+        socket.to(roomId).emit('cancelReady', { isReady: ready.isReady });
+        console.log(ready);
+      }
     });
 
     // msg 발송
@@ -80,6 +111,5 @@ module.exports = (server) => {
       socket.to(roomId).emit('getMsg', game.msg);
       console.log('getMsg', game);
     });
-
   });
 };

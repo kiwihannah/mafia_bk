@@ -1,7 +1,6 @@
 const gameService = require('../services/game');
 const { ControllerAsyncWrapper } = require('../utils/wrapper');
 
-
 module.exports = {
   test: {
     statusSchedule: ControllerAsyncWrapper(async () => {
@@ -183,7 +182,7 @@ module.exports = {
       const { roomId } = req.params;
       const isVote = await gameService.gamePlay.isZeroVote({ roomId });
       return res.status(200).json({ isVote });
-    }), 
+    }),
 
     invalidAndAiVote: ControllerAsyncWrapper(async (req, res) => {
       const { userId, roomId, roundNo } = req.params;
