@@ -1,6 +1,5 @@
 const { User, Room, GameGroup, GameStatus, Vote } = require('../models');
 const { ServiceAsyncWrapper } = require('../utils/wrapper');
-const {} = require('../utils/socket');
 
 module.exports = {
   entryAndExit: {
@@ -534,7 +533,6 @@ module.exports = {
     dayTimeVoteArr: ServiceAsyncWrapper(async (data) => {
       const { roomId, userId, candidacy, roundNo } = data;
       const prevGameStatus = await GameStatus.findOne({ where: { roomId } });
-      const prevGameGroup = await GameGroup.findOne({ where: { userId } });
 
       if (!prevGameStatus) {
         throw { msg: '게임의 상태 정보가 존재하지 않습니다.' };
@@ -626,7 +624,6 @@ module.exports = {
       const { roomId, roundNo } = data;
       const prevVote = await Vote.findAll({ where: { roomId, roundNo } });
       const prevGameStatus = await GameStatus.findOne({ where: { roomId } });
-      const leftUsers = await GameGroup.findAll({ where: { roomId, isEliminated: 'N' } });
 
       if (!prevVote) {
         throw { msg: '투표 정보가 존재하지 않습니다.' };
@@ -656,43 +653,53 @@ module.exports = {
 
         console.log(`###### 세계최고 개표 시스템이 말한다 : ${sorted}`);
 
-        // 현재 결과가 났는지 확인
-        let tempSpyArr = [],
-          tempEmplArr = [];
-        let tempResult = 0;
-        for (let i = 0; i < leftUsers.length; i++) {
-          leftUsers[i].role === 4
-            ? tempSpyArr.push(leftUsers[i].userId)
-            : tempEmplArr.push(leftUsers[i].userId);
-        }
-        if (tempEmplArr.length <= tempSpyArr.length) tempResult = 2;
-        else if (tempSpyArr.length === 0) tempResult = 1;
-        else tempResult = 2;
-
-        console.log(
-          `######스파이 수: ${tempSpyArr.length}\n사원 수: ${tempEmplArr.length}`
-        );
-
         if (sorted[0][0] === '0') {
           await prevGameStatus.update({
-            msg: '무효표가 가장 많습니다. 아무도 해고당하지 않았습니다.'
+            msg: '무효표가 가장 많습니다. 아무도 해고당하지 않았습니다.',
           });
-          return {msg: `무효표가 가장 많습니다. 아무도 해고당하지 않았습니다.`, result: tempResult};
+          return {
+            msg: `무효표가 가장 많습니다. 아무도 해고당하지 않았습니다.`,
+            result: 0,
+          };
         } else if (sorted[0][1] === sorted[1][1]) {
           await prevGameStatus.update({
             msg: '동표이므로 아무도 해고당하지 않았습니다.',
           });
-          return {msg: '동표이므로 아무도 해고당하지 않았습니다.', result: tempResult};
+          return { msg: '동표이므로 아무도 해고당하지 않았습니다.', result: 0 };
         } else {
           // isGameResult_1 를 프론트에서 사용 안하므로 여기선 상태 업데이트 스킵
 
           await prevGameGroup.update({ isEliminated: 'Y' });
+
+          const leftUsers = await GameGroup.findAll({
+            where: { roomId, isEliminated: 'N' },
+          });
+
+          // 현재 결과가 났는지 확인
+          let tempSpyArr = [],
+            tempEmplArr = [];
+          let tempResult = 0;
+          for (let i = 0; i < leftUsers.length; i++) {
+            leftUsers[i].role === 4
+              ? tempSpyArr.push(leftUsers[i].userId)
+              : tempEmplArr.push(leftUsers[i].userId);
+          }
+          if (tempEmplArr.length <= tempSpyArr.length) tempResult = 2;
+
+          else if (tempSpyArr.length === 0) tempResult = 1;
+          else tempResult = 2;
+          await prevGameStatus.update({ isResult: tempResult });
+          
+          console.log(
+            `######스파이 수: ${tempSpyArr.length}\n사원 수: ${tempEmplArr.length}`
+          );
+
           const msg =
             prevGameGroup.role === 4
               ? `산업 스파이 [ ${prevGameGroup.nickname} ] (이)가 붙잡혔습니다.`
               : `성실한 일개미 [ ${prevGameGroup.nickname} ] (이)가 해고 당했습니다.`;
           await prevGameStatus.update({ msg });
-          return {msg: msg, result: tempResult};
+          return { msg: msg, result: tempResult };
         }
       }
     }),
