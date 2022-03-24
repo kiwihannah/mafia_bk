@@ -208,9 +208,6 @@ module.exports = {
       const isHost = await GameGroup.findOne({ where: { userId } });
       const currIdx = statusArr.indexOf(game.status);
       if (isHost.isHost === 'Y') {
-        console.log(
-          `@@@@@ ${isHost.nickname} try to update the status to ${nextStatus.status}`
-        );
         if (statusArr[statusArr.length - 1] === statusArr[currIdx]) {
           const nextStatus = await game.update({ status: statusArr[0] });
           return nextStatus.status;
@@ -218,6 +215,9 @@ module.exports = {
           const nextStatus = await game.update({
             status: statusArr[currIdx + 1],
           });
+          console.log(
+            `@@@@@ ${isHost.nickname} try to update the status to ${nextStatus.status}`
+          );
           return nextStatus.status;
         }
       } else {
@@ -405,9 +405,9 @@ module.exports = {
         } else {
           const firedUser = await prevUser.update({ isEliminated: 'Y' });
           await prevGameStatus.update({
-            msg: `성실한 사원 [ ${firedUser.nickname} ] (이)가 간 밤에 해고 당했습니다.`,
+            msg: `성실한 일개미 [ ${firedUser.nickname} ] (이)가 간 밤에 해고 당했습니다.`,
           });
-          return `성실한 사원 [ ${firedUser.nickname} ] (이)가 간 밤에 해고 당했습니다.`;
+          return `성실한 일개미 [ ${firedUser.nickname} ] (이)가 간 밤에 해고 당했습니다.`;
         }
       } else {
         return `행동할 ai 유저가 없습니다.`;
@@ -517,9 +517,9 @@ module.exports = {
         } else {
           const firedUser = await prevUser.update({ isEliminated: 'Y' });
           await prevGameStatus.update({
-            msg: `성실한 사원 [ ${firedUser.nickname} ] (이)가 간 밤에 해고 당했습니다.`,
+            msg: `성실한 일개미 [ ${firedUser.nickname} ] (이)가 간 밤에 해고 당했습니다.`,
           });
-          return `성실한 사원 [ ${firedUser.nickname} ] (이)가 간 밤에 해고 당했습니다.`;
+          return `성실한 일개미 [ ${firedUser.nickname} ] (이)가 간 밤에 해고 당했습니다.`;
         }
       }
     }),
@@ -626,6 +626,7 @@ module.exports = {
       const { roomId, roundNo } = data;
       const prevVote = await Vote.findAll({ where: { roomId, roundNo } });
       const prevGameStatus = await GameStatus.findOne({ where: { roomId } });
+      const leftUsers = await GameGroup.findAll({ where: { roomId, isEliminated: 'N' } });
 
       if (!prevVote) {
         throw { msg: '투표 정보가 존재하지 않습니다.' };
@@ -655,16 +656,33 @@ module.exports = {
 
         console.log(`###### 세계최고 개표 시스템이 말한다 : ${sorted}`);
 
+        // 현재 결과가 났는지 확인
+        let tempSpyArr = [],
+          tempEmplArr = [];
+        let tempResult = 0;
+        for (let i = 0; i < leftUsers.length; i++) {
+          leftUsers[i].role === 4
+            ? tempSpyArr.push(leftUsers[i].userId)
+            : tempEmplArr.push(leftUsers[i].userId);
+        }
+        if (tempEmplArr.length <= tempSpyArr.length) tempResult = 2;
+        else if (tempSpyArr.length === 0) tempResult = 1;
+        else tempResult = 2;
+
+        console.log(
+          `######스파이 수: ${tempSpyArr.length}\n사원 수: ${tempEmplArr.length}`
+        );
+
         if (sorted[0][0] === '0') {
           await prevGameStatus.update({
-            msg: '무효표가 가장 많습니다. 아무도 해고당하지 않았습니다.',
+            msg: '무효표가 가장 많습니다. 아무도 해고당하지 않았습니다.'
           });
-          return `무효표가 가장 많습니다. 아무도 해고당하지 않았습니다.`;
+          return {msg: `무효표가 가장 많습니다. 아무도 해고당하지 않았습니다.`, result: tempResult};
         } else if (sorted[0][1] === sorted[1][1]) {
           await prevGameStatus.update({
             msg: '동표이므로 아무도 해고당하지 않았습니다.',
           });
-          return '동표이므로 아무도 해고당하지 않았습니다.';
+          return {msg: '동표이므로 아무도 해고당하지 않았습니다.', result: tempResult};
         } else {
           // isGameResult_1 를 프론트에서 사용 안하므로 여기선 상태 업데이트 스킵
 
@@ -672,9 +690,9 @@ module.exports = {
           const msg =
             prevGameGroup.role === 4
               ? `산업 스파이 [ ${prevGameGroup.nickname} ] (이)가 붙잡혔습니다.`
-              : `성실한 사원 [ ${prevGameGroup.nickname} ] (이)가 해고 당했습니다.`;
+              : `성실한 일개미 [ ${prevGameGroup.nickname} ] (이)가 해고 당했습니다.`;
           await prevGameStatus.update({ msg });
-          return msg;
+          return {msg: msg, result: tempResult};
         }
       }
     }),
@@ -734,7 +752,7 @@ module.exports = {
           await prevGameStatus.update({ msg: '스파이의 승리 입니다!' });
           await prevGameStatus.update({ isResult: 2 });
         } else if (tempSpyArr.length === 0) {
-          await prevGameStatus.update({ msg: '사원들의 승리 입니다!' });
+          await prevGameStatus.update({ msg: '일개미들의 승리 입니다!' });
           await prevGameStatus.update({ isResult: 1 });
         } else {
           // 승부 없음

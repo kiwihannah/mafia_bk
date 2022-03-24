@@ -196,11 +196,11 @@ module.exports = {
 
     getVoteResult: ControllerAsyncWrapper(async (req, res) => {
       const { roomId, roundNo } = req.params;
-      const result = await gameService.gamePlay.getVoteResult({
+      const { msg, result } = await gameService.gamePlay.getVoteResult({
         roomId,
         roundNo,
       });
-      return res.status(200).json({ result });
+      return res.status(200).json({ msg, result });
     }),
   },
 
