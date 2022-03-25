@@ -54,18 +54,35 @@ module.exports = (server) => {
 
     // status, msg 발송
     socket.on('getStatus', async (roomId) => {
-      const gameStatus = await GameStatus.findOne({ where: { roomId } });
+      const statusArr = [
+        'isStart',
+        'roleGive',
+        'showRole',
+        'dayTime',
+        'voteDay',
+        'invalidVoteCnt',
+        'showResultDay',
+        'voteNightLawyer',
+        'voteNightDetective',
+        'voteNightSpy',
+        'showResultNight',
+        'finalResult',
+      ];
 
-      if (!gameStatus) {
-        socket
-          .to(roomId)
-          .emit(
-            'getStatus',
-            '[socket] 게임이 시작되지 않았거나, 게임 정보가 없습니다.'
-          );
+      const game = await GameStatus.findOne({ where: { roomId } });
+      if (!game) {
+        socket.to(roomId).emit('getStatus', '게임 정보가 없습니다.');
       } else {
-        socket.to(roomId).emit('getStatus', gameStatus);
-        console.log(gameStatus);
+        const currIdx = statusArr.indexOf(game.status);
+        if (statusArr[statusArr.length - 1] === statusArr[currIdx]) {
+          const gameStatus = await game.update({ status: 'dayTime' });
+          socket.to(roomId).emit('getStatus', gameStatus);
+        } else {
+          const gameStatus = await game.update({
+            status: statusArr[currIdx + 1],
+          });
+          socket.to(roomId).emit('getStatus', gameStatus);
+        }
       }
     });
 
@@ -103,13 +120,6 @@ module.exports = (server) => {
         socket.to(roomId).emit('cancelReady', { isReady: ready.isReady });
         console.log(ready);
       }
-    });
-
-    // msg 발송
-    socket.on('getMsg', async (roomId) => {
-      const game = await GameStatus.findOne({ where: { roomId } });
-      socket.to(roomId).emit('getMsg', game.msg);
-      console.log('getMsg', game);
     });
   });
 };

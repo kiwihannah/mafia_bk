@@ -207,7 +207,7 @@ module.exports = {
       const currIdx = statusArr.indexOf(game.status);
       if (isHost.isHost === 'Y') {
         if (statusArr[statusArr.length - 1] === statusArr[currIdx]) {
-          const nextStatus = await game.update({ status: statusArr[0] });
+          //const nextStatus = await game.update({ status: statusArr[0] });
           return nextStatus.status;
         } else {
           const nextStatus = await game.update({
@@ -257,7 +257,7 @@ module.exports = {
                 roomId: data.roomId,
               });
             } else {
-              await prevGameStatus.update({ status: 'isStart' });
+              //await prevGameStatus.update({ status: 'isStart' });
             }
 
             // ai 사용해서 바로 시작
@@ -281,7 +281,7 @@ module.exports = {
       const room = await prevRoom.update({ onPlay: 'Y' });
 
       // 상태 업데이트
-      await status.update({ status: 'roleGive' });
+      //await status.update({ status: 'roleGive' });
       await status.update({
         msg: '게임이 시작되었습니다.\n게임 시작 후, 퇴장이 불가합니다.',
       });
@@ -333,7 +333,7 @@ module.exports = {
         } else {
           await updateUser.update({ role: roleArr[i] });
           // 상태 업데이트
-          await status.update({ status: 'showRole' });
+          //await status.update({ status: 'showRole' });
         }
       }
 
@@ -352,7 +352,7 @@ module.exports = {
       });
 
       const status = await GameStatus.findOne({ where: { roomId } });
-      await status.update({ status: 'voteNightDetective' });
+      //await status.update({ status: 'voteNightDetective' });
 
       let userArr = [];
       for (let i = 0; i < prevGameGroup.length; i++) {
@@ -386,7 +386,7 @@ module.exports = {
 
       const prevGameStatus = await GameStatus.findOne({ where: { roomId } });
       // 게임 상태 한번만 업데이트
-      await prevGameStatus.update({ status: 'showResultNight' });
+      //await prevGameStatus.update({ status: 'showResultNight' });
 
       let userArr = [];
       for (let i = 0; i < prevGameGroup.length; i++) {
@@ -446,7 +446,7 @@ module.exports = {
         };
       } else {
         // 게임 상태 업데이트
-        await prevGameStatus.update({ status: 'voteNightDetective' });
+        //await prevGameStatus.update({ status: 'voteNightDetective' });
         const protectedUser = await prevdUser.update({ isProtected: 'Y' });
         return `[ ${protectedUser.nickname} ] (이)를 스파이로 부터 1회 보호합니다.`;
       }
@@ -467,7 +467,7 @@ module.exports = {
         throw { msg: '존재하지 않는 유저이거나, 탐정이 이미 해고되었습니다.' };
       } else {
         // 게임 상태 한번만 업데이트
-        await prevGameStatus.update({ status: 'voteNightSpy' });
+        //await prevGameStatus.update({ status: 'voteNightSpy' });
 
         return prevGameUser.role === 4
           ? `[ ${prevGameUser.nickname} ] (은)는 스파이 입니다.`
@@ -506,7 +506,7 @@ module.exports = {
         };
       } else {
         // 게임 상태 한번만 업데이트
-        await prevGameStatus.update({ status: 'showResultNight' });
+        //await prevGameStatus.update({ status: 'showResultNight' });
 
         if (prevUser.isProtected === 'Y') {
           // 1회 만 보호
@@ -610,7 +610,7 @@ module.exports = {
             console.log(user.userId);
           }
         }
-        await prevGameStatus.update({ status: 'showResultDay' });
+        //await prevGameStatus.update({ status: 'showResultDay' });
         return `${
           prevGameGroup.length - prevVote.length
         } 개의 무효표 처리가 완료되었습니다.\n${
@@ -669,7 +669,7 @@ module.exports = {
           return { msg: '동표이므로 아무도 해고당하지 않았습니다.', result: 0 };
         } else {
           // 변호사 투표 요구 상태 반환
-          await prevGameStatus.update({ status: 'voteNightLawyer' });
+          //await prevGameStatus.update({ status: 'voteNightLawyer' });
           // 최다 투표자 해고
           await prevGameGroup.update({ isEliminated: 'Y' });
           // 남은 유저 확인
@@ -770,7 +770,7 @@ module.exports = {
             prevGameStatus.status !== 'showResultNight'
               ? 'voteNightLawyer'
               : 'dayTime';
-          await prevGameStatus.update({ status: `${updateStatus}` });
+          //await prevGameStatus.update({ status: `${updateStatus}` });
         }
         const afterCnt = await GameStatus.findOne({ where: { roomId } });
         return afterCnt.isResult;

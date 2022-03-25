@@ -27,7 +27,7 @@ router.patch(
   GameController.update.changeMaxPlayer
 );
 // 게임 조건 업데이트 및 확인용 // 원래 status_2
-router.get('/room/:roomId/user/:userId/status', GameController.update.status);
+// router.get('/room/:roomId/user/:userId/status', GameController.update.status);
 
 // 게임 시작 전 시작 조건 메세지 확인
 router.get('/room/:roomId/user/:userId/msg', GameController.sendMsg.start);
@@ -82,7 +82,7 @@ router.get('/room/:roomId/roundNo', GameController.getGame.roundNo);
 // 방 안 유저 리스트 조회roomId
 router.get('/room/:roomId/users', GameController.getGame.users);
 // 게임 스테이터스 조건 확인용
-router.get('/room/:roomId/status_1', GameController.getGame.status);
+// router.get('/room/:roomId/status_1', GameController.getGame.status);
 // 결과 확인
 router.get('/room/:roomId/result', GameController.getGame.result);
 
