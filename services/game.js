@@ -197,10 +197,9 @@ module.exports = {
         'showResultDay',
         'voteNightLawyer',
         'voteNightDetective',
-        // 'showMsgDetective',
         'voteNightSpy',
         'showResultNight',
-        // 'isGameResult_2',
+        'finalResult',
       ];
 
       const game = await GameStatus.findOne({ where: { roomId } });
@@ -641,6 +640,7 @@ module.exports = {
           await Vote.destroy({ where: { id: votes.id } });
         }
 
+        // 무효표 카운팅 후 삭제 처리 
         await Vote.destroy({ where: { voter: 0 } });
 
         let result = {};
@@ -648,13 +648,11 @@ module.exports = {
           result[vote] = (result[vote] || 0) + 1;
         });
         let sorted = Object.entries(result).sort((a, b) => b[1] - a[1]);
-        console.log(sorted);
+        console.log(`[개표 시스템]: ${sorted}`);
 
         const prevGameGroup = await GameGroup.findOne({
           where: { userId: Number(sorted[0][0]) },
         });
-
-        console.log(`###### 세계최고 개표 시스템이 말한다 : ${sorted}`);
 
         if (sorted[0][0] === '0') {
           await prevGameStatus.update({
@@ -670,10 +668,11 @@ module.exports = {
           });
           return { msg: '동표이므로 아무도 해고당하지 않았습니다.', result: 0 };
         } else {
-          // isGameResult_1 를 프론트에서 사용 안하므로 여기선 상태 업데이트 스킵
-
+          // 변호사 투표 요구 상태 반환
+          await prevGameStatus.update({ status: 'voteNightLawyer' });
+          // 최다 투표자 해고
           await prevGameGroup.update({ isEliminated: 'Y' });
-
+          // 남은 유저 확인
           const leftUsers = await GameGroup.findAll({
             where: { roomId, isEliminated: 'N' },
           });
@@ -694,7 +693,7 @@ module.exports = {
           await prevGameStatus.update({ isResult: tempResult });
 
           console.log(
-            `######스파이 수: ${tempSpyArr.length}\n사원 수: ${tempEmplArr.length}`
+            `###### 스파이 수: ${tempSpyArr.length}\n사원 수: ${tempEmplArr.length}`
           );
 
           const msg =
