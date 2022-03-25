@@ -52,39 +52,50 @@ module.exports = (server) => {
       console.log('User Disconnected', socket.id);
     });
 
-    // status, msg 발송
-    socket.on('getStatus', async (roomId) => {
-      const statusArr = [
-        'isStart',
-        'roleGive',
-        'showRole',
-        'dayTime',
-        'voteDay',
-        'invalidVoteCnt',
-        'showResultDay',
-        'voteNightLawyer',
-        'voteNightDetective',
-        'voteNightSpy',
-        'showResultNight',
-        'finalResult',
-      ];
 
-      const game = await GameStatus.findOne({ where: { roomId } });
-      if (!game) {
-        socket.to(roomId).emit('getStatus', '게임 정보가 없습니다.');
-      } else {
-        const currIdx = statusArr.indexOf(game.status);
-        if (statusArr[statusArr.length - 1] === statusArr[currIdx]) {
-          const gameStatus = await game.update({ status: 'dayTime' });
-          socket.to(roomId).emit('getStatus', gameStatus);
-        } else {
-          const gameStatus = await game.update({
-            status: statusArr[currIdx + 1],
-          });
-          socket.to(roomId).emit('getStatus', gameStatus);
-        }
-      }
+    // 브로드캐스트 테스트 data: {roomId: 0, status: 'blah'};
+    socket.on('getStatus', async (data) => {
+      const { roomId, status } = data;
+      const prevStatus = await GameStatus.findOne({ where: { roomId } });
+      const gameStatus = await prevStatus.update({ status })
+      socket.to(roomId).emit('getStatus', gameStatus);
+      console.log(gameStatus);
     });
+
+
+    // status, msg 발송
+    // socket.on('getStatus', async (roomId) => {
+    //   const statusArr = [
+    //     'isStart',
+    //     'roleGive',
+    //     'showRole',
+    //     'dayTime',
+    //     'voteDay',
+    //     'invalidVoteCnt',
+    //     'showResultDay',
+    //     'voteNightLawyer',
+    //     'voteNightDetective',
+    //     'voteNightSpy',
+    //     'showResultNight',
+    //     'finalResult',
+    //   ];
+
+    //   const game = await GameStatus.findOne({ where: { roomId } });
+    //   if (!game) {
+    //     socket.to(roomId).emit('getStatus', '게임 정보가 없습니다.');
+    //   } else {
+    //     const currIdx = statusArr.indexOf(game.status);
+    //     if (statusArr[statusArr.length - 1] === statusArr[currIdx]) {
+    //       const gameStatus = await game.update({ status: 'dayTime' });
+    //       socket.to(roomId).emit('getStatus', gameStatus);
+    //     } else {
+    //       const gameStatus = await game.update({
+    //         status: statusArr[currIdx + 1],
+    //       });
+    //       socket.to(roomId).emit('getStatus', gameStatus);
+    //     }
+    //   }
+    // });
 
     // 레디(준비)
     socket.on('ready', async (data) => {
