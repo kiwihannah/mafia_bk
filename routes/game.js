@@ -9,15 +9,8 @@ const GameController = require('../controllers/game');
 router.put('/enter/:roomId/user/:userId', GameController.entryAndExit.enter);
 // 유저 방 나가기 & 강퇴 기능 공동 사용
 router.patch('/out/:roomId/user/:userId', GameController.entryAndExit.exit);
-// 레디 하기
-router.patch('/room/:roomId/user/:userId/ready', GameController.create.ready);
 // ai 플레이어 생성 수락한 방에 부족한 인원 인공지능으로 채우기
 router.put('/room/:roomId/ai', GameController.create.aiPlayer);
-// 레디 취소
-router.patch(
-  './room/:roomId/user/:userId/cancelReady',
-  GameController.cancel.ready
-);
 // 방 최대인원 줄이리 -> 조건 : maxPlayer > currPlayer, aiPlayer = N, downgradePlayer = Y
 router.patch(
   '/room/:roomId/changeMaxPlayer',

@@ -24,24 +24,10 @@ module.exports = {
   },
 
   create: {
-    ready: ControllerAsyncWrapper(async (req, res) => {
-      const { roomId, userId } = req.params;
-      const isReady = await gameService.create.ready({ roomId, userId });
-      return res.status(201).json({ isReady });
-    }),
-
     aiPlayer: ControllerAsyncWrapper(async (req, res) => {
       const { roomId } = req.params;
       const users = await gameService.create.aiPlayer({ roomId });
       return res.status(200).json({ users });
-    }),
-  },
-
-  cancel: {
-    ready: ControllerAsyncWrapper(async (req, res) => {
-      const { roomId, userId } = req.params;
-      const isReady = await gameService.cancel.ready({ roomId, userId });
-      return res.status(200).json({ isReady });
     }),
   },
 

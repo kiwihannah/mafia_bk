@@ -109,20 +109,6 @@ module.exports = {
   },
 
   create: {
-    // 레디 하기
-    ready: ServiceAsyncWrapper(async (data) => {
-      const prevGameGroupUser = await GameGroup.findOne({
-        where: { userId: data.userId },
-      });
-
-      if (!prevGameGroupUser) {
-        throw { msg: '존재하지 않는 유저입니다.' };
-      } else {
-        const isReady = await prevGameGroupUser.update({ isReady: 'Y' });
-        return isReady;
-      }
-    }),
-
     // 부족 인원 ai로 채우기
     aiPlayer: ServiceAsyncWrapper(async (data) => {
       const { roomId } = data;
@@ -154,21 +140,6 @@ module.exports = {
         }
         const users = await GameGroup.findAll({ where: { roomId } });
         return users;
-      }
-    }),
-  },
-
-  cancel: {
-    ready: ServiceAsyncWrapper(async (data) => {
-      const prevGameGroupUser = await GameGroup.findOne({
-        where: { userId: data.userId },
-      });
-
-      if (!prevGameGroupUser) {
-        throw { msg: '존재하지 않는 유저입니다.' };
-      } else {
-        const isReady = await prevGameGroupUser.update({ isReady: 'N' });
-        return isReady;
       }
     }),
   },
@@ -629,7 +600,7 @@ module.exports = {
               : tempEmplArr.push(leftUsers[i].userId);
           }
 
-          if (tempEmplArr.length <= tempSpyArr.length) tempResult = 2;
+          if (tempEmplArr.length <= tempSpyArr.length) tempResult = 2; 
           else if (tempSpyArr.length === 0) tempResult = 1;
           else tempResult = 0;
           await prevGameStatus.update({ isResult: tempResult });
@@ -677,9 +648,6 @@ module.exports = {
           msg: '정보가 저장되지 않아, 게임 스테이지 불러오지 못했습니다.',
         };
       } else {
-        const newRoundNo = prevGameStatus.roundNo +1;
-        await prevGameStatus.update({ roundNo: newRoundNo });
-
         let tempSpyArr = [],
           tempEmplArr = [];
         for (let i = 0; i < leftUsers.length; i++) {
@@ -698,7 +666,8 @@ module.exports = {
           await prevGameStatus.update({ isResult: 1 });
         } else {
           // 승부 없음
-          await prevGameStatus.update({ msg: '다음 라운드로 넘어 갑니다!' });
+          const newRoundNo = prevGameStatus.roundNo +1;
+          await prevGameStatus.update({ msg: '다음 라운드로 넘어 갑니다!', roundNo: newRoundNo });
         }
         const afterCnt = await GameStatus.findOne({ where: { roomId } });
         console.log(
