@@ -15,43 +15,38 @@ module.exports = (server) => {
     console.log('socket connected');
     socket['nickname'] = `Anon`;
 
-    socket.on('join_room', (data, nickname) => {
-      console.log(
-        'before join roooooooooooooooooooooooooooooooooom',
-        socket.rooms
-      );
-      socket.join(data);
-      console.log(
-        'after join roooooooooooooooooooooooooooooooooom',
-        socket.rooms
-      );
-      socket.nickname = `${nickname}`;
-      socket
-        .to(data) // sting 형 int
-        .emit(
-          'join_room',
-          `roomId : ${data}`,
-          `nickname: ${socket.nickname}`,
-          socket.id
-        );
-      console.log(
-        `유저아이디 : ${socket.nickname} 방이름 : ${data}`,
-        socket.id
-      );
+    socket.on('join_room', async (data) => { // 방검색 socket.rooms
+      // 변수 정리
+      const { userId, roomId } = data;
+      const socketId = socket.id;
+      const isDupUser = await GameGroup.findOne({ where: { roomId, socketId } });
+
+      // 예외 처리
+      if (isDupUser) {
+        socket.to(socket.id).emit('@@@ 방에 입장할 수 없는 유저입니다.');
+      } else {
+        socket.join(roomId);
+
+        // db저장 로직 
+        const prevUser = await GameGroup.findOne({ where: { userId } });     
+        await prevUser.update({ socketId });
+
+        console.log(`@@@ 방 입장 --> 유저아이디 : ${ userId } | 방 번호 : ${ roomId } | 소켓 아이디: ${ socketId }`);
+      }
     });
 
     socket.on('send_message', (data) => {
       socket.to(data.room).emit('receive_message', data);
     });
 
-    socket.on('private message', (data) => {
-      socket.to(data.room).to(socket.id).emit('private message', data);
+    socket.on('privateMsg', async(data) => { 
+      const { roomId, socketId, privateMsg } = data;
+      socket.to(roomId).to(socketId).emit('privateMsg', privateMsg);
     });
 
     socket.on('disconnect', () => {
       console.log('User Disconnected', socket.id);
     });
-
 
     // 상태 데이터 반환 data: {roomId: 0, status: 'blah'};
     socket.on('getStatus', async (data) => {
@@ -73,7 +68,7 @@ module.exports = (server) => {
             '[socket] 게임이 시작되지 않았거나, 게임 정보가 없습니다.'
           );
       } else {
-        const ready = await readyUser.update({ isReady: 'Y' });
+        await readyUser.update({ isReady: 'Y' });
         const users = await GameGroup.findAll({ where: { roomId } });
         socket.to(roomId).emit('ready', { users });
       }
@@ -91,7 +86,7 @@ module.exports = (server) => {
             '[socket] 게임이 시작되지 않았거나, 게임 정보가 없습니다.'
           );
       } else {
-        const ready = await readyUser.update({ isReady: 'N' });
+        await readyUser.update({ isReady: 'N' });
         const users = await GameGroup.findAll({ where: { roomId } });
         socket.to(roomId).emit('cancelReady', { users });
       }
