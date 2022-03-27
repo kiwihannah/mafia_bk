@@ -21,4 +21,15 @@ module.exports = {
       }
     };
   },
+
+  SocketAsyncWrapper: (asyncFn) => {
+    return async (data) => {
+      try {
+        return await asyncFn(data);
+      } catch (error) {
+        console.error('Error from SocketAsyncWrapper : ', error);
+        return res.status(400).json(error);
+      }
+    };
+  },
 };

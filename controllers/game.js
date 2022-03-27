@@ -99,18 +99,6 @@ module.exports = {
       return res.status(200).json({ msg });
     }),
 
-    dayTimeVoteArr: ControllerAsyncWrapper(async (req, res) => {
-      const { roomId, userId } = req.params;
-      const { candidacy, roundNo } = req.body;
-      const voteUserId = await gameService.gamePlay.dayTimeVoteArr({
-        roomId,
-        userId,
-        candidacy,
-        roundNo,
-      });
-      return res.status(200).json({ voteUserId });
-    }),
-
     isZeroVote: ControllerAsyncWrapper(async (req, res) => {
       const { roomId } = req.params;
       const isVote = await gameService.gamePlay.isZeroVote({ roomId });

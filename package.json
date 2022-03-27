@@ -4,10 +4,9 @@
   "description": "#4 main proj bk_repo",
   "main": "index.js",
   "scripts": {
-    "dev": "nodemon app",
     "prettify": "prettier --write *.js **/*.js",
     "test": "jest",
-    "start": "pm2 start app.js "
+    "start": "pm2 start app.js"
   },
   "repository": {
     "type": "git",
@@ -31,8 +30,6 @@
     "express": "^4.17.3",
     "express-session": "^1.17.2",
     "helmet": "^5.0.2",
-    "joi": "^17.6.0",
-    "jsonwebtoken": "^8.5.1",
     "letsencrypt": "^2.1.10",
     "moment": "^2.29.1",
     "multer": "^1.4.4",
@@ -43,8 +40,7 @@
     "session-file-store": "^1.5.0",
     "socket.io": "^4.4.1",
     "swagger-jsdoc": "^6.1.0",
-    "swagger-ui-express": "^4.3.0",
-    "waait": "^1.0.5"
+    "swagger-ui-express": "^4.3.0"
   },
   "devDependencies": {
     "jest": "^27.5.1",

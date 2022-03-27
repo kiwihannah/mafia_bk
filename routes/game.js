@@ -11,7 +11,7 @@ router.put('/enter/:roomId/user/:userId', GameController.entryAndExit.enter);
 router.patch('/out/:roomId/user/:userId', GameController.entryAndExit.exit);
 // ai 플레이어 생성 수락한 방에 부족한 인원 인공지능으로 채우기
 router.put('/room/:roomId/ai', GameController.create.aiPlayer);
-// 방 최대인원 줄이리 -> 조건 : maxPlayer > currPlayer, aiPlayer = N, downgradePlayer = Y
+// 방 최대인원 줄이기 -> 조건 : maxPlayer > currPlayer, aiPlayer = N, downgradePlayer = Y
 router.patch(
   '/room/:roomId/changeMaxPlayer',
   GameController.update.changeMaxPlayer
@@ -38,14 +38,8 @@ router.patch('/room/:roomId/spyAct', GameController.gamePlay.spyAct);
 // ai개미가 하는 투표
 router.patch('/room/:roomId/aiLawyerAct', GameController.gamePlay.aiLawyerAct);
 router.patch('/room/:roomId/aiSpyAct', GameController.gamePlay.aiSpyAct);
-// 유저 낮 투표 저장
-router.patch(
-  '/room/:roomId/voter/:userId/vote',
-  GameController.gamePlay.dayTimeVoteArr
-);
 // 유저가 투표를 하나도 하지 않을 경우 확인
 router.get('/room/:roomId/isZeroVote', GameController.gamePlay.isZeroVote);
-
 // 무효표 처리 & ai 랜덤 낮투표
 router.put(
   '/room/:roomId/round/:roundNo/user/:userId/invalidAndAiVote',
@@ -56,12 +50,12 @@ router.get(
   '/room/:roomId/round/:roundNo',
   GameController.gamePlay.getVoteResult
 );
-// 라운드 넘버 구하기
-router.get('/room/:roomId/roundNo', GameController.getGame.roundNo);
 
 /**
  * 게임정보 메세지 받기
  **/
+// 라운드 넘버 구하기
+router.get('/room/:roomId/roundNo', GameController.getGame.roundNo);
 // 방 안 유저 리스트 조회roomId
 router.get('/room/:roomId/users', GameController.getGame.users);
 // 결과 확인
