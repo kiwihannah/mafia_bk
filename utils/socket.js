@@ -35,13 +35,14 @@ module.exports = (server) => {
       }
     });
 
+    // 일반 채팅
     socket.on('send_message', (data) => {
-      socket.to(data.room).emit('receive_message', data);
+      socket.to(data.roomId).emit('receive_message', data);
     });
 
-    socket.on('privateMsg', async (data) => {
-      const { roomId, socketId, privateMsg } = data;
-      socket.to(roomId).to(socketId).emit('privateMsg', privateMsg);
+    // 귓속말
+    socket.on('privateMsg', async (data) => { 
+      socket.to(data.roomId).to(data.socketId).emit('privateMsg', data); 
     });
 
     socket.on('disconnect', () => {
@@ -56,22 +57,15 @@ module.exports = (server) => {
       socket.to(roomId).emit('getStatus', gameStatus);
     });
 
-    // 레디(준비)
-    socket.on('ready', async (data) => {
+    // 현재 레디한 숫자 카운트 
+    socket.on('readyCnt', async (data) => {
       const { roomId, userId } = data;
       const readyUser = await GameGroup.findOne({ where: { roomId, userId } });
       await readyUser.update({ isReady: 'Y' });
-      const users = await GameGroup.findAll({ where: { roomId } });
-      socket.to(roomId).emit('ready', { users });
-    });
 
-    // 레디(취소)
-    socket.on('cancelReady', async (data) => {
-      const { roomId, userId } = data;
-      const readyUser = await GameGroup.findOne({ where: { roomId, userId } });
-      await readyUser.update({ isReady: 'N' });
-      const users = await GameGroup.findAll({ where: { roomId } });
-      socket.to(roomId).emit('cancelReady', { users });
+      const users = await GameGroup.findAll({ where: { roomId, isReady: 'Y' } });
+      const readyCnt = users.length;
+      socket.to(roomId).emit('readyCnt', { readyCnt });
     });
 
     // 각자 낮 투표 (사원) 처리
