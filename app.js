@@ -88,7 +88,7 @@ db.sequelize
   .catch(console.error);
 
 router.get('/', (_, res) => {
-  res.send('#4 testing deploy now ver 1');
+  res.send('#4 testing deploy now ver 2');
 });
 
 // routes
