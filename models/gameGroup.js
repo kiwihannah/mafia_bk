@@ -41,6 +41,11 @@ module.exports = (sequelize, DataTypes) => {
         allowNull: true,
         default: 'N',
       },
+      // socketId: {
+      //   type: DataTypes.STRING(20),
+      //   allowNull: true,
+      //   default: 'N',
+      // },
     },
     {
       charset: 'utf8mb4',

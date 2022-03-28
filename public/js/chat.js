@@ -2,24 +2,40 @@
 //@ client (emit) -> server(receive) => socket io understand(acknowledgement) => client
 const socket = io();
 
-// function test() {
-//   msg = 'hello';
-//   return socket.emit('test', msg);
-// }
+userDatalist = [];
 
-// test();
+function test() {
+  msg = 'hello';
+  roomId = '1';
+  return socket.emit('test', roomId, msg);
+}
+
+test();
 
 // function sendRoomId() {
 //   return socket.emit('getStatus', roomId);
 // }
 
-a = [];
-
 socket.on('test', (msg) => {
-  a.push(msg);
+  setTimeout(function () {
+    console.log('5초 후에');
+    socket.emit('test2', msg);
+  }, 5000);
 });
 
-console.log(a);
+socket.emit('join_room', 12, '테스트테스트');
+
+socket.on('join_room', (userData) => {
+  console.log('userData:', userData);
+  userDatalist.push(userData);
+  console.log('userDataList:', userDatalist);
+  // const msg = '귓속말 테스트';
+  // socket.emit('privateMessage', userData, msg);
+});
+
+socket.on('privateMessage', (msg) => {
+  console.log('귓속말 테스트:', msg);
+});
 
 // function sendready() {
 //   return socket.emit('ready', { roomId: '1', userId: '1' });
@@ -37,9 +53,9 @@ console.log(a);
 //   console.log(msg);
 // });
 
-// socket.on('news', (msg) => {
-//   console.log(msg);
-// });
+socket.on('news', (msg) => {
+  console.log(msg);
+});
 
 // sendRoomId();
-sendready();
+// sendready();
