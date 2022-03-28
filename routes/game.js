@@ -60,5 +60,8 @@ router.get('/room/:roomId/roundNo', GameController.getGame.roundNo);
 router.get('/room/:roomId/users', GameController.getGame.users);
 // 결과 확인
 router.get('/room/:roomId/result', GameController.getGame.result);
+// 승리한 유저 반환
+router.get('/room/:roomId/winner', GameController.getGame.winner);
+
 
 module.exports = router;

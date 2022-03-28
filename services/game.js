@@ -1,5 +1,6 @@
 const { User, Room, GameGroup, GameStatus, Vote } = require('../models');
 const { ServiceAsyncWrapper } = require('../utils/wrapper');
+const { Op } = require('sequelize');
 
 module.exports = {
   entryAndExit: {
@@ -671,6 +672,23 @@ module.exports = {
       });
       if (!users) throw { msg: '방에 입장한 유저가 없습니다.' };
       else return users;
+    }),
+
+    winner: ServiceAsyncWrapper(async (data) => {
+      const { roomId } = data;
+      const prevStatus = await GameStatus.findOne({ where: { roomId } });
+      const spyGroup = await GameGroup.findAll({ where: { roomId, role: 4 } });
+      const emplGroup = await GameGroup.findAll({
+        where: { roomId, role: { [Op.ne]: 4 } },
+      });
+
+      if (!prevStatus || prevStatus.isResult === 0) {
+        throw { msg: '아직 게임결과가 나오지 않았습니다. ' };
+      } else if (prevStatus.isResult === 1) {
+        return emplGroup;
+      } else if (prevStatus.isResult === 2) {
+        return spyGroup;
+      }
     }),
   },
 };

@@ -61,7 +61,8 @@ module.exports = (server) => {
       const { roomId, userId } = data;
       const readyUser = await GameGroup.findOne({ where: { roomId, userId } });
       await readyUser.update({ isReady: 'Y' });
-      socket.to(roomId).emit('ready', { isReady: 'Y' });
+      const users = await GameGroup.findAll({ where: { roomId } });
+      socket.to(roomId).emit('ready', { users });
     });
 
     // 레디(취소)
@@ -69,7 +70,8 @@ module.exports = (server) => {
       const { roomId, userId } = data;
       const readyUser = await GameGroup.findOne({ where: { roomId, userId } });
       await readyUser.update({ isReady: 'N' });
-      socket.to(roomId).emit('cancelReady', { isReady: 'N' });
+      const users = await GameGroup.findAll({ where: { roomId } });
+      socket.to(roomId).emit('cancelReady', { users });
     });
 
     // 각자 낮 투표 (사원) 처리 
