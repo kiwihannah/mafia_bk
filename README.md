@@ -1,2 +1,2 @@
 # mafia_bk
-#4 main proj bk_repo
+#4 main proj bk_repo prototype ver. 01

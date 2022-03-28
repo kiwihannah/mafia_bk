@@ -12,10 +12,8 @@ const session = require('express-session');
 const FileStore = require('session-file-store')(session);
 const helmet = require('helmet');
 const dotenv = require('dotenv');
-
-const { swaggerUi, specs } = require('./swagger');
-
 dotenv.config();
+
 const port = process.env.PORT || 3000; // 소켓 웹 통합 포트
 
 const app = express();
@@ -25,7 +23,6 @@ const router = express.Router();
 // app.use('/', express.static(path.join(__dirname, 'images')));
 
 // middlewares
-app.use(helmet());
 app.use(morgan('dev'));
 app.use(morgan('combined')); // 접속자 ip
 
@@ -34,7 +31,6 @@ app.use('/api', bodyParser.json(), router);
 app.use(express.static('public'));
 
 app.use('/swagger', swaggerUi.serve, swaggerUi.setup(specs));
-
 app.use(helmet());
 app.use(
   session({
@@ -59,7 +55,7 @@ app.get('*', (req, res, next) => {
 
 // letsencrypt 로 받은 인증서 경로를 입력 ssl
 const options = {
-  ca: fs.readFileSync( '/etc/letsencrypt/live/mafia.milagros.shop/fullchain.pem'),
+  ca: fs.readFileSync('/etc/letsencrypt/live/mafia.milagros.shop/fullchain.pem'),
   key: fs.readFileSync('/etc/letsencrypt/live/mafia.milagros.shop/privkey.pem'),
   cert: fs.readFileSync('/etc/letsencrypt/live/mafia.milagros.shop/cert.pem'),
 };
@@ -70,8 +66,8 @@ const httpserver = https.createServer(options, app).listen(443, () => {
   console.log(`[ web & socket server ] listening on ${port}`);
 });
 
-//socket.io connect 
-SocketIO(httpserver, cors({ origin: '*' }));
+//socket.io connect <- 여기에 cors 설정 두번 들어감 체크 3/23
+SocketIO(httpserver);
 
 // Parse application/vnd.api+json as json
 app.use('/', bodyParser.json({ type: 'application/vnd.api+json' }), router);
@@ -92,7 +88,7 @@ db.sequelize
   .catch(console.error);
 
 router.get('/', (_, res) => {
-  res.send('#4 main proj mafia_bk sever open test');
+  res.send('#4 testing deploy now ver 1');
 });
 
 // routes
