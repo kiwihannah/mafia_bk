@@ -21,12 +21,9 @@ module.exports = {
         });
 
         // 유저 테이블에 방번호 입력
-        User.sequelize.query(
-          `UPDATE users SET roomId = ${room.id} WHERE id=${userId};`,
-          (err) => {
-            if (err) throw err;
-          }
-        );
+        User.sequelize.query(`UPDATE users SET roomId = ${room.id} WHERE id=${userId};`, (err) => {
+          if (err) throw err;
+        });
 
         // 방장 -> 자동 레디
         const gameGroup = await GameGroup.create({

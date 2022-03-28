@@ -26,12 +26,7 @@
       }
       return n[i].exports;
     }
-    for (
-      var u = 'function' == typeof require && require, i = 0;
-      i < t.length;
-      i++
-    )
-      o(t[i]);
+    for (var u = 'function' == typeof require && require, i = 0; i < t.length; i++) o(t[i]);
     return o;
   }
   return r;
@@ -75,9 +70,7 @@
           ReflectOwnKeys = R.ownKeys;
         } else if (Object.getOwnPropertySymbols) {
           ReflectOwnKeys = function ReflectOwnKeys(target) {
-            return Object.getOwnPropertyNames(target).concat(
-              Object.getOwnPropertySymbols(target)
-            );
+            return Object.getOwnPropertyNames(target).concat(Object.getOwnPropertySymbols(target));
           };
         } else {
           ReflectOwnKeys = function ReflectOwnKeys(target) {
@@ -115,8 +108,7 @@
         function checkListener(listener) {
           if (typeof listener !== 'function') {
             throw new TypeError(
-              'The "listener" argument must be of type Function. Received type ' +
-                typeof listener
+              'The "listener" argument must be of type Function. Received type ' + typeof listener
             );
           }
         }
@@ -139,10 +131,7 @@
         });
 
         EventEmitter.init = function () {
-          if (
-            this._events === undefined ||
-            this._events === Object.getPrototypeOf(this)._events
-          ) {
+          if (this._events === undefined || this._events === Object.getPrototypeOf(this)._events) {
             this._events = Object.create(null);
             this._eventsCount = 0;
           }
@@ -165,8 +154,7 @@
         };
 
         function _getMaxListeners(that) {
-          if (that._maxListeners === undefined)
-            return EventEmitter.defaultMaxListeners;
+          if (that._maxListeners === undefined) return EventEmitter.defaultMaxListeners;
           return that._maxListeners;
         }
 
@@ -180,8 +168,7 @@
           var doError = type === 'error';
 
           var events = this._events;
-          if (events !== undefined)
-            doError = doError && events.error === undefined;
+          if (events !== undefined) doError = doError && events.error === undefined;
           else if (!doError) return false;
 
           // If there is no 'error' event listener then throw.
@@ -194,9 +181,7 @@
               throw er; // Unhandled 'error' event
             }
             // At least give some kind of context to the user
-            var err = new Error(
-              'Unhandled error.' + (er ? ' (' + er.message + ')' : '')
-            );
+            var err = new Error('Unhandled error.' + (er ? ' (' + er.message + ')' : ''));
             err.context = er;
             throw err; // Unhandled 'error' event
           }
@@ -210,8 +195,7 @@
           } else {
             var len = handler.length;
             var listeners = arrayClone(handler, len);
-            for (var i = 0; i < len; ++i)
-              ReflectApply(listeners[i], this, args);
+            for (var i = 0; i < len; ++i) ReflectApply(listeners[i], this, args);
           }
 
           return true;
@@ -232,11 +216,7 @@
             // To avoid recursion in the case that type === "newListener"! Before
             // adding it to the listeners, first emit "newListener".
             if (events.newListener !== undefined) {
-              target.emit(
-                'newListener',
-                type,
-                listener.listener ? listener.listener : listener
-              );
+              target.emit('newListener', type, listener.listener ? listener.listener : listener);
 
               // Re-assign `events` because a newListener handler could have caused the
               // this._events to be assigned to a new object
@@ -252,9 +232,7 @@
           } else {
             if (typeof existing === 'function') {
               // Adding the second element, need to change to array.
-              existing = events[type] = prepend
-                ? [listener, existing]
-                : [existing, listener];
+              existing = events[type] = prepend ? [listener, existing] : [existing, listener];
               // If we've already got an array, just append.
             } else if (prepend) {
               existing.unshift(listener);
@@ -288,19 +266,13 @@
           return target;
         }
 
-        EventEmitter.prototype.addListener = function addListener(
-          type,
-          listener
-        ) {
+        EventEmitter.prototype.addListener = function addListener(type, listener) {
           return _addListener(this, type, listener, false);
         };
 
         EventEmitter.prototype.on = EventEmitter.prototype.addListener;
 
-        EventEmitter.prototype.prependListener = function prependListener(
-          type,
-          listener
-        ) {
+        EventEmitter.prototype.prependListener = function prependListener(type, listener) {
           return _addListener(this, type, listener, true);
         };
 
@@ -333,18 +305,14 @@
           return this;
         };
 
-        EventEmitter.prototype.prependOnceListener =
-          function prependOnceListener(type, listener) {
-            checkListener(listener);
-            this.prependListener(type, _onceWrap(this, type, listener));
-            return this;
-          };
+        EventEmitter.prototype.prependOnceListener = function prependOnceListener(type, listener) {
+          checkListener(listener);
+          this.prependListener(type, _onceWrap(this, type, listener));
+          return this;
+        };
 
         // Emits a 'removeListener' event if and only if the listener was removed.
-        EventEmitter.prototype.removeListener = function removeListener(
-          type,
-          listener
-        ) {
+        EventEmitter.prototype.removeListener = function removeListener(type, listener) {
           var list, events, position, i, originalListener;
 
           checkListener(listener);
@@ -391,9 +359,7 @@
 
         EventEmitter.prototype.off = EventEmitter.prototype.removeListener;
 
-        EventEmitter.prototype.removeAllListeners = function removeAllListeners(
-          type
-        ) {
+        EventEmitter.prototype.removeAllListeners = function removeAllListeners(type) {
           var listeners, events, i;
 
           events = this._events;
@@ -451,9 +417,7 @@
           if (typeof evlistener === 'function')
             return unwrap ? [evlistener.listener || evlistener] : [evlistener];
 
-          return unwrap
-            ? unwrapListeners(evlistener)
-            : arrayClone(evlistener, evlistener.length);
+          return unwrap ? unwrapListeners(evlistener) : arrayClone(evlistener, evlistener.length);
         }
 
         EventEmitter.prototype.listeners = function listeners(type) {
@@ -500,8 +464,7 @@
         }
 
         function spliceOne(list, index) {
-          for (; index + 1 < list.length; index++)
-            list[index] = list[index + 1];
+          for (; index + 1 < list.length; index++) list[index] = list[index + 1];
           list.pop();
         }
 
@@ -544,12 +507,7 @@
           }
         }
 
-        function eventTargetAgnosticAddListener(
-          emitter,
-          name,
-          listener,
-          flags
-        ) {
+        function eventTargetAgnosticAddListener(emitter, name, listener, flags) {
           if (typeof emitter.on === 'function') {
             if (flags.once) {
               emitter.once(name, listener);
@@ -569,8 +527,7 @@
             });
           } else {
             throw new TypeError(
-              'The "emitter" argument must be of type EventEmitter. Received type ' +
-                typeof emitter
+              'The "emitter" argument must be of type EventEmitter. Received type ' + typeof emitter
             );
           }
         }
@@ -754,8 +711,7 @@
             running = true;
 
           // Ensure that just a single AudioContext is internally created
-          audioContext =
-            options.audioContext || audioContext || new audioContextType();
+          audioContext = options.audioContext || audioContext || new audioContextType();
 
           var sourceNode, fftBins, analyser;
 
@@ -765,10 +721,7 @@
           fftBins = new Float32Array(analyser.frequencyBinCount);
 
           if (stream.jquery) stream = stream[0];
-          if (
-            stream instanceof HTMLAudioElement ||
-            stream instanceof HTMLVideoElement
-          ) {
+          if (stream instanceof HTMLAudioElement || stream instanceof HTMLVideoElement) {
             //Audio Tag
             sourceNode = audioContext.createMediaElementSource(stream);
             if (typeof play === 'undefined') play = true;
@@ -921,8 +874,7 @@
                     d.__proto__ = b;
                   }) ||
                 function (d, b) {
-                  for (var p in b)
-                    if (Object.prototype.hasOwnProperty.call(b, p)) d[p] = b[p];
+                  for (var p in b) if (Object.prototype.hasOwnProperty.call(b, p)) d[p] = b[p];
                 };
               return extendStatics(d, b);
             };
@@ -932,9 +884,7 @@
                 this.constructor = d;
               }
               d.prototype =
-                b === null
-                  ? Object.create(b)
-                  : ((__.prototype = b.prototype), new __());
+                b === null ? Object.create(b) : ((__.prototype = b.prototype), new __());
             };
           })();
         function JL(loggerName) {
@@ -954,50 +904,48 @@
             };
           }
           var accumulatedLoggerName = '';
-          var logger = ('.' + loggerName)
-            .split('.')
-            .reduce(function (prev, curr, idx, arr) {
-              // if loggername is a.b.c, than currentLogger will be set to the loggers
-              // root   (prev: JL, curr: '')
-              // a      (prev: JL.__, curr: 'a')
-              // a.b    (prev: JL.__.__a, curr: 'b')
-              // a.b.c  (prev: JL.__.__a.__a.b, curr: 'c')
-              // Note that when a new logger name is encountered (such as 'a.b.c'),
-              // a new logger object is created and added as a property to the parent ('a.b').
-              // The root logger is added as a property of the JL object itself.
-              // It is essential that the name of the property containing the child logger
-              // contains the full 'path' name of the child logger ('a.b.c') instead of
-              // just the bit after the last period ('c').
-              // This is because the parent inherits properties from its ancestors.
-              // So if the root has a child logger 'c' (stored in a property 'c' of the root logger),
-              // then logger 'a.b' has that same property 'c' through inheritance.
-              // The names of the logger properties start with __, so the root logger
-              // (which has name ''), has a nice property name '__'.
-              // accumulatedLoggerName evaluates false ('' is falsy) in first iteration when prev is the root logger.
-              // accumulatedLoggerName will be the logger name corresponding with the logger in currentLogger.
-              // Keep in mind that the currentLogger may not be defined yet, so can't get the name from
-              // the currentLogger object itself.
-              if (accumulatedLoggerName) {
-                accumulatedLoggerName += '.' + curr;
-              } else {
-                accumulatedLoggerName = curr;
-              }
-              var currentLogger = prev['__' + accumulatedLoggerName];
-              // If the currentLogger (or the actual logger being sought) does not yet exist,
-              // create it now.
-              if (currentLogger === undefined) {
-                // Set the prototype of the Logger constructor function to the parent of the logger
-                // to be created. This way, __proto of the new logger object will point at the parent.
-                // When logger.level is evaluated and is not present, the JavaScript runtime will
-                // walk down the prototype chain to find the first ancestor with a level property.
-                //
-                // Note that prev at this point refers to the parent logger.
-                JL.Logger.prototype = prev;
-                currentLogger = new JL.Logger(accumulatedLoggerName);
-                prev['__' + accumulatedLoggerName] = currentLogger;
-              }
-              return currentLogger;
-            }, JL.__);
+          var logger = ('.' + loggerName).split('.').reduce(function (prev, curr, idx, arr) {
+            // if loggername is a.b.c, than currentLogger will be set to the loggers
+            // root   (prev: JL, curr: '')
+            // a      (prev: JL.__, curr: 'a')
+            // a.b    (prev: JL.__.__a, curr: 'b')
+            // a.b.c  (prev: JL.__.__a.__a.b, curr: 'c')
+            // Note that when a new logger name is encountered (such as 'a.b.c'),
+            // a new logger object is created and added as a property to the parent ('a.b').
+            // The root logger is added as a property of the JL object itself.
+            // It is essential that the name of the property containing the child logger
+            // contains the full 'path' name of the child logger ('a.b.c') instead of
+            // just the bit after the last period ('c').
+            // This is because the parent inherits properties from its ancestors.
+            // So if the root has a child logger 'c' (stored in a property 'c' of the root logger),
+            // then logger 'a.b' has that same property 'c' through inheritance.
+            // The names of the logger properties start with __, so the root logger
+            // (which has name ''), has a nice property name '__'.
+            // accumulatedLoggerName evaluates false ('' is falsy) in first iteration when prev is the root logger.
+            // accumulatedLoggerName will be the logger name corresponding with the logger in currentLogger.
+            // Keep in mind that the currentLogger may not be defined yet, so can't get the name from
+            // the currentLogger object itself.
+            if (accumulatedLoggerName) {
+              accumulatedLoggerName += '.' + curr;
+            } else {
+              accumulatedLoggerName = curr;
+            }
+            var currentLogger = prev['__' + accumulatedLoggerName];
+            // If the currentLogger (or the actual logger being sought) does not yet exist,
+            // create it now.
+            if (currentLogger === undefined) {
+              // Set the prototype of the Logger constructor function to the parent of the logger
+              // to be created. This way, __proto of the new logger object will point at the parent.
+              // When logger.level is evaluated and is not present, the JavaScript runtime will
+              // walk down the prototype chain to find the first ancestor with a level property.
+              //
+              // Note that prev at this point refers to the parent logger.
+              JL.Logger.prototype = prev;
+              currentLogger = new JL.Logger(accumulatedLoggerName);
+              prev['__' + accumulatedLoggerName] = currentLogger;
+            }
+            return currentLogger;
+          }, JL.__);
           return logger;
         }
         (function (JL) {
@@ -1065,9 +1013,7 @@
             // Ignore this, and pass the log item (better too much than too little).
             try {
               if (filters.userAgentRegex) {
-                if (
-                  !new RegExp(filters.userAgentRegex).test(navigator.userAgent)
-                ) {
+                if (!new RegExp(filters.userAgentRegex).test(navigator.userAgent)) {
                   return false;
                 }
               }
@@ -1149,11 +1095,7 @@
             // been resolved with stringifyLogObjectFunction.
             switch (typeof actualLogObject) {
               case 'string':
-                return new StringifiedLogObject(
-                  actualLogObject,
-                  null,
-                  actualLogObject
-                );
+                return new StringifiedLogObject(actualLogObject, null, actualLogObject);
               case 'number':
                 finalString = actualLogObject.toString();
                 return new StringifiedLogObject(finalString, null, finalString);
@@ -1170,11 +1112,7 @@
                   actualLogObject instanceof Boolean
                 ) {
                   finalString = actualLogObject.toString();
-                  return new StringifiedLogObject(
-                    finalString,
-                    null,
-                    finalString
-                  );
+                  return new StringifiedLogObject(finalString, null, finalString);
                 } else {
                   if (typeof JL.serialize === 'function') {
                     finalString = JL.serialize.call(this, actualLogObject);
@@ -1183,11 +1121,7 @@
                   }
                   // Set the msg field to "" instead of null. Some Winston transports
                   // assume that the msg field is not null.
-                  return new StringifiedLogObject(
-                    '',
-                    actualLogObject,
-                    finalString
-                  );
+                  return new StringifiedLogObject('', actualLogObject, finalString);
                 }
               default:
                 return new StringifiedLogObject('unknown', null, 'unknown');
@@ -1298,13 +1232,7 @@
           JL.LogItem = LogItem;
           function newLogItem(levelNbr, message, loggerName) {
             JL.entryId++;
-            return new LogItem(
-              levelNbr,
-              message,
-              loggerName,
-              JL._getTime(),
-              JL.entryId
-            );
+            return new LogItem(levelNbr, message, loggerName, JL._getTime(), JL.entryId);
           }
           function clearTimer(timer) {
             if (timer.id) {
@@ -1440,11 +1368,7 @@
             // and there is no batch timeout, then they will never be sent. This is especially important if
             // maxMessages was reached while jsnlog.js was retrying sending messages to the server.
             Appender.prototype.batchBufferHasStrandedMessage = function () {
-              return (
-                !(JL.maxMessages == null) &&
-                JL.maxMessages < 1 &&
-                this.batchBuffer.length > 0
-              );
+              return !(JL.maxMessages == null) && JL.maxMessages < 1 && this.batchBuffer.length > 0;
             };
             Appender.prototype.sendBatchIfComplete = function () {
               if (
@@ -1600,11 +1524,7 @@
             __extends(AjaxAppender, _super);
             function AjaxAppender(appenderName) {
               return (
-                _super.call(
-                  this,
-                  appenderName,
-                  AjaxAppender.prototype.sendLogItemsAjax
-                ) || this
+                _super.call(this, appenderName, AjaxAppender.prototype.sendLogItemsAjax) || this
               );
             }
             AjaxAppender.prototype.setOptions = function (options) {
@@ -1613,10 +1533,7 @@
               _super.prototype.setOptions.call(this, options);
               return this;
             };
-            AjaxAppender.prototype.sendLogItemsAjax = function (
-              logItems,
-              successCallback
-            ) {
+            AjaxAppender.prototype.sendLogItemsAjax = function (logItems, successCallback) {
               // JSON.stringify is only supported on IE8+
               // Use try-catch in case we get an exception here.
               //
@@ -1651,11 +1568,7 @@
                 // If a request is in progress, abort it.
                 // Otherwise, it may call the success callback, which will be very confusing.
                 // It may also stop the inflight request from resulting in a log at the server.
-                if (
-                  this.xhr &&
-                  this.xhr.readyState != 0 &&
-                  this.xhr.readyState != 4
-                ) {
+                if (this.xhr && this.xhr.readyState != 0 && this.xhr.readyState != 4) {
                   this.xhr.abort();
                 }
                 // Because a react-native XMLHttpRequest cannot be reused it needs to be recreated with each request
@@ -1685,11 +1598,7 @@
                   // for a response.
                   // Some servers will return a 204 (success, no content) when the JSNLog endpoint
                   // returns the empty response. So check on any code in the 2.. range, not just 200.
-                  if (
-                    that.xhr.readyState == 4 &&
-                    that.xhr.status >= 200 &&
-                    that.xhr.status < 300
-                  ) {
+                  if (that.xhr.readyState == 4 && that.xhr.status >= 200 && that.xhr.status < 300) {
                     successCallback();
                   }
                 };
@@ -1717,11 +1626,8 @@
             __extends(ConsoleAppender, _super);
             function ConsoleAppender(appenderName) {
               return (
-                _super.call(
-                  this,
-                  appenderName,
-                  ConsoleAppender.prototype.sendLogItemsConsole
-                ) || this
+                _super.call(this, appenderName, ConsoleAppender.prototype.sendLogItemsConsole) ||
+                this
               );
             }
             ConsoleAppender.prototype.clog = function (logEntry) {
@@ -1762,10 +1668,7 @@
                 this.cinfo(logEntry);
               }
             };
-            ConsoleAppender.prototype.sendLogItemsConsole = function (
-              logItems,
-              successCallback
-            ) {
+            ConsoleAppender.prototype.sendLogItemsConsole = function (logItems, successCallback) {
               try {
                 // Do not send logs, if JL.enabled is set to false
                 //
@@ -1880,11 +1783,7 @@
                   if (this.onceOnly) {
                     i = this.onceOnly.length - 1;
                     while (i >= 0) {
-                      if (
-                        new RegExp(this.onceOnly[i]).test(
-                          compositeMessage.finalString
-                        )
-                      ) {
+                      if (new RegExp(this.onceOnly[i]).test(compositeMessage.finalString)) {
                         if (this.seenRegexes[i]) {
                           return this;
                         }
@@ -1997,13 +1896,7 @@
         // is no such handler already.
         // Must use "typeof window" here, because in NodeJs, window is not defined at all, so cannot refer to window in any way.
         if (typeof window !== 'undefined' && !window.onerror) {
-          window.onerror = function (
-            errorMsg,
-            url,
-            lineNumber,
-            column,
-            errorObj
-          ) {
+          window.onerror = function (errorMsg, url, lineNumber, column, errorObj) {
             // Send object with all data to server side log, using severity fatal,
             // from logger "onerrorLogger"
             //
@@ -2034,9 +1927,7 @@
             JL('onerrorLogger').fatalException(
               {
                 msg: 'unhandledrejection',
-                errorMsg: event.reason
-                  ? event.reason.message
-                  : event.message || null,
+                errorMsg: event.reason ? event.reason.message : event.message || null,
               },
               event.reason
             );
@@ -2459,16 +2350,7 @@
           'text/mathml': ['mml'],
           'text/mdx': ['mdx'],
           'text/n3': ['n3'],
-          'text/plain': [
-            'txt',
-            'text',
-            'conf',
-            'def',
-            'list',
-            'log',
-            'in',
-            'ini',
-          ],
+          'text/plain': ['txt', 'text', 'conf', 'def', 'list', 'log', 'in', 'ini'],
           'text/richtext': ['rtx'],
           'text/rtf': ['*rtf'],
           'text/sgml': ['sgml', 'sgm'],
@@ -2594,18 +2476,10 @@
               var freeExports = objectTypes[typeof exports] && exports;
 
               /** Detect free variable `module`. */
-              var freeModule =
-                objectTypes[typeof module] &&
-                module &&
-                !module.nodeType &&
-                module;
+              var freeModule = objectTypes[typeof module] && module && !module.nodeType && module;
 
               /** Detect free variable `global` from Node.js or Browserified code and use it as `root`. */
-              var freeGlobal =
-                freeExports &&
-                freeModule &&
-                typeof global == 'object' &&
-                global;
+              var freeGlobal = freeExports && freeModule && typeof global == 'object' && global;
               if (
                 freeGlobal &&
                 (freeGlobal.global === freeGlobal ||
@@ -2725,11 +2599,7 @@
                 var index = -1,
                   length = object ? object.length : 0;
 
-                if (
-                  typeof length == 'number' &&
-                  length > -1 &&
-                  length <= maxSafeInteger
-                ) {
+                if (typeof length == 'number' && length > -1 && length <= maxSafeInteger) {
                   while (++index < length) {
                     callback(object[index], index, object);
                   }
@@ -2747,9 +2617,7 @@
                */
               function format(string) {
                 string = trim(string);
-                return /^(?:webOS|i(?:OS|P))/.test(string)
-                  ? string
-                  : capitalize(string);
+                return /^(?:webOS|i(?:OS|P))/.test(string) ? string : capitalize(string);
               }
 
               /**
@@ -2775,9 +2643,7 @@
                * @returns {string} The `[[Class]]`.
                */
               function getClassOf(value) {
-                return value == null
-                  ? capitalize(value)
-                  : toString.call(value).slice(8, -1);
+                return value == null ? capitalize(value) : toString.call(value).slice(8, -1);
               }
 
               /**
@@ -2851,8 +2717,7 @@
                 var context = root;
 
                 /** Used to flag when a custom context is provided. */
-                var isCustomContext =
-                  ua && typeof ua == 'object' && getClassOf(ua) != 'String';
+                var isCustomContext = ua && typeof ua == 'object' && getClassOf(ua) != 'String';
 
                 // Juggle arguments.
                 if (isCustomContext) {
@@ -2874,29 +2739,21 @@
                 /** Used to detect if browser is like Chrome. */
                 var likeChrome = isCustomContext
                   ? !!nav.likeChrome
-                  : /\bChrome\b/.test(ua) &&
-                    !/internal|\n/i.test(toString.toString());
+                  : /\bChrome\b/.test(ua) && !/internal|\n/i.test(toString.toString());
 
                 /** Internal `[[Class]]` value shortcuts. */
                 var objectClass = 'Object',
-                  airRuntimeClass = isCustomContext
-                    ? objectClass
-                    : 'ScriptBridgingProxyObject',
+                  airRuntimeClass = isCustomContext ? objectClass : 'ScriptBridgingProxyObject',
                   enviroClass = isCustomContext ? objectClass : 'Environment',
                   javaClass =
-                    isCustomContext && context.java
-                      ? 'JavaPackage'
-                      : getClassOf(context.java),
-                  phantomClass = isCustomContext
-                    ? objectClass
-                    : 'RuntimeObject';
+                    isCustomContext && context.java ? 'JavaPackage' : getClassOf(context.java),
+                  phantomClass = isCustomContext ? objectClass : 'RuntimeObject';
 
                 /** Detect Java environments. */
                 var java = /\bJava/.test(javaClass) && context.java;
 
                 /** Detect Rhino. */
-                var rhino =
-                  java && getClassOf(context.environment) == enviroClass;
+                var rhino = java && getClassOf(context.environment) == enviroClass;
 
                 /** A character to represent alpha. */
                 var alpha = java ? 'a' : '\u03b1';
@@ -2916,10 +2773,7 @@
 
                 /** Opera `[[Class]]`. */
                 var operaClass = reOpera.test(
-                  (operaClass =
-                    isCustomContext && opera
-                      ? opera['[[Class]]']
-                      : getClassOf(opera))
+                  (operaClass = isCustomContext && opera ? opera['[[Class]]'] : getClassOf(opera))
                 )
                   ? operaClass
                   : (opera = null);
@@ -2943,10 +2797,7 @@
 
                 /** The browser/environment version. */
                 var version =
-                  useFeatures &&
-                  opera &&
-                  typeof opera.version == 'function' &&
-                  opera.version();
+                  useFeatures && opera && typeof opera.version == 'function' && opera.version();
 
                 /** A flag to indicate if the OS ends with "/ Version" */
                 var isSpecialCasedOS;
@@ -3137,10 +2988,7 @@
                   return reduce(guesses, function (result, guess) {
                     return (
                       result ||
-                      (RegExp(
-                        '\\b' + (guess.pattern || qualify(guess)) + '\\b',
-                        'i'
-                      ).exec(ua) &&
+                      (RegExp('\\b' + (guess.pattern || qualify(guess)) + '\\b', 'i').exec(ua) &&
                         (guess.label || guess))
                     );
                   });
@@ -3160,10 +3008,7 @@
                       result ||
                       ((value[product] ||
                         value[/^[a-z]+(?: +[a-z]+\b)*/i.exec(product)] ||
-                        RegExp(
-                          '\\b' + qualify(key) + '(?:\\b|\\w*\\d)',
-                          'i'
-                        ).exec(ua)) &&
+                        RegExp('\\b' + qualify(key) + '(?:\\b|\\w*\\d)', 'i').exec(ua)) &&
                         key)
                     );
                   });
@@ -3180,10 +3025,7 @@
                   return reduce(guesses, function (result, guess) {
                     return (
                       result ||
-                      (RegExp(
-                        '\\b' + (guess.pattern || qualify(guess)) + '\\b',
-                        'i'
-                      ).exec(ua) &&
+                      (RegExp('\\b' + (guess.pattern || qualify(guess)) + '\\b', 'i').exec(ua) &&
                         (guess.label || guess))
                     );
                   });
@@ -3201,10 +3043,7 @@
                     var pattern = guess.pattern || qualify(guess);
                     if (
                       !result &&
-                      (result = RegExp(
-                        '\\b' + pattern + '(?:/[\\d.]+|[ \\w.]*)',
-                        'i'
-                      ).exec(ua))
+                      (result = RegExp('\\b' + pattern + '(?:/[\\d.]+|[ \\w.]*)', 'i').exec(ua))
                     ) {
                       result = cleanupOS(result, pattern, guess.label || guess);
                     }
@@ -3225,16 +3064,10 @@
                     if (
                       !result &&
                       (result =
-                        RegExp('\\b' + pattern + ' *\\d+[.\\w_]*', 'i').exec(
-                          ua
-                        ) ||
-                        RegExp('\\b' + pattern + ' *\\w+-[\\w]*', 'i').exec(
-                          ua
-                        ) ||
+                        RegExp('\\b' + pattern + ' *\\d+[.\\w_]*', 'i').exec(ua) ||
+                        RegExp('\\b' + pattern + ' *\\w+-[\\w]*', 'i').exec(ua) ||
                         RegExp(
-                          '\\b' +
-                            pattern +
-                            '(?:; *(?:[a-z]+[_-])?[a-z]+\\d+|[^ ();-]*)',
+                          '\\b' + pattern + '(?:; *(?:[a-z]+[_-])?[a-z]+\\d+|[^ ();-]*)',
                           'i'
                         ).exec(ua))
                     ) {
@@ -3254,14 +3087,8 @@
                       result = format(
                         result[0]
                           .replace(RegExp(pattern, 'i'), guess)
-                          .replace(
-                            RegExp('; *(?:' + guess + '[_-])?', 'i'),
-                            ' '
-                          )
-                          .replace(
-                            RegExp('(' + guess + ')[-_.]?(\\w)', 'i'),
-                            '$1 $2'
-                          )
+                          .replace(RegExp('; *(?:' + guess + '[_-])?', 'i'), ' ')
+                          .replace(RegExp('(' + guess + ')[-_.]?(\\w)', 'i'), '$1 $2')
                       );
                     }
                     return result;
@@ -3280,8 +3107,7 @@
                     return (
                       result ||
                       (RegExp(
-                        pattern +
-                          '(?:-[\\d.]+/|(?: for [\\w-]+)?[ /-])([\\d.]+[^ ();/_-]*)',
+                        pattern + '(?:-[\\d.]+/|(?: for [\\w-]+)?[ /-])([\\d.]+[^ ();/_-]*)',
                         'i'
                       ).exec(ua) || 0)[1] ||
                       null
@@ -3314,8 +3140,7 @@
                 if (
                   /\bAndroid\b/.test(os) &&
                   !product &&
-                  (data =
-                    /\bAndroid[^;]*;(.*?)(?:Build|\) AppleWebKit)\b/i.exec(ua))
+                  (data = /\bAndroid[^;]*;(.*?)(?:Build|\) AppleWebKit)\b/i.exec(ua))
                 ) {
                   product =
                     trim(data[1])
@@ -3332,10 +3157,7 @@
                       manufacturer + ' '
                     )
                     .replace(
-                      RegExp(
-                        '^(' + qualify(manufacturer) + ')[-_.]?(\\w)',
-                        'i'
-                      ),
+                      RegExp('^(' + qualify(manufacturer) + ')[-_.]?(\\w)', 'i'),
                       manufacturer + ' $2'
                     );
                 }
@@ -3362,9 +3184,7 @@
                   name || (name = 'Safari');
                   os =
                     'iOS' +
-                    ((data = / OS ([\d_]+)/i.exec(ua))
-                      ? ' ' + data[1].replace(/_/g, '.')
-                      : '');
+                    ((data = / OS ([\d_]+)/i.exec(ua)) ? ' ' + data[1].replace(/_/g, '.') : '');
                 }
                 // Detect Kubuntu.
                 else if (name == 'Konqueror' && /^Linux\b/i.test(os)) {
@@ -3376,9 +3196,7 @@
                     manufacturer != 'Google' &&
                     ((/Chrome/.test(name) && !/\bMobile Safari\b/i.test(ua)) ||
                       /\bVita\b/.test(product))) ||
-                  (/\bAndroid\b/.test(os) &&
-                    /^Chrome/.test(name) &&
-                    /\bVersion\//i.test(ua))
+                  (/\bAndroid\b/.test(os) && /^Chrome/.test(name) && /\bVersion\//i.test(ua))
                 ) {
                   name = 'Android Browser';
                   os = /\bAndroid\b/.test(os) ? os : 'Android';
@@ -3398,26 +3216,18 @@
                   description.push('speed mode');
                 }
                 // Detect PaleMoon identifying as Firefox.
-                else if (
-                  name == 'PaleMoon' &&
-                  (data = /\bFirefox\/([\d.]+)\b/.exec(ua))
-                ) {
+                else if (name == 'PaleMoon' && (data = /\bFirefox\/([\d.]+)\b/.exec(ua))) {
                   description.push('identifying as Firefox ' + data[1]);
                 }
                 // Detect Firefox OS and products running Firefox.
-                else if (
-                  name == 'Firefox' &&
-                  (data = /\b(Mobile|Tablet|TV)\b/i.exec(ua))
-                ) {
+                else if (name == 'Firefox' && (data = /\b(Mobile|Tablet|TV)\b/i.exec(ua))) {
                   os || (os = 'Firefox OS');
                   product || (product = data[1]);
                 }
                 // Detect false positives for Firefox/Safari.
                 else if (
                   !name ||
-                  (data =
-                    !/\bMinefield\b/i.test(ua) &&
-                    /\b(?:Firefox|Safari)\b/.exec(name))
+                  (data = !/\bMinefield\b/i.test(ua) && /\b(?:Firefox|Safari)\b/.exec(name))
                 ) {
                   // Escape the `/` for Firefox 1.
                   if (
@@ -3435,17 +3245,11 @@
                       manufacturer ||
                       /\b(?:Android|Symbian OS|Tablet OS|webOS)\b/.test(os))
                   ) {
-                    name =
-                      /[a-z]+(?: Hat)?/i.exec(
-                        /\bAndroid\b/.test(os) ? os : data
-                      ) + ' Browser';
+                    name = /[a-z]+(?: Hat)?/i.exec(/\bAndroid\b/.test(os) ? os : data) + ' Browser';
                   }
                 }
                 // Add Chrome version to description for Electron.
-                else if (
-                  name == 'Electron' &&
-                  (data = (/\bChrome\/([\d.]+)\b/.exec(ua) || 0)[1])
-                ) {
+                else if (name == 'Electron' && (data = (/\bChrome\/([\d.]+)\b/.exec(ua) || 0)[1])) {
                   description.push('Chromium ' + data);
                 }
                 // Detect non-Opera (Presto-based) versions (order is important).
@@ -3461,28 +3265,19 @@
                 if (
                   (data =
                     (layout == 'iCab' && parseFloat(version) > 3 && 'WebKit') ||
-                    (/\bOpera\b/.test(name) &&
-                      (/\bOPR\b/.test(ua) ? 'Blink' : 'Presto')) ||
+                    (/\bOpera\b/.test(name) && (/\bOPR\b/.test(ua) ? 'Blink' : 'Presto')) ||
                     (/\b(?:Midori|Nook|Safari)\b/i.test(ua) &&
                       !/^(?:Trident|EdgeHTML)$/.test(layout) &&
                       'WebKit') ||
-                    (!layout &&
-                      /\bMSIE\b/i.test(ua) &&
-                      (os == 'Mac OS' ? 'Tasman' : 'Trident')) ||
-                    (layout == 'WebKit' &&
-                      /\bPlayStation\b(?! Vita\b)/i.test(name) &&
-                      'NetFront'))
+                    (!layout && /\bMSIE\b/i.test(ua) && (os == 'Mac OS' ? 'Tasman' : 'Trident')) ||
+                    (layout == 'WebKit' && /\bPlayStation\b(?! Vita\b)/i.test(name) && 'NetFront'))
                 ) {
                   layout = [data];
                 }
                 // Detect Windows Phone 7 desktop mode.
-                if (
-                  name == 'IE' &&
-                  (data = (/; *(?:XBLWP|ZuneWP)(\d+)/i.exec(ua) || 0)[1])
-                ) {
+                if (name == 'IE' && (data = (/; *(?:XBLWP|ZuneWP)(\d+)/i.exec(ua) || 0)[1])) {
                   name += ' Mobile';
-                  os =
-                    'Windows Phone ' + (/\+$/.test(data) ? data : data + '.x');
+                  os = 'Windows Phone ' + (/\+$/.test(data) ? data : data + '.x');
                   description.unshift('desktop mode');
                 }
                 // Detect Windows Phone 8.x desktop mode.
@@ -3493,15 +3288,9 @@
                   version || (version = (/\brv:([\d.]+)/.exec(ua) || 0)[1]);
                 }
                 // Detect IE 11 identifying as other browsers.
-                else if (
-                  name != 'IE' &&
-                  layout == 'Trident' &&
-                  (data = /\brv:([\d.]+)/.exec(ua))
-                ) {
+                else if (name != 'IE' && layout == 'Trident' && (data = /\brv:([\d.]+)/.exec(ua))) {
                   if (name) {
-                    description.push(
-                      'identifying as ' + name + (version ? ' ' + version : '')
-                    );
+                    description.push('identifying as ' + name + (version ? ' ' + version : ''));
                   }
                   name = 'IE';
                   version = data[1];
@@ -3514,23 +3303,14 @@
                     if (java) {
                       data = java.lang.System;
                       arch = data.getProperty('os.arch');
-                      os =
-                        os ||
-                        data.getProperty('os.name') +
-                          ' ' +
-                          data.getProperty('os.version');
+                      os = os || data.getProperty('os.name') + ' ' + data.getProperty('os.version');
                     }
                     if (rhino) {
                       try {
-                        version = context
-                          .require('ringo/engine')
-                          .version.join('.');
+                        version = context.require('ringo/engine').version.join('.');
                         name = 'RingoJS';
                       } catch (e) {
-                        if (
-                          (data = context.system) &&
-                          data.global.system == context.system
-                        ) {
+                        if ((data = context.system) && data.global.system == context.system) {
                           name = 'Narwhal';
                           os || (os = data[0].os || null);
                         }
@@ -3549,10 +3329,7 @@
                           name = 'Electron';
                           version = data.versions.electron;
                         } else if (typeof data.versions.nw == 'string') {
-                          description.push(
-                            'Chromium ' + version,
-                            'Node ' + data.versions.node
-                          );
+                          description.push('Chromium ' + version, 'Node ' + data.versions.node);
                           name = 'NW.js';
                           version = data.versions.nw;
                         }
@@ -3567,16 +3344,12 @@
                     }
                   }
                   // Detect Adobe AIR.
-                  else if (
-                    getClassOf((data = context.runtime)) == airRuntimeClass
-                  ) {
+                  else if (getClassOf((data = context.runtime)) == airRuntimeClass) {
                     name = 'Adobe AIR';
                     os = data.flash.system.Capabilities.os;
                   }
                   // Detect PhantomJS.
-                  else if (
-                    getClassOf((data = context.phantom)) == phantomClass
-                  ) {
+                  else if (getClassOf((data = context.phantom)) == phantomClass) {
                     name = 'PhantomJS';
                     version =
                       (data = data.version || null) &&
@@ -3595,8 +3368,7 @@
                       layout && (layout[1] = '');
                       version[1] = data;
                     }
-                    version =
-                      name == 'IE' ? String(version[1].toFixed(1)) : version[0];
+                    version = name == 'IE' ? String(version[1].toFixed(1)) : version[0];
                   }
                   // Detect IE 11 masking as other browsers.
                   else if (
@@ -3630,8 +3402,7 @@
                 // Detect Firefox Mobile.
                 if (
                   name == 'Fennec' ||
-                  (name == 'Firefox' &&
-                    /\b(?:Android|Firefox OS|KaiOS)\b/.test(os))
+                  (name == 'Firefox' && /\b(?:Android|Firefox OS|KaiOS)\b/.test(os))
                 ) {
                   name = 'Firefox Mobile';
                 }
@@ -3671,10 +3442,8 @@
                 else if (
                   (/\bBlackBerry\b/.test(product) || /\bBB10\b/.test(ua)) &&
                   (data =
-                    (RegExp(
-                      product.replace(/ +/g, ' *') + '/([.\\d]+)',
-                      'i'
-                    ).exec(ua) || 0)[1] || version)
+                    (RegExp(product.replace(/ +/g, ' *') + '/([.\\d]+)', 'i').exec(ua) || 0)[1] ||
+                    version)
                 ) {
                   data = [data, /BB10/.test(ua)];
                   os =
@@ -3697,16 +3466,11 @@
                       ((os && !/^Win/.test(os) && version > 5.5) ||
                         (/\bWindows XP\b/.test(os) && version > 8) ||
                         (version == 8 && !/\bTrident\b/.test(ua))))) &&
-                  !reOpera.test(
-                    (data = parse.call(forOwn, ua.replace(reOpera, '') + ';'))
-                  ) &&
+                  !reOpera.test((data = parse.call(forOwn, ua.replace(reOpera, '') + ';'))) &&
                   data.name
                 ) {
                   // When "identifying", the UA contains both Opera and the other browser's name.
-                  data =
-                    'ing as ' +
-                    data.name +
-                    ((data = data.version) ? ' ' + data : '');
+                  data = 'ing as ' + data.name + ((data = data.version) ? ' ' + data : '');
                   if (reOpera.test(name)) {
                     if (/\bIE\b/.test(data) && os == 'Mac OS') {
                       os = null;
@@ -3717,9 +3481,7 @@
                   else {
                     data = 'mask' + data;
                     if (operaClass) {
-                      name = format(
-                        operaClass.replace(/([a-z])([A-Z])/g, '$1 $2')
-                      );
+                      name = format(operaClass.replace(/([a-z])([A-Z])/g, '$1 $2'));
                     } else {
                       name = 'Opera';
                     }
@@ -3747,14 +3509,12 @@
                   // Clear incorrect browser versions.
                   else if (
                     version == data[1] ||
-                    version ==
-                      (data[2] = (/\bSafari\/([\d.]+\+?)/i.exec(ua) || 0)[1])
+                    version == (data[2] = (/\bSafari\/([\d.]+\+?)/i.exec(ua) || 0)[1])
                   ) {
                     version = null;
                   }
                   // Use the full Chrome version when available.
-                  data[1] = (/\b(?:Headless)?Chrome\/([\d.]+)/i.exec(ua) ||
-                    0)[1];
+                  data[1] = (/\b(?:Headless)?Chrome\/([\d.]+)/i.exec(ua) || 0)[1];
                   // Detect Blink layout engine.
                   if (
                     data[0] == 537.36 &&
@@ -3858,17 +3618,9 @@
                   layout &&
                     (layout[1] +=
                       ' ' +
-                      (data +=
-                        typeof data == 'number'
-                          ? '.x'
-                          : /[.+]/.test(data)
-                          ? ''
-                          : '+'));
+                      (data += typeof data == 'number' ? '.x' : /[.+]/.test(data) ? '' : '+'));
                   // Obscure version for some Safari 1-2 releases.
-                  if (
-                    name == 'Safari' &&
-                    (!version || parseInt(version) > 45)
-                  ) {
+                  if (name == 'Safari' && (!version || parseInt(version) > 45)) {
                     version = data;
                   } else if (name == 'Chrome' && /\bHeadlessChrome/i.test(ua)) {
                     description.unshift('headless');
@@ -3887,10 +3639,7 @@
                   os = os.replace(RegExp(' *' + data + '$'), '');
                 }
                 // Detect Chrome desktop mode.
-                else if (
-                  name == 'Safari' &&
-                  /\bChrome\b/.exec(layout && layout[1])
-                ) {
+                else if (name == 'Safari' && /\bChrome\b/.exec(layout && layout[1])) {
                   description.unshift('desktop mode');
                   name = 'Chrome Mobile';
                   version = null;
@@ -3915,11 +3664,7 @@
                   os = trim(os.replace(data, ''));
                 }
                 // Ensure OS does not include the browser name.
-                if (
-                  os &&
-                  os.indexOf(name) != -1 &&
-                  !RegExp(name + ' OS').test(os)
-                ) {
+                if (os && os.indexOf(name) != -1 && !RegExp(name + ' OS').test(os)) {
                   os = os.replace(RegExp(' *' + qualify(name) + ' *'), '');
                 }
                 // Add layout engine.
@@ -3927,9 +3672,7 @@
                   layout &&
                   !/\b(?:Avant|Nook)\b/.test(name) &&
                   (/Browser|Lunascape|Maxthon/.test(name) ||
-                    (name != 'Safari' &&
-                      /^iOS/.test(os) &&
-                      /\bSafari\b/.test(layout[1])) ||
+                    (name != 'Safari' && /^iOS/.test(os) && /\bSafari\b/.test(layout[1])) ||
                     (/^(?:Adobe|Arora|Breach|Midori|Opera|Phantom|Rekonq|Rock|Samsung Internet|Sleipnir|SRWare Iron|Vivaldi|Web)/.test(
                       name
                     ) &&
@@ -3943,30 +3686,22 @@
                   description = ['(' + description.join('; ') + ')'];
                 }
                 // Append manufacturer to description.
-                if (
-                  manufacturer &&
-                  product &&
-                  product.indexOf(manufacturer) < 0
-                ) {
+                if (manufacturer && product && product.indexOf(manufacturer) < 0) {
                   description.push('on ' + manufacturer);
                 }
                 // Append product to description.
                 if (product) {
                   description.push(
-                    (/^on /.test(description[description.length - 1])
-                      ? ''
-                      : 'on ') + product
+                    (/^on /.test(description[description.length - 1]) ? '' : 'on ') + product
                   );
                 }
                 // Parse the OS into an object.
                 if (os) {
                   data = / ([\d.+]+)$/.exec(os);
-                  isSpecialCasedOS =
-                    data && os.charAt(os.length - data[0].length - 1) == '/';
+                  isSpecialCasedOS = data && os.charAt(os.length - data[0].length - 1) == '/';
                   os = {
                     architecture: 32,
-                    family:
-                      data && !isSpecialCasedOS ? os.replace(data[0], '') : os,
+                    family: data && !isSpecialCasedOS ? os.replace(data[0], '') : os,
                     version: data ? data[1] : null,
                     toString: function () {
                       var version = this.version;
@@ -4163,10 +3898,7 @@
                 if (
                   os &&
                   name &&
-                  !(
-                    os == String(os).split(' ')[0] &&
-                    (os == name.split(' ')[0] || product)
-                  )
+                  !(os == String(os).split(' ')[0] && (os == name.split(' ')[0] || product))
                 ) {
                   description.push(product ? '(' + os + ')' : 'on ' + os);
                 }
@@ -4182,11 +3914,7 @@
               var platform = parse();
 
               // Some AMD build optimizers, like r.js, check for condition patterns like the following:
-              if (
-                typeof define == 'function' &&
-                typeof define.amd == 'object' &&
-                define.amd
-              ) {
+              if (typeof define == 'function' && typeof define.amd == 'object' && define.amd) {
                 // Expose platform on the global object to prevent errors when platform is
                 // loaded by a script tag in the presence of an AMD loader.
                 // See http://requirejs.org/docs/errors.html#mismatch for more details.
@@ -4267,10 +3995,7 @@
             return setTimeout(fun, 0);
           }
           // if setTimeout wasn't available but was latter defined
-          if (
-            (cachedSetTimeout === defaultSetTimout || !cachedSetTimeout) &&
-            setTimeout
-          ) {
+          if ((cachedSetTimeout === defaultSetTimout || !cachedSetTimeout) && setTimeout) {
             cachedSetTimeout = setTimeout;
             return setTimeout(fun, 0);
           }
@@ -4293,11 +4018,7 @@
             return clearTimeout(marker);
           }
           // if clearTimeout wasn't available but was latter defined
-          if (
-            (cachedClearTimeout === defaultClearTimeout ||
-              !cachedClearTimeout) &&
-            clearTimeout
-          ) {
+          if ((cachedClearTimeout === defaultClearTimeout || !cachedClearTimeout) && clearTimeout) {
             cachedClearTimeout = clearTimeout;
             return clearTimeout(marker);
           }
@@ -4422,10 +4143,7 @@
     14: [
       function (require, module, exports) {
         const debug = require('../internal/debug');
-        const {
-          MAX_LENGTH,
-          MAX_SAFE_INTEGER,
-        } = require('../internal/constants');
+        const { MAX_LENGTH, MAX_SAFE_INTEGER } = require('../internal/constants');
         const { re, t } = require('../internal/re');
 
         const parseOptions = require('../internal/parse-options');
@@ -4448,9 +4166,7 @@
             }
 
             if (version.length > MAX_LENGTH) {
-              throw new TypeError(
-                `version is longer than ${MAX_LENGTH} characters`
-              );
+              throw new TypeError(`version is longer than ${MAX_LENGTH} characters`);
             }
 
             debug('SemVer', version, options);
@@ -4460,9 +4176,7 @@
             // don't run into trouble passing this.options around.
             this.includePrerelease = !!options.includePrerelease;
 
-            const m = version
-              .trim()
-              .match(options.loose ? re[t.LOOSE] : re[t.FULL]);
+            const m = version.trim().match(options.loose ? re[t.LOOSE] : re[t.FULL]);
 
             if (!m) {
               throw new TypeError(`Invalid Version: ${version}`);
@@ -4642,11 +4356,7 @@
                 // Otherwise increment major.
                 // 1.0.0-5 bumps to 1.0.0
                 // 1.1.0 bumps to 2.0.0
-                if (
-                  this.minor !== 0 ||
-                  this.patch !== 0 ||
-                  this.prerelease.length === 0
-                ) {
+                if (this.minor !== 0 || this.patch !== 0 || this.prerelease.length === 0) {
                   this.major++;
                 }
                 this.minor = 0;
@@ -4748,8 +4458,7 @@
 
         const MAX_LENGTH = 256;
         const MAX_SAFE_INTEGER =
-          Number.MAX_SAFE_INTEGER ||
-          /* istanbul ignore next */ 9007199254740991;
+          Number.MAX_SAFE_INTEGER || /* istanbul ignore next */ 9007199254740991;
 
         // Max safe segment length for coercion.
         const MAX_SAFE_COMPONENT_LENGTH = 16;
@@ -4793,15 +4502,7 @@
             b = +b;
           }
 
-          return a === b
-            ? 0
-            : anum && !bnum
-            ? -1
-            : bnum && !anum
-            ? 1
-            : a < b
-            ? -1
-            : 1;
+          return a === b ? 0 : anum && !bnum ? -1 : bnum && !anum ? 1 : a < b ? -1 : 1;
         };
 
         const rcompareIdentifiers = (a, b) => compareIdentifiers(b, a);
@@ -4904,16 +4605,12 @@
 
         createToken(
           'PRERELEASE',
-          `(?:-(${src[t.PRERELEASEIDENTIFIER]}(?:\\.${
-            src[t.PRERELEASEIDENTIFIER]
-          })*))`
+          `(?:-(${src[t.PRERELEASEIDENTIFIER]}(?:\\.${src[t.PRERELEASEIDENTIFIER]})*))`
         );
 
         createToken(
           'PRERELEASELOOSE',
-          `(?:-?(${src[t.PRERELEASEIDENTIFIERLOOSE]}(?:\\.${
-            src[t.PRERELEASEIDENTIFIERLOOSE]
-          })*))`
+          `(?:-?(${src[t.PRERELEASEIDENTIFIERLOOSE]}(?:\\.${src[t.PRERELEASEIDENTIFIERLOOSE]})*))`
         );
 
         // ## Build Metadata Identifier
@@ -4925,10 +4622,7 @@
         // Plus sign, followed by one or more period-separated build metadata
         // identifiers.
 
-        createToken(
-          'BUILD',
-          `(?:\\+(${src[t.BUILDIDENTIFIER]}(?:\\.${src[t.BUILDIDENTIFIER]})*))`
-        );
+        createToken('BUILD', `(?:\\+(${src[t.BUILDIDENTIFIER]}(?:\\.${src[t.BUILDIDENTIFIER]})*))`);
 
         // ## Full Version String
         // A main version, followed optionally by a pre-release version and
@@ -4939,10 +4633,7 @@
         // capturing group, because it should not ever be used in version
         // comparison.
 
-        createToken(
-          'FULLPLAIN',
-          `v?${src[t.MAINVERSION]}${src[t.PRERELEASE]}?${src[t.BUILD]}?`
-        );
+        createToken('FULLPLAIN', `v?${src[t.MAINVERSION]}${src[t.PRERELEASE]}?${src[t.BUILD]}?`);
 
         createToken('FULL', `^${src[t.FULLPLAIN]}$`);
 
@@ -4951,9 +4642,7 @@
         // common in the npm registry.
         createToken(
           'LOOSEPLAIN',
-          `[v=\\s]*${src[t.MAINVERSIONLOOSE]}${src[t.PRERELEASELOOSE]}?${
-            src[t.BUILD]
-          }?`
+          `[v=\\s]*${src[t.MAINVERSIONLOOSE]}${src[t.PRERELEASELOOSE]}?${src[t.BUILD]}?`
         );
 
         createToken('LOOSE', `^${src[t.LOOSEPLAIN]}$`);
@@ -4963,10 +4652,7 @@
         // Something like "2.*" or "1.2.x".
         // Note that "x.x" is a valid xRange identifer, meaning "any version"
         // Only the first item is strictly required.
-        createToken(
-          'XRANGEIDENTIFIERLOOSE',
-          `${src[t.NUMERICIDENTIFIERLOOSE]}|x|X|\\*`
-        );
+        createToken('XRANGEIDENTIFIERLOOSE', `${src[t.NUMERICIDENTIFIERLOOSE]}|x|X|\\*`);
         createToken('XRANGEIDENTIFIER', `${src[t.NUMERICIDENTIFIER]}|x|X|\\*`);
 
         createToken(
@@ -4988,10 +4674,7 @@
         );
 
         createToken('XRANGE', `^${src[t.GTLT]}\\s*${src[t.XRANGEPLAIN]}$`);
-        createToken(
-          'XRANGELOOSE',
-          `^${src[t.GTLT]}\\s*${src[t.XRANGEPLAINLOOSE]}$`
-        );
+        createToken('XRANGELOOSE', `^${src[t.GTLT]}\\s*${src[t.XRANGEPLAINLOOSE]}$`);
 
         // Coercion.
         // Extract anything that could conceivably be a part of a valid semver
@@ -5012,10 +4695,7 @@
         exports.tildeTrimReplace = '$1~';
 
         createToken('TILDE', `^${src[t.LONETILDE]}${src[t.XRANGEPLAIN]}$`);
-        createToken(
-          'TILDELOOSE',
-          `^${src[t.LONETILDE]}${src[t.XRANGEPLAINLOOSE]}$`
-        );
+        createToken('TILDELOOSE', `^${src[t.LONETILDE]}${src[t.XRANGEPLAINLOOSE]}$`);
 
         // Caret ranges.
         // Meaning is "at least and backwards compatible with"
@@ -5025,28 +4705,17 @@
         exports.caretTrimReplace = '$1^';
 
         createToken('CARET', `^${src[t.LONECARET]}${src[t.XRANGEPLAIN]}$`);
-        createToken(
-          'CARETLOOSE',
-          `^${src[t.LONECARET]}${src[t.XRANGEPLAINLOOSE]}$`
-        );
+        createToken('CARETLOOSE', `^${src[t.LONECARET]}${src[t.XRANGEPLAINLOOSE]}$`);
 
         // A simple gt/lt/eq thing, or just "" to indicate "any version"
-        createToken(
-          'COMPARATORLOOSE',
-          `^${src[t.GTLT]}\\s*(${src[t.LOOSEPLAIN]})$|^$`
-        );
-        createToken(
-          'COMPARATOR',
-          `^${src[t.GTLT]}\\s*(${src[t.FULLPLAIN]})$|^$`
-        );
+        createToken('COMPARATORLOOSE', `^${src[t.GTLT]}\\s*(${src[t.LOOSEPLAIN]})$|^$`);
+        createToken('COMPARATOR', `^${src[t.GTLT]}\\s*(${src[t.FULLPLAIN]})$|^$`);
 
         // An expression to strip any whitespace between the gtlt and the thing
         // it modifies, so that `> 1.2.3` ==> `>1.2.3`
         createToken(
           'COMPARATORTRIM',
-          `(\\s*)${src[t.GTLT]}\\s*(${src[t.LOOSEPLAIN]}|${
-            src[t.XRANGEPLAIN]
-          })`,
+          `(\\s*)${src[t.GTLT]}\\s*(${src[t.LOOSEPLAIN]}|${src[t.XRANGEPLAIN]})`,
           true
         );
         exports.comparatorTrimReplace = '$1$2$3';
@@ -5057,10 +4726,7 @@
         // later.
         createToken(
           'HYPHENRANGE',
-          `^\\s*(${src[t.XRANGEPLAIN]})` +
-            `\\s+-\\s+` +
-            `(${src[t.XRANGEPLAIN]})` +
-            `\\s*$`
+          `^\\s*(${src[t.XRANGEPLAIN]})` + `\\s+-\\s+` + `(${src[t.XRANGEPLAIN]})` + `\\s*$`
         );
 
         createToken(
@@ -5215,9 +4881,7 @@
             }
           }
 
-          return md5ToHexEncodedArray(
-            wordsToMd5(bytesToWords(bytes), bytes.length * 8)
-          );
+          return md5ToHexEncodedArray(wordsToMd5(bytesToWords(bytes), bytes.length * 8));
         }
         /*
          * Convert an array of little-endian words to an array of bytes
@@ -5230,10 +4894,7 @@
 
           for (let i = 0; i < length32; i += 8) {
             const x = (input[i >> 5] >>> i % 32) & 0xff;
-            const hex = parseInt(
-              hexTab.charAt((x >>> 4) & 0x0f) + hexTab.charAt(x & 0x0f),
-              16
-            );
+            const hex = parseInt(hexTab.charAt((x >>> 4) & 0x0f) + hexTab.charAt(x & 0x0f), 16);
             output.push(hex);
           }
 
@@ -5377,10 +5038,7 @@
          */
 
         function md5cmn(q, a, b, x, s, t) {
-          return safeAdd(
-            bitRotateLeft(safeAdd(safeAdd(a, q), safeAdd(x, t)), s),
-            b
-          );
+          return safeAdd(bitRotateLeft(safeAdd(safeAdd(a, q), safeAdd(x, t)), s), b);
         }
 
         function md5ff(a, b, c, d, x, s, t) {
@@ -5455,8 +5113,7 @@
           arr[9] = v & 0xff; // Parse ........-....-....-....-############
           // (Use "/" to avoid 32-bit truncation when bit-shifting high-order bytes)
 
-          arr[10] =
-            ((v = parseInt(uuid.slice(24, 36), 16)) / 0x10000000000) & 0xff;
+          arr[10] = ((v = parseInt(uuid.slice(24, 36), 16)) / 0x10000000000) & 0xff;
           arr[11] = (v / 0x100000000) & 0xff;
           arr[12] = (v >>> 24) & 0xff;
           arr[13] = (v >>> 16) & 0xff;
@@ -5556,9 +5213,7 @@
 
         function sha1(bytes) {
           const K = [0x5a827999, 0x6ed9eba1, 0x8f1bbcdc, 0xca62c1d6];
-          const H = [
-            0x67452301, 0xefcdab89, 0x98badcfe, 0x10325476, 0xc3d2e1f0,
-          ];
+          const H = [0x67452301, 0xefcdab89, 0x98badcfe, 0x10325476, 0xc3d2e1f0];
 
           if (typeof bytes === 'string') {
             const msg = unescape(encodeURIComponent(bytes)); // UTF8 escape
@@ -5759,8 +5414,7 @@
           const b = buf || new Array(16);
           options = options || {};
           let node = options.node || _nodeId;
-          let clockseq =
-            options.clockseq !== undefined ? options.clockseq : _clockseq; // node and clockseq need to be initialized to random values if they're not
+          let clockseq = options.clockseq !== undefined ? options.clockseq : _clockseq; // node and clockseq need to be initialized to random values if they're not
           // specified.  We do this lazily to minimize issues related to insufficient
           // system entropy.  See #189
 
@@ -5781,8 +5435,7 @@
 
             if (clockseq == null) {
               // Per 4.2.2, randomize (14 bit) clockseq
-              clockseq = _clockseq =
-                ((seedBytes[6] << 8) | seedBytes[7]) & 0x3fff;
+              clockseq = _clockseq = ((seedBytes[6] << 8) | seedBytes[7]) & 0x3fff;
             }
           } // UUID timestamps are 100 nano-second units since the Gregorian epoch,
           // (1582-10-15 00:00).  JSNumbers aren't precise enough for this, so
@@ -5792,8 +5445,7 @@
           let msecs = options.msecs !== undefined ? options.msecs : Date.now(); // Per 4.2.1.2, use count of uuid's generated during the current clock
           // cycle to simulate higher resolution clock
 
-          let nsecs =
-            options.nsecs !== undefined ? options.nsecs : _lastNSecs + 1; // Time since last uuid creation (in msecs)
+          let nsecs = options.nsecs !== undefined ? options.nsecs : _lastNSecs + 1; // Time since last uuid creation (in msecs)
 
           const dt = msecs - _lastMSecs + (nsecs - _lastNSecs) / 10000; // Per 4.2.1.2, Bump clockseq on clock regression
 
@@ -5915,9 +5567,7 @@
             }
 
             if (namespace.length !== 16) {
-              throw TypeError(
-                'Namespace must be array-like (16 iterable integer values, 0-255)'
-              );
+              throw TypeError('Namespace must be array-like (16 iterable integer values, 0-255)');
             } // Compute hash of namespace and value, Per 4.3
             // Future: Use spread syntax when supported on all platforms, e.g. `bytes =
             // hashfunc([...namespace, ... value])`
@@ -6220,8 +5870,7 @@ the event name as the first argument.
               split = item.split('*');
               if (
                 item === '*' ||
-                (split.length === 2 &&
-                  eventName.slice(0, split[0].length) === split[0])
+                (split.length === 2 && eventName.slice(0, split[0].length) === split[0])
               ) {
                 result = result.concat(this.callbacks[item]);
               }
@@ -6526,11 +6175,7 @@ the event name as the first argument.
            * @param {Function[]} [listeners] An optional array of listener functions to add/remove.
            * @return {Object} Current instance of EventEmitter for chaining.
            */
-          proto.manipulateListeners = function manipulateListeners(
-            remove,
-            evt,
-            listeners
-          ) {
+          proto.manipulateListeners = function manipulateListeners(remove, evt, listeners) {
             var i;
             var value;
             var single = remove ? this.removeListener : this.addListener;
@@ -6837,8 +6482,7 @@ the event name as the first argument.
               if (this.remoteOptions.streams) {
                 this.initRemoteStreams(this.remoteOptions.streams);
               }
-              msg +=
-                "(remote) with 'connectionId' [" + this.remoteOptions.id + ']';
+              msg += "(remote) with 'connectionId' [" + this.remoteOptions.id + ']';
             }
             logger.info(msg);
           }
@@ -6860,9 +6504,7 @@ the event name as the first argument.
               },
               function (error, response) {
                 if (error) {
-                  logger.error(
-                    'Error sending ICE candidate: ' + JSON.stringify(error)
-                  );
+                  logger.error('Error sending ICE candidate: ' + JSON.stringify(error));
                   _this.session.emitEvent('exception', [
                     new ExceptionEvent_1.ExceptionEvent(
                       _this.session,
@@ -6953,11 +6595,7 @@ the event name as the first argument.
             this.ee.on(type, arrowHandler);
             return this;
           };
-          EventDispatcher.prototype.onceAux = function (
-            type,
-            message,
-            handler
-          ) {
+          EventDispatcher.prototype.onceAux = function (type, message, handler) {
             var _this = this;
             var arrowHandler = function (event) {
               if (event) {
@@ -7011,16 +6649,13 @@ the event name as the first argument.
           Filter.prototype.execMethod = function (method, params) {
             var _this = this;
             return new Promise(function (resolve, reject) {
-              logger.info(
-                'Executing filter method to stream ' + _this.stream.streamId
-              );
+              logger.info('Executing filter method to stream ' + _this.stream.streamId);
               var stringParams;
               if (typeof params !== 'string') {
                 try {
                   stringParams = JSON.stringify(params);
                 } catch (error) {
-                  var errorMsg =
-                    "'params' property must be a JSON formatted object";
+                  var errorMsg = "'params' property must be a JSON formatted object";
                   logger.error(errorMsg);
                   return reject(errorMsg);
                 }
@@ -7037,8 +6672,7 @@ the event name as the first argument.
                 function (error, response) {
                   if (error) {
                     logger.error(
-                      'Error executing filter method for Stream ' +
-                        _this.stream.streamId,
+                      'Error executing filter method for Stream ' + _this.stream.streamId,
                       error
                     );
                     if (error.code === 401) {
@@ -7053,8 +6687,7 @@ the event name as the first argument.
                     }
                   } else {
                     logger.info(
-                      'Filter method successfully executed on Stream ' +
-                        _this.stream.streamId
+                      'Filter method successfully executed on Stream ' + _this.stream.streamId
                     );
                     var oldValue = Object.assign({}, _this.stream.filter);
                     _this.stream.filter.lastExecMethod = {
@@ -7071,19 +6704,16 @@ the event name as the first argument.
                         'execFilterMethod'
                       ),
                     ]);
-                    _this.stream.streamManager.emitEvent(
-                      'streamPropertyChanged',
-                      [
-                        new StreamPropertyChangedEvent_1.StreamPropertyChangedEvent(
-                          _this.stream.streamManager,
-                          _this.stream,
-                          'filter',
-                          _this.stream.filter,
-                          oldValue,
-                          'execFilterMethod'
-                        ),
-                      ]
-                    );
+                    _this.stream.streamManager.emitEvent('streamPropertyChanged', [
+                      new StreamPropertyChangedEvent_1.StreamPropertyChangedEvent(
+                        _this.stream.streamManager,
+                        _this.stream,
+                        'filter',
+                        _this.stream.filter,
+                        oldValue,
+                        'execFilterMethod'
+                      ),
+                    ]);
                     return resolve();
                   }
                 }
@@ -7209,8 +6839,7 @@ the event name as the first argument.
             this.connectionId = !!this.stream.connection
               ? this.stream.connection.connectionId
               : 'default-connection';
-            this.id =
-              this.stream.streamId + '_' + this.connectionId + '_localrecord';
+            this.id = this.stream.streamId + '_' + this.connectionId + '_localrecord';
             this.state = LocalRecorderState_1.LocalRecorderState.READY;
           }
           LocalRecorder.prototype.record = function (options) {
@@ -7233,9 +6862,7 @@ the event name as the first argument.
                     'MediaRecorder not supported on your device. See compatibility in https://caniuse.com/#search=MediaRecorder'
                   );
                 }
-                if (
-                  _this.state !== LocalRecorderState_1.LocalRecorderState.READY
-                ) {
+                if (_this.state !== LocalRecorderState_1.LocalRecorderState.READY) {
                   throw Error(
                     "'LocalRecord.record()' needs 'LocalRecord.state' to be 'READY' (current value: '" +
                       _this.state +
@@ -7254,10 +6881,7 @@ the event name as the first argument.
                 } else if (!options.mimeType) {
                   options.mimeType = 'video/webm';
                 }
-                _this.mediaRecorder = new MediaRecorder(
-                  _this.stream.getMediaStream(),
-                  options
-                );
+                _this.mediaRecorder = new MediaRecorder(_this.stream.getMediaStream(), options);
                 _this.mediaRecorder.start();
               } catch (err) {
                 return reject(err);
@@ -7271,28 +6895,16 @@ the event name as the first argument.
                 logger.error('MediaRecorder error: ', e);
               };
               _this.mediaRecorder.onstart = function () {
-                logger.log(
-                  'MediaRecorder started (state=' +
-                    _this.mediaRecorder.state +
-                    ')'
-                );
+                logger.log('MediaRecorder started (state=' + _this.mediaRecorder.state + ')');
               };
               _this.mediaRecorder.onstop = function () {
                 _this.onStopDefault();
               };
               _this.mediaRecorder.onpause = function () {
-                logger.log(
-                  'MediaRecorder paused (state=' +
-                    _this.mediaRecorder.state +
-                    ')'
-                );
+                logger.log('MediaRecorder paused (state=' + _this.mediaRecorder.state + ')');
               };
               _this.mediaRecorder.onresume = function () {
-                logger.log(
-                  'MediaRecorder resumed (state=' +
-                    _this.mediaRecorder.state +
-                    ')'
-                );
+                logger.log('MediaRecorder resumed (state=' + _this.mediaRecorder.state + ')');
               };
               _this.state = LocalRecorderState_1.LocalRecorderState.RECORDING;
               return resolve();
@@ -7303,10 +6915,8 @@ the event name as the first argument.
             return new Promise(function (resolve, reject) {
               try {
                 if (
-                  _this.state ===
-                    LocalRecorderState_1.LocalRecorderState.READY ||
-                  _this.state ===
-                    LocalRecorderState_1.LocalRecorderState.FINISHED
+                  _this.state === LocalRecorderState_1.LocalRecorderState.READY ||
+                  _this.state === LocalRecorderState_1.LocalRecorderState.FINISHED
                 ) {
                   throw Error(
                     "'LocalRecord.stop()' needs 'LocalRecord.state' to be 'RECORDING' or 'PAUSED' (current value: '" +
@@ -7328,10 +6938,7 @@ the event name as the first argument.
             var _this = this;
             return new Promise(function (resolve, reject) {
               try {
-                if (
-                  _this.state !==
-                  LocalRecorderState_1.LocalRecorderState.RECORDING
-                ) {
+                if (_this.state !== LocalRecorderState_1.LocalRecorderState.RECORDING) {
                   return reject(
                     Error(
                       "'LocalRecord.pause()' needs 'LocalRecord.state' to be 'RECORDING' (current value: '" +
@@ -7352,9 +6959,7 @@ the event name as the first argument.
             var _this = this;
             return new Promise(function (resolve, reject) {
               try {
-                if (
-                  _this.state !== LocalRecorderState_1.LocalRecorderState.PAUSED
-                ) {
+                if (_this.state !== LocalRecorderState_1.LocalRecorderState.PAUSED) {
                   throw Error(
                     "'LocalRecord.resume()' needs 'LocalRecord.state' to be 'PAUSED' (current value: '" +
                       _this.state +
@@ -7370,9 +6975,7 @@ the event name as the first argument.
             });
           };
           LocalRecorder.prototype.preview = function (parentElement) {
-            if (
-              this.state !== LocalRecorderState_1.LocalRecorderState.FINISHED
-            ) {
+            if (this.state !== LocalRecorderState_1.LocalRecorderState.FINISHED) {
               throw Error(
                 "'LocalRecord.preview()' needs 'LocalRecord.state' to be 'FINISHED' (current value: '" +
                   this.state +
@@ -7388,9 +6991,7 @@ the event name as the first argument.
             if (typeof parentElement === 'string') {
               var parentElementDom = document.getElementById(parentElement);
               if (parentElementDom) {
-                this.videoPreview = parentElementDom.appendChild(
-                  this.videoPreview
-                );
+                this.videoPreview = parentElementDom.appendChild(this.videoPreview);
               }
             } else {
               this.videoPreview = parentElement.appendChild(this.videoPreview);
@@ -7406,8 +7007,7 @@ the event name as the first argument.
               _this.state = LocalRecorderState_1.LocalRecorderState.READY;
             };
             if (
-              this.state ===
-                LocalRecorderState_1.LocalRecorderState.RECORDING ||
+              this.state === LocalRecorderState_1.LocalRecorderState.RECORDING ||
               this.state === LocalRecorderState_1.LocalRecorderState.PAUSED
             ) {
               this.stop()
@@ -7422,9 +7022,7 @@ the event name as the first argument.
             }
           };
           LocalRecorder.prototype.download = function () {
-            if (
-              this.state !== LocalRecorderState_1.LocalRecorderState.FINISHED
-            ) {
+            if (this.state !== LocalRecorderState_1.LocalRecorderState.FINISHED) {
               throw Error(
                 "'LocalRecord.download()' needs 'LocalRecord.state' to be 'FINISHED' (current value: '" +
                   this.state +
@@ -7443,23 +7041,16 @@ the event name as the first argument.
             }
           };
           LocalRecorder.prototype.getBlob = function () {
-            if (
-              this.state !== LocalRecorderState_1.LocalRecorderState.FINISHED
-            ) {
+            if (this.state !== LocalRecorderState_1.LocalRecorderState.FINISHED) {
               throw Error("Call 'LocalRecord.stop()' before getting Blob file");
             } else {
               return this.blob;
             }
           };
-          LocalRecorder.prototype.uploadAsBinary = function (
-            endpoint,
-            headers
-          ) {
+          LocalRecorder.prototype.uploadAsBinary = function (endpoint, headers) {
             var _this = this;
             return new Promise(function (resolve, reject) {
-              if (
-                _this.state !== LocalRecorderState_1.LocalRecorderState.FINISHED
-              ) {
+              if (_this.state !== LocalRecorderState_1.LocalRecorderState.FINISHED) {
                 return reject(
                   Error(
                     "'LocalRecord.uploadAsBinary()' needs 'LocalRecord.state' to be 'FINISHED' (current value: '" +
@@ -7471,11 +7062,7 @@ the event name as the first argument.
                 var http_1 = new XMLHttpRequest();
                 http_1.open('POST', endpoint, true);
                 if (typeof headers === 'object') {
-                  for (
-                    var _i = 0, _a = Object.keys(headers);
-                    _i < _a.length;
-                    _i++
-                  ) {
+                  for (var _i = 0, _a = Object.keys(headers); _i < _a.length; _i++) {
                     var key = _a[_i];
                     http_1.setRequestHeader(key, headers[key]);
                   }
@@ -7493,15 +7080,10 @@ the event name as the first argument.
               }
             });
           };
-          LocalRecorder.prototype.uploadAsMultipartfile = function (
-            endpoint,
-            headers
-          ) {
+          LocalRecorder.prototype.uploadAsMultipartfile = function (endpoint, headers) {
             var _this = this;
             return new Promise(function (resolve, reject) {
-              if (
-                _this.state !== LocalRecorderState_1.LocalRecorderState.FINISHED
-              ) {
+              if (_this.state !== LocalRecorderState_1.LocalRecorderState.FINISHED) {
                 return reject(
                   Error(
                     "'LocalRecord.uploadAsMultipartfile()' needs 'LocalRecord.state' to be 'FINISHED' (current value: '" +
@@ -7513,11 +7095,7 @@ the event name as the first argument.
                 var http_2 = new XMLHttpRequest();
                 http_2.open('POST', endpoint, true);
                 if (typeof headers === 'object') {
-                  for (
-                    var _i = 0, _a = Object.keys(headers);
-                    _i < _a.length;
-                    _i++
-                  ) {
+                  for (var _i = 0, _a = Object.keys(headers); _i < _a.length; _i++) {
                     var key = _a[_i];
                     http_2.setRequestHeader(key, headers[key]);
                   }
@@ -7542,9 +7120,7 @@ the event name as the first argument.
             });
           };
           LocalRecorder.prototype.onStopDefault = function () {
-            logger.log(
-              'MediaRecorder stopped  (state=' + this.mediaRecorder.state + ')'
-            );
+            logger.log('MediaRecorder stopped  (state=' + this.mediaRecorder.state + ')');
             this.blob = new Blob(this.chunks, {
               type: this.mediaRecorder.mimeType,
             });
@@ -7612,12 +7188,7 @@ the event name as the first argument.
                     !!publisher.stream &&
                     !!publisher.stream.hasVideo
                   ) {
-                    _this.sendNewVideoDimensionsIfRequired(
-                      publisher,
-                      'deviceRotated',
-                      75,
-                      10
-                    );
+                    _this.sendNewVideoDimensionsIfRequired(publisher, 'deviceRotated', 75, 10);
                   }
                 });
               });
@@ -7627,11 +7198,7 @@ the event name as the first argument.
             this.session = new Session_1.Session(this);
             return this.session;
           };
-          OpenVidu.prototype.initPublisher = function (
-            targetElement,
-            param2,
-            param3
-          ) {
+          OpenVidu.prototype.initPublisher = function (targetElement, param2, param3) {
             var properties;
             if (!!param2 && typeof param2 !== 'function') {
               properties = param2;
@@ -7653,18 +7220,11 @@ the event name as the first argument.
                       ? VideoInsertMode_1.VideoInsertMode[properties.insertMode]
                       : properties.insertMode
                     : VideoInsertMode_1.VideoInsertMode.APPEND,
-                mirror:
-                  typeof properties.mirror !== 'undefined'
-                    ? properties.mirror
-                    : true,
+                mirror: typeof properties.mirror !== 'undefined' ? properties.mirror : true,
                 publishAudio:
-                  typeof properties.publishAudio !== 'undefined'
-                    ? properties.publishAudio
-                    : true,
+                  typeof properties.publishAudio !== 'undefined' ? properties.publishAudio : true,
                 publishVideo:
-                  typeof properties.publishVideo !== 'undefined'
-                    ? properties.publishVideo
-                    : true,
+                  typeof properties.publishVideo !== 'undefined' ? properties.publishVideo : true,
                 resolution:
                   typeof MediaStreamTrack !== 'undefined' &&
                   properties.videoSource instanceof MediaStreamTrack
@@ -7688,11 +7248,7 @@ the event name as the first argument.
                 resolution: '640x480',
               };
             }
-            var publisher = new Publisher_1.Publisher(
-              targetElement,
-              properties,
-              this
-            );
+            var publisher = new Publisher_1.Publisher(targetElement, properties, this);
             var completionHandler;
             if (!!param2 && typeof param2 === 'function') {
               completionHandler = param2;
@@ -7716,10 +7272,7 @@ the event name as the first argument.
             this.publishers.push(publisher);
             return publisher;
           };
-          OpenVidu.prototype.initPublisherAsync = function (
-            targetElement,
-            properties
-          ) {
+          OpenVidu.prototype.initPublisherAsync = function (targetElement, properties) {
             var _this = this;
             return new Promise(function (resolve, reject) {
               var publisher;
@@ -7731,11 +7284,7 @@ the event name as the first argument.
                 }
               };
               if (!!properties) {
-                publisher = _this.initPublisher(
-                  targetElement,
-                  properties,
-                  callback
-                );
+                publisher = _this.initPublisher(targetElement, properties, callback);
               } else {
                 publisher = _this.initPublisher(targetElement, callback);
               }
@@ -7789,117 +7338,100 @@ the event name as the first argument.
                   if (
                     platform.isIonicAndroid() &&
                     typeof cordova != 'undefined' &&
-                    ((_a =
-                      cordova === null || cordova === void 0
-                        ? void 0
-                        : cordova.plugins) === null || _a === void 0
+                    ((_a = cordova === null || cordova === void 0 ? void 0 : cordova.plugins) ===
+                      null || _a === void 0
                       ? void 0
                       : _a.EnumerateDevicesPlugin)
                   ) {
-                    cordova.plugins.EnumerateDevicesPlugin.getEnumerateDevices().then(
-                      function (pluginDevices) {
-                        var pluginAudioDevices = [];
-                        var videoDevices = [];
-                        var audioDevices = [];
-                        pluginAudioDevices = pluginDevices.filter(function (
-                          device
-                        ) {
-                          return device.kind === 'audioinput';
-                        });
-                        videoDevices = deviceInfos.filter(function (device) {
-                          return device.kind === 'videoinput';
-                        });
-                        audioDevices = deviceInfos.filter(function (device) {
-                          return device.kind === 'audioinput';
-                        });
-                        videoDevices.forEach(function (deviceInfo, index) {
-                          if (!deviceInfo.label) {
-                            var label = '';
-                            if (index === 0) {
-                              label = 'Front Camera';
-                            } else if (index === 1) {
-                              label = 'Back Camera';
-                            } else {
-                              label = 'Unknown Camera';
-                            }
-                            devices.push({
-                              kind: deviceInfo.kind,
-                              deviceId: deviceInfo.deviceId,
-                              label: label,
-                            });
+                    cordova.plugins.EnumerateDevicesPlugin.getEnumerateDevices().then(function (
+                      pluginDevices
+                    ) {
+                      var pluginAudioDevices = [];
+                      var videoDevices = [];
+                      var audioDevices = [];
+                      pluginAudioDevices = pluginDevices.filter(function (device) {
+                        return device.kind === 'audioinput';
+                      });
+                      videoDevices = deviceInfos.filter(function (device) {
+                        return device.kind === 'videoinput';
+                      });
+                      audioDevices = deviceInfos.filter(function (device) {
+                        return device.kind === 'audioinput';
+                      });
+                      videoDevices.forEach(function (deviceInfo, index) {
+                        if (!deviceInfo.label) {
+                          var label = '';
+                          if (index === 0) {
+                            label = 'Front Camera';
+                          } else if (index === 1) {
+                            label = 'Back Camera';
                           } else {
-                            devices.push({
-                              kind: deviceInfo.kind,
-                              deviceId: deviceInfo.deviceId,
-                              label: deviceInfo.label,
-                            });
+                            label = 'Unknown Camera';
                           }
-                        });
-                        audioDevices.forEach(function (deviceInfo, index) {
-                          if (!deviceInfo.label) {
-                            var label = '';
-                            switch (index) {
-                              case 0:
-                                label = 'Default';
-                                break;
-                              case 1:
-                                var defaultMatch = pluginAudioDevices.filter(
-                                  function (d) {
-                                    return d.label.includes('Built');
-                                  }
-                                )[0];
-                                label = defaultMatch
-                                  ? defaultMatch.label
-                                  : 'Built-in Microphone';
-                                break;
-                              case 2:
-                                var wiredMatch = pluginAudioDevices.filter(
-                                  function (d) {
-                                    return d.label.includes('Wired');
-                                  }
-                                )[0];
-                                if (wiredMatch) {
-                                  label = wiredMatch.label;
-                                } else {
-                                  label = 'Headset earpiece';
-                                }
-                                break;
-                              case 3:
-                                var wirelessMatch = pluginAudioDevices.filter(
-                                  function (d) {
-                                    return d.label.includes('Bluetooth');
-                                  }
-                                )[0];
-                                label = wirelessMatch
-                                  ? wirelessMatch.label
-                                  : 'Wireless';
-                                break;
-                              default:
-                                label = 'Unknown Microphone';
-                                break;
-                            }
-                            devices.push({
-                              kind: deviceInfo.kind,
-                              deviceId: deviceInfo.deviceId,
-                              label: label,
-                            });
-                          } else {
-                            devices.push({
-                              kind: deviceInfo.kind,
-                              deviceId: deviceInfo.deviceId,
-                              label: deviceInfo.label,
-                            });
+                          devices.push({
+                            kind: deviceInfo.kind,
+                            deviceId: deviceInfo.deviceId,
+                            label: label,
+                          });
+                        } else {
+                          devices.push({
+                            kind: deviceInfo.kind,
+                            deviceId: deviceInfo.deviceId,
+                            label: deviceInfo.label,
+                          });
+                        }
+                      });
+                      audioDevices.forEach(function (deviceInfo, index) {
+                        if (!deviceInfo.label) {
+                          var label = '';
+                          switch (index) {
+                            case 0:
+                              label = 'Default';
+                              break;
+                            case 1:
+                              var defaultMatch = pluginAudioDevices.filter(function (d) {
+                                return d.label.includes('Built');
+                              })[0];
+                              label = defaultMatch ? defaultMatch.label : 'Built-in Microphone';
+                              break;
+                            case 2:
+                              var wiredMatch = pluginAudioDevices.filter(function (d) {
+                                return d.label.includes('Wired');
+                              })[0];
+                              if (wiredMatch) {
+                                label = wiredMatch.label;
+                              } else {
+                                label = 'Headset earpiece';
+                              }
+                              break;
+                            case 3:
+                              var wirelessMatch = pluginAudioDevices.filter(function (d) {
+                                return d.label.includes('Bluetooth');
+                              })[0];
+                              label = wirelessMatch ? wirelessMatch.label : 'Wireless';
+                              break;
+                            default:
+                              label = 'Unknown Microphone';
+                              break;
                           }
-                        });
-                        return resolve(devices);
-                      }
-                    );
+                          devices.push({
+                            kind: deviceInfo.kind,
+                            deviceId: deviceInfo.deviceId,
+                            label: label,
+                          });
+                        } else {
+                          devices.push({
+                            kind: deviceInfo.kind,
+                            deviceId: deviceInfo.deviceId,
+                            label: deviceInfo.label,
+                          });
+                        }
+                      });
+                      return resolve(devices);
+                    });
                   } else {
                     deviceInfos.forEach(function (deviceInfo) {
-                      if (
-                        deviceInfo.kind === 'audioinput' ||
-                        deviceInfo.kind === 'videoinput'
-                      ) {
+                      if (deviceInfo.kind === 'audioinput' || deviceInfo.kind === 'videoinput') {
                         devices.push({
                           kind: deviceInfo.kind,
                           deviceId: deviceInfo.deviceId,
@@ -7919,10 +7451,7 @@ the event name as the first argument.
           OpenVidu.prototype.getUserMedia = function (options) {
             var _this = this;
             return new Promise(function (resolve, reject) {
-              var askForAudioStreamOnly = function (
-                previousMediaStream,
-                constraints
-              ) {
+              var askForAudioStreamOnly = function (previousMediaStream, constraints) {
                 var definedAudioConstraint =
                   constraints.audio === undefined ? true : constraints.audio;
                 var constraintsAux = {
@@ -7932,25 +7461,17 @@ the event name as the first argument.
                 navigator.mediaDevices
                   .getUserMedia(constraintsAux)
                   .then(function (audioOnlyStream) {
-                    previousMediaStream.addTrack(
-                      audioOnlyStream.getAudioTracks()[0]
-                    );
+                    previousMediaStream.addTrack(audioOnlyStream.getAudioTracks()[0]);
                     return resolve(previousMediaStream);
                   })
                   .catch(function (error) {
-                    previousMediaStream
-                      .getAudioTracks()
-                      .forEach(function (track) {
-                        track.stop();
-                      });
-                    previousMediaStream
-                      .getVideoTracks()
-                      .forEach(function (track) {
-                        track.stop();
-                      });
-                    return reject(
-                      _this.generateAudioDeviceError(error, constraintsAux)
-                    );
+                    previousMediaStream.getAudioTracks().forEach(function (track) {
+                      track.stop();
+                    });
+                    previousMediaStream.getVideoTracks().forEach(function (track) {
+                      track.stop();
+                    });
+                    return reject(_this.generateAudioDeviceError(error, constraintsAux));
                   });
               };
               _this
@@ -7958,24 +7479,18 @@ the event name as the first argument.
                 .then(function (myConstraints) {
                   var _a, _b;
                   if (
-                    (!!myConstraints.videoTrack &&
-                      !!myConstraints.audioTrack) ||
+                    (!!myConstraints.videoTrack && !!myConstraints.audioTrack) ||
                     (!!myConstraints.audioTrack &&
-                      ((_a = myConstraints.constraints) === null ||
-                      _a === void 0
+                      ((_a = myConstraints.constraints) === null || _a === void 0
                         ? void 0
                         : _a.video) === false) ||
                     (!!myConstraints.videoTrack &&
-                      ((_b = myConstraints.constraints) === null ||
-                      _b === void 0
+                      ((_b = myConstraints.constraints) === null || _b === void 0
                         ? void 0
                         : _b.audio) === false)
                   ) {
                     return resolve(
-                      _this.addAlreadyProvidedTracks(
-                        myConstraints,
-                        new MediaStream()
-                      )
+                      _this.addAlreadyProvidedTracks(myConstraints, new MediaStream())
                     );
                   } else {
                     if (!!myConstraints.videoTrack) {
@@ -7989,30 +7504,20 @@ the event name as the first argument.
                       if (
                         options.videoSource === 'screen' ||
                         options.videoSource === 'window' ||
-                        (platform.isElectron() &&
-                          options.videoSource.startsWith('screen:'))
+                        (platform.isElectron() && options.videoSource.startsWith('screen:'))
                       ) {
                         mustAskForAudioTrackLater_1 =
                           !myConstraints.audioTrack &&
                           options.audioSource !== null &&
                           options.audioSource !== false;
-                        if (
-                          navigator.mediaDevices['getDisplayMedia'] &&
-                          !platform.isElectron()
-                        ) {
+                        if (navigator.mediaDevices['getDisplayMedia'] && !platform.isElectron()) {
                           navigator.mediaDevices['getDisplayMedia']({
                             video: true,
                           })
                             .then(function (mediaStream) {
-                              _this.addAlreadyProvidedTracks(
-                                myConstraints,
-                                mediaStream
-                              );
+                              _this.addAlreadyProvidedTracks(myConstraints, mediaStream);
                               if (mustAskForAudioTrackLater_1) {
-                                askForAudioStreamOnly(
-                                  mediaStream,
-                                  myConstraints.constraints
-                                );
+                                askForAudioStreamOnly(mediaStream, myConstraints.constraints);
                                 return;
                               } else {
                                 return resolve(mediaStream);
@@ -8020,14 +7525,10 @@ the event name as the first argument.
                             })
                             .catch(function (error) {
                               var errorName =
-                                OpenViduError_1.OpenViduErrorName
-                                  .SCREEN_CAPTURE_DENIED;
+                                OpenViduError_1.OpenViduErrorName.SCREEN_CAPTURE_DENIED;
                               var errorMessage = error.toString();
                               return reject(
-                                new OpenViduError_1.OpenViduError(
-                                  errorName,
-                                  errorMessage
-                                )
+                                new OpenViduError_1.OpenViduError(errorName, errorMessage)
                               );
                             });
                           return;
@@ -8042,15 +7543,9 @@ the event name as the first argument.
                     navigator.mediaDevices
                       .getUserMedia(constraintsAux)
                       .then(function (mediaStream) {
-                        _this.addAlreadyProvidedTracks(
-                          myConstraints,
-                          mediaStream
-                        );
+                        _this.addAlreadyProvidedTracks(myConstraints, mediaStream);
                         if (mustAskForAudioTrackLater_1) {
-                          askForAudioStreamOnly(
-                            mediaStream,
-                            myConstraints.constraints
-                          );
+                          askForAudioStreamOnly(mediaStream, myConstraints.constraints);
                           return;
                         } else {
                           return resolve(mediaStream);
@@ -8060,20 +7555,11 @@ the event name as the first argument.
                         var errorName;
                         var errorMessage = error.toString();
                         if (!(options.videoSource === 'screen')) {
-                          errorName =
-                            OpenViduError_1.OpenViduErrorName
-                              .DEVICE_ACCESS_DENIED;
+                          errorName = OpenViduError_1.OpenViduErrorName.DEVICE_ACCESS_DENIED;
                         } else {
-                          errorName =
-                            OpenViduError_1.OpenViduErrorName
-                              .SCREEN_CAPTURE_DENIED;
+                          errorName = OpenViduError_1.OpenViduErrorName.SCREEN_CAPTURE_DENIED;
                         }
-                        return reject(
-                          new OpenViduError_1.OpenViduError(
-                            errorName,
-                            errorMessage
-                          )
-                        );
+                        return reject(new OpenViduError_1.OpenViduError(errorName, errorMessage));
                       });
                   }
                 })
@@ -8085,9 +7571,7 @@ the event name as the first argument.
           OpenVidu.prototype.enableProdMode = function () {
             logger.enableProdMode();
           };
-          OpenVidu.prototype.setAdvancedConfiguration = function (
-            configuration
-          ) {
+          OpenVidu.prototype.setAdvancedConfiguration = function (configuration) {
             this.advancedConfiguration = configuration;
           };
           OpenVidu.prototype.onOrientationChanged = function (handler) {
@@ -8111,10 +7595,7 @@ the event name as the first argument.
               publisher
                 .getVideoDimensions(publisher.stream.getMediaStream())
                 .then(function (newDimensions) {
-                  if (
-                    newDimensions.width !== oldWidth ||
-                    newDimensions.height !== oldHeight
-                  ) {
+                  if (newDimensions.width !== oldWidth || newDimensions.height !== oldHeight) {
                     clearTimeout(repeatUntilChangeOrMaxAttempts);
                     _this.sendVideoDimensionsChangedEvent(
                       publisher,
@@ -8151,10 +7632,7 @@ the event name as the first argument.
               },
               function (error, response) {
                 if (error) {
-                  logger.error(
-                    "Error sending 'streamPropertyChanged' event",
-                    error
-                  );
+                  logger.error("Error sending 'streamPropertyChanged' event", error);
                 } else {
                   _this.session.emitEvent('streamPropertyChanged', [
                     new StreamPropertyChangedEvent_1.StreamPropertyChangedEvent(
@@ -8181,9 +7659,7 @@ the event name as the first argument.
               }
             );
           };
-          OpenVidu.prototype.generateMediaConstraints = function (
-            publisherProperties
-          ) {
+          OpenVidu.prototype.generateMediaConstraints = function (publisherProperties) {
             var _this = this;
             return new Promise(function (resolve, reject) {
               var myConstraints = {
@@ -8240,9 +7716,7 @@ the event name as the first argument.
               }
               if (videoSource !== null && videoSource !== false) {
                 if (!!publisherProperties.resolution) {
-                  var widthAndHeight = publisherProperties.resolution
-                    .toLowerCase()
-                    .split('x');
+                  var widthAndHeight = publisherProperties.resolution.toLowerCase().split('x');
                   var idealWidth = Number(widthAndHeight[0]);
                   var idealHeight = Number(widthAndHeight[1]);
                   myConstraints.constraints.video = {
@@ -8283,50 +7757,33 @@ the event name as the first argument.
               rpc: {
                 requestTimeout: 10000,
                 heartbeatRequestTimeout: 5000,
-                participantJoined: this.session.onParticipantJoined.bind(
-                  this.session
-                ),
-                participantPublished: this.session.onParticipantPublished.bind(
-                  this.session
-                ),
-                participantUnpublished:
-                  this.session.onParticipantUnpublished.bind(this.session),
-                participantLeft: this.session.onParticipantLeft.bind(
-                  this.session
-                ),
-                participantEvicted: this.session.onParticipantEvicted.bind(
-                  this.session
-                ),
-                recordingStarted: this.session.onRecordingStarted.bind(
-                  this.session
-                ),
-                recordingStopped: this.session.onRecordingStopped.bind(
-                  this.session
-                ),
+                participantJoined: this.session.onParticipantJoined.bind(this.session),
+                participantPublished: this.session.onParticipantPublished.bind(this.session),
+                participantUnpublished: this.session.onParticipantUnpublished.bind(this.session),
+                participantLeft: this.session.onParticipantLeft.bind(this.session),
+                participantEvicted: this.session.onParticipantEvicted.bind(this.session),
+                recordingStarted: this.session.onRecordingStarted.bind(this.session),
+                recordingStopped: this.session.onRecordingStopped.bind(this.session),
                 sendMessage: this.session.onNewMessage.bind(this.session),
-                streamPropertyChanged:
-                  this.session.onStreamPropertyChanged.bind(this.session),
-                connectionPropertyChanged:
-                  this.session.onConnectionPropertyChanged.bind(this.session),
-                networkQualityLevelChanged:
-                  this.session.onNetworkQualityLevelChangedChanged.bind(
-                    this.session
-                  ),
-                filterEventDispatched:
-                  this.session.onFilterEventDispatched.bind(this.session),
+                streamPropertyChanged: this.session.onStreamPropertyChanged.bind(this.session),
+                connectionPropertyChanged: this.session.onConnectionPropertyChanged.bind(
+                  this.session
+                ),
+                networkQualityLevelChanged: this.session.onNetworkQualityLevelChangedChanged.bind(
+                  this.session
+                ),
+                filterEventDispatched: this.session.onFilterEventDispatched.bind(this.session),
                 iceCandidate: this.session.recvIceCandidate.bind(this.session),
                 mediaError: this.session.onMediaError.bind(this.session),
-                masterNodeCrashedNotification:
-                  this.onMasterNodeCrashedNotification.bind(this),
-                forciblyReconnectSubscriber:
-                  this.session.onForciblyReconnectSubscriber.bind(this.session),
+                masterNodeCrashedNotification: this.onMasterNodeCrashedNotification.bind(this),
+                forciblyReconnectSubscriber: this.session.onForciblyReconnectSubscriber.bind(
+                  this.session
+                ),
               },
             };
             this.jsonRpcClient = new RpcBuilder.clients.JsonRpcClient(config);
           };
-          OpenVidu.prototype.onMasterNodeCrashedNotification = function (
-            response
-          ) {
+          OpenVidu.prototype.onMasterNodeCrashedNotification = function (response) {
             console.error('Master Node has crashed');
             this.masterNodeHasCrashed = true;
             this.session.onLostConnection('nodeCrashed');
@@ -8344,11 +7801,7 @@ the event name as the first argument.
               params = {};
             }
             logger.debug(
-              'Sending request: {method:"' +
-                method +
-                '", params: ' +
-                JSON.stringify(params) +
-                '}'
+              'Sending request: {method:"' + method + '", params: ' + JSON.stringify(params) + '}'
             );
             this.jsonRpcClient.send(method, params, callback);
           };
@@ -8361,62 +7814,39 @@ the event name as the first argument.
           OpenVidu.prototype.getRecorder = function () {
             return this.recorder;
           };
-          OpenVidu.prototype.generateAudioDeviceError = function (
-            error,
-            constraints
-          ) {
+          OpenVidu.prototype.generateAudioDeviceError = function (error, constraints) {
             if (error.name === 'Error') {
               error.name = error.constructor.name;
             }
             var errorName, errorMessage;
             switch (error.name.toLowerCase()) {
               case 'notfounderror':
-                errorName =
-                  OpenViduError_1.OpenViduErrorName
-                    .INPUT_AUDIO_DEVICE_NOT_FOUND;
+                errorName = OpenViduError_1.OpenViduErrorName.INPUT_AUDIO_DEVICE_NOT_FOUND;
                 errorMessage = error.toString();
-                return new OpenViduError_1.OpenViduError(
-                  errorName,
-                  errorMessage
-                );
+                return new OpenViduError_1.OpenViduError(errorName, errorMessage);
               case 'notallowederror':
-                errorName =
-                  OpenViduError_1.OpenViduErrorName.DEVICE_ACCESS_DENIED;
+                errorName = OpenViduError_1.OpenViduErrorName.DEVICE_ACCESS_DENIED;
                 errorMessage = error.toString();
-                return new OpenViduError_1.OpenViduError(
-                  errorName,
-                  errorMessage
-                );
+                return new OpenViduError_1.OpenViduError(errorName, errorMessage);
               case 'overconstrainederror':
                 if (error.constraint.toLowerCase() === 'deviceid') {
-                  errorName =
-                    OpenViduError_1.OpenViduErrorName
-                      .INPUT_AUDIO_DEVICE_NOT_FOUND;
+                  errorName = OpenViduError_1.OpenViduErrorName.INPUT_AUDIO_DEVICE_NOT_FOUND;
                   errorMessage =
                     "Audio input device with deviceId '" +
                     constraints.audio.deviceId.exact +
                     "' not found";
                 } else {
-                  errorName =
-                    OpenViduError_1.OpenViduErrorName
-                      .PUBLISHER_PROPERTIES_ERROR;
+                  errorName = OpenViduError_1.OpenViduErrorName.PUBLISHER_PROPERTIES_ERROR;
                   errorMessage =
                     "Audio input device doesn't support the value passed for constraint '" +
                     error.constraint +
                     "'";
                 }
-                return new OpenViduError_1.OpenViduError(
-                  errorName,
-                  errorMessage
-                );
+                return new OpenViduError_1.OpenViduError(errorName, errorMessage);
               case 'notreadableerror':
-                errorName =
-                  OpenViduError_1.OpenViduErrorName.DEVICE_ALREADY_IN_USE;
+                errorName = OpenViduError_1.OpenViduErrorName.DEVICE_ALREADY_IN_USE;
                 errorMessage = error.toString();
-                return new OpenViduError_1.OpenViduError(
-                  errorName,
-                  errorMessage
-                );
+                return new OpenViduError_1.OpenViduError(errorName, errorMessage);
               default:
                 return new OpenViduError_1.OpenViduError(
                   OpenViduError_1.OpenViduErrorName.INPUT_AUDIO_DEVICE_GENERIC_ERROR,
@@ -8424,10 +7854,7 @@ the event name as the first argument.
                 );
             }
           };
-          OpenVidu.prototype.addAlreadyProvidedTracks = function (
-            myConstraints,
-            mediaStream
-          ) {
+          OpenVidu.prototype.addAlreadyProvidedTracks = function (myConstraints, mediaStream) {
             if (!!myConstraints.videoTrack) {
               mediaStream.addTrack(myConstraints.videoTrack);
             }
@@ -8481,26 +7908,16 @@ the event name as the first argument.
                   } else {
                     if (
                       !!this.advancedConfiguration.screenShareChromeExtension &&
-                      !(
-                        platform.isFirefoxBrowser() ||
-                        platform.isFirefoxMobileBrowser()
-                      ) &&
+                      !(platform.isFirefoxBrowser() || platform.isFirefoxMobileBrowser()) &&
                       !navigator.mediaDevices['getDisplayMedia']
                     ) {
-                      screenSharing.getScreenConstraints(function (
-                        error,
-                        screenConstraints
-                      ) {
+                      screenSharing.getScreenConstraints(function (error, screenConstraints) {
                         if (
                           !!error ||
                           (!!screenConstraints.mandatory &&
-                            screenConstraints.mandatory.chromeMediaSource ===
-                              'screen')
+                            screenConstraints.mandatory.chromeMediaSource === 'screen')
                         ) {
-                          if (
-                            error === 'permission-denied' ||
-                            error === 'PermissionDeniedError'
-                          ) {
+                          if (error === 'permission-denied' || error === 'PermissionDeniedError') {
                             var error_1 = new OpenViduError_1.OpenViduError(
                               OpenViduError_1.OpenViduErrorName.SCREEN_CAPTURE_DENIED,
                               'You must allow access to one window of your desktop'
@@ -8508,34 +7925,28 @@ the event name as the first argument.
                             logger.error(error_1);
                             return reject(error_1);
                           } else {
-                            var extensionId =
-                              _this.advancedConfiguration.screenShareChromeExtension
-                                .split('/')
-                                .pop()
-                                .trim();
-                            screenSharing.getChromeExtensionStatus(
-                              extensionId,
-                              function (status) {
-                                if (status === 'installed-disabled') {
-                                  var error_2 =
-                                    new OpenViduError_1.OpenViduError(
-                                      OpenViduError_1.OpenViduErrorName.SCREEN_EXTENSION_DISABLED,
-                                      'You must enable the screen extension'
-                                    );
-                                  logger.error(error_2);
-                                  return reject(error_2);
-                                }
-                                if (status === 'not-installed') {
-                                  var error_3 =
-                                    new OpenViduError_1.OpenViduError(
-                                      OpenViduError_1.OpenViduErrorName.SCREEN_EXTENSION_NOT_INSTALLED,
-                                      _this.advancedConfiguration.screenShareChromeExtension
-                                    );
-                                  logger.error(error_3);
-                                  return reject(error_3);
-                                }
+                            var extensionId = _this.advancedConfiguration.screenShareChromeExtension
+                              .split('/')
+                              .pop()
+                              .trim();
+                            screenSharing.getChromeExtensionStatus(extensionId, function (status) {
+                              if (status === 'installed-disabled') {
+                                var error_2 = new OpenViduError_1.OpenViduError(
+                                  OpenViduError_1.OpenViduErrorName.SCREEN_EXTENSION_DISABLED,
+                                  'You must enable the screen extension'
+                                );
+                                logger.error(error_2);
+                                return reject(error_2);
                               }
-                            );
+                              if (status === 'not-installed') {
+                                var error_3 = new OpenViduError_1.OpenViduError(
+                                  OpenViduError_1.OpenViduErrorName.SCREEN_EXTENSION_NOT_INSTALLED,
+                                  _this.advancedConfiguration.screenShareChromeExtension
+                                );
+                                logger.error(error_3);
+                                return reject(error_3);
+                              }
+                            });
                             return;
                           }
                         } else {
@@ -8549,8 +7960,7 @@ the event name as the first argument.
                         return resolve(myConstraints);
                       } else {
                         var firefoxString =
-                          platform.isFirefoxBrowser() ||
-                          platform.isFirefoxMobileBrowser()
+                          platform.isFirefoxBrowser() || platform.isFirefoxMobileBrowser()
                             ? publisherProperties.videoSource
                             : undefined;
                         screenSharingAuto.getScreenId(
@@ -8560,8 +7970,7 @@ the event name as the first argument.
                               if (error === 'not-installed') {
                                 var extensionUrl = !!_this.advancedConfiguration
                                   .screenShareChromeExtension
-                                  ? _this.advancedConfiguration
-                                      .screenShareChromeExtension
+                                  ? _this.advancedConfiguration.screenShareChromeExtension
                                   : 'https://chrome.google.com/webstore/detail/openvidu-screensharing/lfcgfepafnobdloecchnfaclibenjold';
                                 var err = new OpenViduError_1.OpenViduError(
                                   OpenViduError_1.OpenViduErrorName.SCREEN_EXTENSION_NOT_INSTALLED,
@@ -8593,8 +8002,7 @@ the event name as the first argument.
                                 return reject(err);
                               }
                             } else {
-                              myConstraints.constraints.video =
-                                screenConstraints.video;
+                              myConstraints.constraints.video = screenConstraints.video;
                               return resolve(myConstraints);
                             }
                           }
@@ -8607,10 +8015,7 @@ the event name as the first argument.
               }
             }
           };
-          OpenVidu.prototype.setVideoSource = function (
-            myConstraints,
-            videoSource
-          ) {
+          OpenVidu.prototype.setVideoSource = function (myConstraints, videoSource) {
             if (!myConstraints.constraints.video) {
               myConstraints.constraints.video = {};
             }
@@ -8634,78 +8039,68 @@ the event name as the first argument.
               this.session.emitEvent('reconnecting', []);
             }
           };
-          OpenVidu.prototype.reconnectWebsocketThroughRpcConnectMethod =
-            function (rpcSessionId) {
-              var _this = this;
-              this.sendRequest(
-                'connect',
-                { sessionId: rpcSessionId, reconnect: true },
-                function (error, response) {
-                  if (!!error) {
-                    if (_this.isMasterNodeCrashed()) {
-                      logger.warn('Master Node has crashed!');
-                    } else {
-                      logger.error(error);
-                      var notifyLostConnection_1 = function (reason, errorMsg) {
-                        logger.warn(errorMsg);
-                        _this.session.onLostConnection(reason);
-                        _this.jsonRpcClient.close(
-                          4101,
-                          'Reconnection fault: ' + errorMsg
+          OpenVidu.prototype.reconnectWebsocketThroughRpcConnectMethod = function (rpcSessionId) {
+            var _this = this;
+            this.sendRequest(
+              'connect',
+              { sessionId: rpcSessionId, reconnect: true },
+              function (error, response) {
+                if (!!error) {
+                  if (_this.isMasterNodeCrashed()) {
+                    logger.warn('Master Node has crashed!');
+                  } else {
+                    logger.error(error);
+                    var notifyLostConnection_1 = function (reason, errorMsg) {
+                      logger.warn(errorMsg);
+                      _this.session.onLostConnection(reason);
+                      _this.jsonRpcClient.close(4101, 'Reconnection fault: ' + errorMsg);
+                    };
+                    var rpcSessionStatus = function () {
+                      if (_this.life === -1) {
+                        notifyLostConnection_1(
+                          'networkDisconnect',
+                          'WS successfully reconnected but the user was already evicted due to timeout'
                         );
-                      };
-                      var rpcSessionStatus = function () {
-                        if (_this.life === -1) {
-                          notifyLostConnection_1(
-                            'networkDisconnect',
-                            'WS successfully reconnected but the user was already evicted due to timeout'
-                          );
-                        } else {
-                          _this.sendRequest(
-                            'sessionStatus',
-                            { sessionId: _this.session.sessionId },
-                            function (error, response) {
-                              if (error != null) {
-                                console.error(
-                                  'Error checking session status',
-                                  error
+                      } else {
+                        _this.sendRequest(
+                          'sessionStatus',
+                          { sessionId: _this.session.sessionId },
+                          function (error, response) {
+                            if (error != null) {
+                              console.error('Error checking session status', error);
+                            } else {
+                              if (_this.life === response.life) {
+                                notifyLostConnection_1(
+                                  'networkDisconnect',
+                                  'WS successfully reconnected but the user was already evicted due to timeout'
                                 );
                               } else {
-                                if (_this.life === response.life) {
-                                  notifyLostConnection_1(
-                                    'networkDisconnect',
-                                    'WS successfully reconnected but the user was already evicted due to timeout'
-                                  );
-                                } else {
-                                  notifyLostConnection_1(
-                                    'nodeCrashed',
-                                    'WS successfully reconnected to OpenVidu Server but your Master Node crashed'
-                                  );
-                                }
+                                notifyLostConnection_1(
+                                  'nodeCrashed',
+                                  'WS successfully reconnected to OpenVidu Server but your Master Node crashed'
+                                );
                               }
                             }
-                          );
-                        }
-                      };
-                      if (
-                        error.code === 40007 &&
-                        error.message === 'reconnection error'
-                      ) {
-                        console.error(
-                          'Invalid RPC sessionId. Client network disconnection or Master Node crash'
+                          }
                         );
-                        rpcSessionStatus();
-                      } else {
-                        rpcSessionStatus();
                       }
+                    };
+                    if (error.code === 40007 && error.message === 'reconnection error') {
+                      console.error(
+                        'Invalid RPC sessionId. Client network disconnection or Master Node crash'
+                      );
+                      rpcSessionStatus();
+                    } else {
+                      rpcSessionStatus();
                     }
-                  } else {
-                    _this.jsonRpcClient.resetPing();
-                    _this.session.onRecoveredConnection();
                   }
+                } else {
+                  _this.jsonRpcClient.resetPing();
+                  _this.session.onRecoveredConnection();
                 }
-              );
-            };
+              }
+            );
+          };
           OpenVidu.prototype.reconnectedCallback = function () {
             logger.warn('Websocket reconnected');
             if (this.isRoomAvailable()) {
@@ -8714,17 +8109,13 @@ the event name as the first argument.
                   this.session.connection.rpcSessionId
                 );
               } else {
-                logger.warn(
-                  'There was no previous connection when running reconnection callback'
-                );
+                logger.warn('There was no previous connection when running reconnection callback');
                 var sessionDisconnectEvent =
                   new SessionDisconnectedEvent_1.SessionDisconnectedEvent(
                     this.session,
                     'networkDisconnect'
                   );
-                this.session.ee.emitEvent('sessionDisconnected', [
-                  sessionDisconnectEvent,
-                ]);
+                this.session.ee.emitEvent('sessionDisconnected', [sessionDisconnectEvent]);
                 sessionDisconnectEvent.callDefaultBehavior();
               }
             } else {
@@ -8735,10 +8126,7 @@ the event name as the first argument.
             return this.masterNodeHasCrashed;
           };
           OpenVidu.prototype.isRoomAvailable = function () {
-            if (
-              this.session !== undefined &&
-              this.session instanceof Session_1.Session
-            ) {
+            if (this.session !== undefined && this.session instanceof Session_1.Session) {
               return true;
             } else {
               logger.warn('Session instance not found');
@@ -8788,26 +8176,21 @@ the event name as the first argument.
                     d.__proto__ = b;
                   }) ||
                 function (d, b) {
-                  for (var p in b)
-                    if (Object.prototype.hasOwnProperty.call(b, p)) d[p] = b[p];
+                  for (var p in b) if (Object.prototype.hasOwnProperty.call(b, p)) d[p] = b[p];
                 };
               return extendStatics(d, b);
             };
             return function (d, b) {
               if (typeof b !== 'function' && b !== null)
                 throw new TypeError(
-                  'Class extends value ' +
-                    String(b) +
-                    ' is not a constructor or null'
+                  'Class extends value ' + String(b) + ' is not a constructor or null'
                 );
               extendStatics(d, b);
               function __() {
                 this.constructor = d;
               }
               d.prototype =
-                b === null
-                  ? Object.create(b)
-                  : ((__.prototype = b.prototype), new __());
+                b === null ? Object.create(b) : ((__.prototype = b.prototype), new __());
             };
           })();
         var __awaiter =
@@ -8836,13 +8219,9 @@ the event name as the first argument.
                 }
               }
               function step(result) {
-                result.done
-                  ? resolve(result.value)
-                  : adopt(result.value).then(fulfilled, rejected);
+                result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected);
               }
-              step(
-                (generator = generator.apply(thisArg, _arguments || [])).next()
-              );
+              step((generator = generator.apply(thisArg, _arguments || [])).next());
             });
           };
         var __generator =
@@ -8910,17 +8289,13 @@ the event name as the first argument.
                       continue;
                     default:
                       if (
-                        !((t = _.trys),
-                        (t = t.length > 0 && t[t.length - 1])) &&
+                        !((t = _.trys), (t = t.length > 0 && t[t.length - 1])) &&
                         (op[0] === 6 || op[0] === 2)
                       ) {
                         _ = 0;
                         continue;
                       }
-                      if (
-                        op[0] === 3 &&
-                        (!t || (op[1] > t[0] && op[1] < t[3]))
-                      ) {
+                      if (op[0] === 3 && (!t || (op[1] > t[0] && op[1] < t[3]))) {
                         _.label = op[1];
                         break;
                       }
@@ -8969,10 +8344,11 @@ the event name as the first argument.
               _super.call(
                 this,
                 new Stream_1.Stream(
-                  !!openvidu.session
-                    ? openvidu.session
-                    : new Session_1.Session(openvidu),
-                  { publisherProperties: properties, mediaConstraints: {} }
+                  !!openvidu.session ? openvidu.session : new Session_1.Session(openvidu),
+                  {
+                    publisherProperties: properties,
+                    mediaConstraints: {},
+                  }
                 ),
                 targEl
               ) || this;
@@ -9016,10 +8392,7 @@ the event name as the first argument.
                   },
                   function (error, response) {
                     if (error) {
-                      logger.error(
-                        "Error sending 'streamPropertyChanged' event",
-                        error
-                      );
+                      logger.error("Error sending 'streamPropertyChanged' event", error);
                     } else {
                       _this.session.emitEvent('streamPropertyChanged', [
                         new StreamPropertyChangedEvent_1.StreamPropertyChangedEvent(
@@ -9048,9 +8421,7 @@ the event name as the first argument.
               }
               this.stream.audioActive = value;
               logger.info(
-                "'Publisher' has " +
-                  (value ? 'published' : 'unpublished') +
-                  ' its audio stream'
+                "'Publisher' has " + (value ? 'published' : 'unpublished') + ' its audio stream'
               );
             }
           };
@@ -9074,10 +8445,7 @@ the event name as the first argument.
                   },
                   function (error, response) {
                     if (error) {
-                      logger.error(
-                        "Error sending 'streamPropertyChanged' event",
-                        error
-                      );
+                      logger.error("Error sending 'streamPropertyChanged' event", error);
                     } else {
                       _this.session.emitEvent('streamPropertyChanged', [
                         new StreamPropertyChangedEvent_1.StreamPropertyChangedEvent(
@@ -9106,9 +8474,7 @@ the event name as the first argument.
               }
               this.stream.videoActive = value;
               logger.info(
-                "'Publisher' has " +
-                  (value ? 'published' : 'unpublished') +
-                  ' its video stream'
+                "'Publisher' has " + (value ? 'published' : 'unpublished') + ' its video stream'
               );
             }
           };
@@ -9123,24 +8489,12 @@ the event name as the first argument.
             if (type === 'streamCreated') {
               if (!!this.stream && this.stream.isLocalStreamPublished) {
                 this.emitEvent('streamCreated', [
-                  new StreamEvent_1.StreamEvent(
-                    false,
-                    this,
-                    'streamCreated',
-                    this.stream,
-                    ''
-                  ),
+                  new StreamEvent_1.StreamEvent(false, this, 'streamCreated', this.stream, ''),
                 ]);
               } else {
                 this.stream.ee.on('stream-created-by-publisher', function () {
                   _this.emitEvent('streamCreated', [
-                    new StreamEvent_1.StreamEvent(
-                      false,
-                      _this,
-                      'streamCreated',
-                      _this.stream,
-                      ''
-                    ),
+                    new StreamEvent_1.StreamEvent(false, _this, 'streamCreated', _this.stream, ''),
                   ]);
                 });
               }
@@ -9163,24 +8517,12 @@ the event name as the first argument.
             if (type === 'streamCreated') {
               if (!!this.stream && this.stream.isLocalStreamPublished) {
                 this.emitEvent('streamCreated', [
-                  new StreamEvent_1.StreamEvent(
-                    false,
-                    this,
-                    'streamCreated',
-                    this.stream,
-                    ''
-                  ),
+                  new StreamEvent_1.StreamEvent(false, this, 'streamCreated', this.stream, ''),
                 ]);
               } else {
                 this.stream.ee.once('stream-created-by-publisher', function () {
                   _this.emitEvent('streamCreated', [
-                    new StreamEvent_1.StreamEvent(
-                      false,
-                      _this,
-                      'streamCreated',
-                      _this.stream,
-                      ''
-                    ),
+                    new StreamEvent_1.StreamEvent(false, _this, 'streamCreated', _this.stream, ''),
                   ]);
                 });
               }
@@ -9225,31 +8567,21 @@ the event name as the first argument.
                         mediaStream.removeTrack(removedTrack);
                         removedTrack.stop();
                         mediaStream.addTrack(track);
-                        if (
-                          track.kind === 'video' &&
-                          _this.stream.isLocalStreamPublished
-                        ) {
+                        if (track.kind === 'video' && _this.stream.isLocalStreamPublished) {
                           _this.openvidu.sendNewVideoDimensionsIfRequired(
                             _this,
                             'trackReplaced',
                             50,
                             30
                           );
-                          _this.session.sendVideoData(
-                            _this.stream.streamManager,
-                            5,
-                            true,
-                            5
-                          );
+                          _this.session.sendVideoData(_this.stream.streamManager, 5, true, 5);
                         }
                         return resolve();
                       });
                     };
                     replaceTrackInRtcRtpSender = function () {
                       return new Promise(function (resolve, reject) {
-                        var senders = _this.stream
-                          .getRTCPeerConnection()
-                          .getSenders();
+                        var senders = _this.stream.getRTCPeerConnection().getSenders();
                         var sender;
                         if (track.kind === 'video') {
                           sender = senders.find(function (s) {
@@ -9274,9 +8606,7 @@ the event name as the first argument.
                             );
                           }
                         } else {
-                          return reject(
-                            new Error('Unknown track kind ' + track.kind)
-                          );
+                          return reject(new Error('Unknown track kind ' + track.kind));
                         }
                         sender
                           .replaceTrack(track)
@@ -9357,61 +8687,34 @@ the event name as the first argument.
                 }
                 if (!!mediaStream.getAudioTracks()[0]) {
                   var enabled =
-                    _this.stream.audioActive !== undefined &&
-                    _this.stream.audioActive !== null
+                    _this.stream.audioActive !== undefined && _this.stream.audioActive !== null
                       ? _this.stream.audioActive
-                      : !!_this.stream.outboundStreamOpts.publisherProperties
-                          .publishAudio;
+                      : !!_this.stream.outboundStreamOpts.publisherProperties.publishAudio;
                   mediaStream.getAudioTracks()[0].enabled = enabled;
                 }
                 if (!!mediaStream.getVideoTracks()[0]) {
                   var enabled =
-                    _this.stream.videoActive !== undefined &&
-                    _this.stream.videoActive !== null
+                    _this.stream.videoActive !== undefined && _this.stream.videoActive !== null
                       ? _this.stream.videoActive
-                      : !!_this.stream.outboundStreamOpts.publisherProperties
-                          .publishVideo;
+                      : !!_this.stream.outboundStreamOpts.publisherProperties.publishVideo;
                   mediaStream.getVideoTracks()[0].enabled = enabled;
                 }
-                for (
-                  var _i = 0, _c = mediaStream.getAudioTracks();
-                  _i < _c.length;
-                  _i++
-                ) {
+                for (var _i = 0, _c = mediaStream.getAudioTracks(); _i < _c.length; _i++) {
                   var track = _c[_i];
-                  if (
-                    !((_a = track.contentHint) === null || _a === void 0
-                      ? void 0
-                      : _a.length)
-                  ) {
+                  if (!((_a = track.contentHint) === null || _a === void 0 ? void 0 : _a.length)) {
                     track.contentHint = '';
-                    logger.info(
-                      "Audio track Content Hint set: '".concat(
-                        track.contentHint,
-                        "'"
-                      )
-                    );
+                    logger.info("Audio track Content Hint set: '".concat(track.contentHint, "'"));
                   }
                 }
-                for (
-                  var _d = 0, _e = mediaStream.getVideoTracks();
-                  _d < _e.length;
-                  _d++
-                ) {
+                for (var _d = 0, _e = mediaStream.getVideoTracks(); _d < _e.length; _d++) {
                   var track = _e[_d];
-                  if (
-                    !((_b = track.contentHint) === null || _b === void 0
-                      ? void 0
-                      : _b.length)
-                  ) {
+                  if (!((_b = track.contentHint) === null || _b === void 0 ? void 0 : _b.length)) {
                     switch (_this.stream.typeOfVideo) {
                       case TypeOfVideo_1.TypeOfVideo.SCREEN:
                         track.contentHint = 'detail';
                         break;
                       case TypeOfVideo_1.TypeOfVideo.CUSTOM:
-                        logger.warn(
-                          'CUSTOM type video track was provided without Content Hint!'
-                        );
+                        logger.warn('CUSTOM type video track was provided without Content Hint!');
                         track.contentHint = 'motion';
                         break;
                       case TypeOfVideo_1.TypeOfVideo.CAMERA:
@@ -9420,12 +8723,7 @@ the event name as the first argument.
                         track.contentHint = 'motion';
                         break;
                     }
-                    logger.info(
-                      "Video track Content Hint set: '".concat(
-                        track.contentHint,
-                        "'"
-                      )
-                    );
+                    logger.info("Video track Content Hint set: '".concat(track.contentHint, "'"));
                   }
                 }
                 _this.initializeVideoReference(mediaStream);
@@ -9434,54 +8732,42 @@ the event name as the first argument.
                 }
                 delete _this.firstVideoElement;
                 if (_this.stream.isSendVideo()) {
-                  _this
-                    .getVideoDimensions(mediaStream)
-                    .then(function (dimensions) {
-                      _this.stream.videoDimensions = {
-                        width: dimensions.width,
-                        height: dimensions.height,
-                      };
-                      if (_this.stream.isSendScreen()) {
-                        _this.screenShareResizeInterval = setInterval(
-                          function () {
-                            var settings = mediaStream
-                              .getVideoTracks()[0]
-                              .getSettings();
-                            var newWidth = settings.width;
-                            var newHeight = settings.height;
-                            if (
-                              _this.stream.isLocalStreamPublished &&
-                              (newWidth !==
-                                _this.stream.videoDimensions.width ||
-                                newHeight !==
-                                  _this.stream.videoDimensions.height)
-                            ) {
-                              _this.openvidu.sendVideoDimensionsChangedEvent(
-                                _this,
-                                'screenResized',
-                                _this.stream.videoDimensions.width,
-                                _this.stream.videoDimensions.height,
-                                newWidth || 0,
-                                newHeight || 0
-                              );
-                            }
-                          },
-                          650
-                        );
-                      }
-                      _this.stream.isLocalStreamReadyToPublish = true;
-                      _this.stream.ee.emitEvent('stream-ready-to-publish', []);
-                    });
+                  _this.getVideoDimensions(mediaStream).then(function (dimensions) {
+                    _this.stream.videoDimensions = {
+                      width: dimensions.width,
+                      height: dimensions.height,
+                    };
+                    if (_this.stream.isSendScreen()) {
+                      _this.screenShareResizeInterval = setInterval(function () {
+                        var settings = mediaStream.getVideoTracks()[0].getSettings();
+                        var newWidth = settings.width;
+                        var newHeight = settings.height;
+                        if (
+                          _this.stream.isLocalStreamPublished &&
+                          (newWidth !== _this.stream.videoDimensions.width ||
+                            newHeight !== _this.stream.videoDimensions.height)
+                        ) {
+                          _this.openvidu.sendVideoDimensionsChangedEvent(
+                            _this,
+                            'screenResized',
+                            _this.stream.videoDimensions.width,
+                            _this.stream.videoDimensions.height,
+                            newWidth || 0,
+                            newHeight || 0
+                          );
+                        }
+                      }, 650);
+                    }
+                    _this.stream.isLocalStreamReadyToPublish = true;
+                    _this.stream.ee.emitEvent('stream-ready-to-publish', []);
+                  });
                 } else {
                   _this.stream.isLocalStreamReadyToPublish = true;
                   _this.stream.ee.emitEvent('stream-ready-to-publish', []);
                 }
                 return resolve();
               };
-              var getMediaSuccess = function (
-                mediaStream,
-                definedAudioConstraint
-              ) {
+              var getMediaSuccess = function (mediaStream, definedAudioConstraint) {
                 _this.clearPermissionDialogTimer(startTime, timeForDialogEvent);
                 if (_this.stream.isSendScreen() && _this.stream.isSendAudio()) {
                   constraintsAux.audio = definedAudioConstraint;
@@ -9491,30 +8777,19 @@ the event name as the first argument.
                   navigator.mediaDevices
                     .getUserMedia(constraintsAux)
                     .then(function (audioOnlyStream) {
-                      _this.clearPermissionDialogTimer(
-                        startTime,
-                        timeForDialogEvent
-                      );
+                      _this.clearPermissionDialogTimer(startTime, timeForDialogEvent);
                       mediaStream.addTrack(audioOnlyStream.getAudioTracks()[0]);
                       successCallback(mediaStream);
                     })
                     .catch(function (error) {
-                      _this.clearPermissionDialogTimer(
-                        startTime,
-                        timeForDialogEvent
-                      );
+                      _this.clearPermissionDialogTimer(startTime, timeForDialogEvent);
                       mediaStream.getAudioTracks().forEach(function (track) {
                         track.stop();
                       });
                       mediaStream.getVideoTracks().forEach(function (track) {
                         track.stop();
                       });
-                      errorCallback(
-                        _this.openvidu.generateAudioDeviceError(
-                          error,
-                          constraints
-                        )
-                      );
+                      errorCallback(_this.openvidu.generateAudioDeviceError(error, constraints));
                       return;
                     });
                 } else {
@@ -9539,28 +8814,14 @@ the event name as the first argument.
                         mediaStream.getVideoTracks().forEach(function (track) {
                           track.stop();
                         });
-                        errorName =
-                          OpenViduError_1.OpenViduErrorName
-                            .INPUT_AUDIO_DEVICE_NOT_FOUND;
+                        errorName = OpenViduError_1.OpenViduErrorName.INPUT_AUDIO_DEVICE_NOT_FOUND;
                         errorMessage = error.toString();
-                        errorCallback(
-                          new OpenViduError_1.OpenViduError(
-                            errorName,
-                            errorMessage
-                          )
-                        );
+                        errorCallback(new OpenViduError_1.OpenViduError(errorName, errorMessage));
                       })
                       .catch(function (e) {
-                        errorName =
-                          OpenViduError_1.OpenViduErrorName
-                            .INPUT_VIDEO_DEVICE_NOT_FOUND;
+                        errorName = OpenViduError_1.OpenViduErrorName.INPUT_VIDEO_DEVICE_NOT_FOUND;
                         errorMessage = error.toString();
-                        errorCallback(
-                          new OpenViduError_1.OpenViduError(
-                            errorName,
-                            errorMessage
-                          )
-                        );
+                        errorCallback(new OpenViduError_1.OpenViduError(errorName, errorMessage));
                       });
                     break;
                   case 'notallowederror':
@@ -9568,9 +8829,7 @@ the event name as the first argument.
                       ? OpenViduError_1.OpenViduErrorName.SCREEN_CAPTURE_DENIED
                       : OpenViduError_1.OpenViduErrorName.DEVICE_ACCESS_DENIED;
                     errorMessage = error.toString();
-                    errorCallback(
-                      new OpenViduError_1.OpenViduError(errorName, errorMessage)
-                    );
+                    errorCallback(new OpenViduError_1.OpenViduError(errorName, errorMessage));
                     break;
                   case 'overconstrainederror':
                     navigator.mediaDevices
@@ -9584,69 +8843,48 @@ the event name as the first argument.
                         });
                         if (error.constraint.toLowerCase() === 'deviceid') {
                           errorName =
-                            OpenViduError_1.OpenViduErrorName
-                              .INPUT_AUDIO_DEVICE_NOT_FOUND;
+                            OpenViduError_1.OpenViduErrorName.INPUT_AUDIO_DEVICE_NOT_FOUND;
                           errorMessage =
                             "Audio input device with deviceId '" +
                             constraints.audio.deviceId.exact +
                             "' not found";
                         } else {
-                          errorName =
-                            OpenViduError_1.OpenViduErrorName
-                              .PUBLISHER_PROPERTIES_ERROR;
+                          errorName = OpenViduError_1.OpenViduErrorName.PUBLISHER_PROPERTIES_ERROR;
                           errorMessage =
                             "Audio input device doesn't support the value passed for constraint '" +
                             error.constraint +
                             "'";
                         }
-                        errorCallback(
-                          new OpenViduError_1.OpenViduError(
-                            errorName,
-                            errorMessage
-                          )
-                        );
+                        errorCallback(new OpenViduError_1.OpenViduError(errorName, errorMessage));
                       })
                       .catch(function (e) {
                         if (error.constraint.toLowerCase() === 'deviceid') {
                           errorName =
-                            OpenViduError_1.OpenViduErrorName
-                              .INPUT_VIDEO_DEVICE_NOT_FOUND;
+                            OpenViduError_1.OpenViduErrorName.INPUT_VIDEO_DEVICE_NOT_FOUND;
                           errorMessage =
                             "Video input device with deviceId '" +
                             constraints.video.deviceId.exact +
                             "' not found";
                         } else {
-                          errorName =
-                            OpenViduError_1.OpenViduErrorName
-                              .PUBLISHER_PROPERTIES_ERROR;
+                          errorName = OpenViduError_1.OpenViduErrorName.PUBLISHER_PROPERTIES_ERROR;
                           errorMessage =
                             "Video input device doesn't support the value passed for constraint '" +
                             error.constraint +
                             "'";
                         }
-                        errorCallback(
-                          new OpenViduError_1.OpenViduError(
-                            errorName,
-                            errorMessage
-                          )
-                        );
+                        errorCallback(new OpenViduError_1.OpenViduError(errorName, errorMessage));
                       });
                     break;
                   case 'aborterror':
                   case 'notreadableerror':
-                    errorName =
-                      OpenViduError_1.OpenViduErrorName.DEVICE_ALREADY_IN_USE;
+                    errorName = OpenViduError_1.OpenViduErrorName.DEVICE_ALREADY_IN_USE;
                     errorMessage = error.toString();
-                    errorCallback(
-                      new OpenViduError_1.OpenViduError(errorName, errorMessage)
-                    );
+                    errorCallback(new OpenViduError_1.OpenViduError(errorName, errorMessage));
                     break;
                   default:
                     errorName = OpenViduError_1.OpenViduErrorName.GENERIC_ERROR;
                     errorMessage = error.toString();
-                    errorCallback(
-                      new OpenViduError_1.OpenViduError(errorName, errorMessage)
-                    );
+                    errorCallback(new OpenViduError_1.OpenViduError(errorName, errorMessage));
                     break;
                 }
               };
@@ -9655,24 +8893,18 @@ the event name as the first argument.
                 .then(function (myConstraints) {
                   var _a, _b;
                   if (
-                    (!!myConstraints.videoTrack &&
-                      !!myConstraints.audioTrack) ||
+                    (!!myConstraints.videoTrack && !!myConstraints.audioTrack) ||
                     (!!myConstraints.audioTrack &&
-                      ((_a = myConstraints.constraints) === null ||
-                      _a === void 0
+                      ((_a = myConstraints.constraints) === null || _a === void 0
                         ? void 0
                         : _a.video) === false) ||
                     (!!myConstraints.videoTrack &&
-                      ((_b = myConstraints.constraints) === null ||
-                      _b === void 0
+                      ((_b = myConstraints.constraints) === null || _b === void 0
                         ? void 0
                         : _b.audio) === false)
                   ) {
                     successCallback(
-                      _this.openvidu.addAlreadyProvidedTracks(
-                        myConstraints,
-                        new MediaStream()
-                      )
+                      _this.openvidu.addAlreadyProvidedTracks(myConstraints, new MediaStream())
                     );
                     return;
                   }
@@ -9697,10 +8929,7 @@ the event name as the first argument.
                   ) {
                     navigator.mediaDevices['getDisplayMedia']({ video: true })
                       .then(function (mediaStream) {
-                        _this.openvidu.addAlreadyProvidedTracks(
-                          myConstraints,
-                          mediaStream
-                        );
+                        _this.openvidu.addAlreadyProvidedTracks(myConstraints, mediaStream);
                         getMediaSuccess(mediaStream, definedAudioConstraint);
                       })
                       .catch(function (error) {
@@ -9710,10 +8939,7 @@ the event name as the first argument.
                     navigator.mediaDevices
                       .getUserMedia(constraintsAux)
                       .then(function (mediaStream) {
-                        _this.openvidu.addAlreadyProvidedTracks(
-                          myConstraints,
-                          mediaStream
-                        );
+                        _this.openvidu.addAlreadyProvidedTracks(myConstraints, mediaStream);
                         getMediaSuccess(mediaStream, definedAudioConstraint);
                       })
                       .catch(function (error) {
@@ -9729,20 +8955,16 @@ the event name as the first argument.
           Publisher.prototype.getVideoDimensions = function (mediaStream) {
             var _this = this;
             return new Promise(function (resolve, reject) {
-              var requiresDomInsertion =
-                platform.isIonicIos() || platform.isIOSWithSafari();
+              var requiresDomInsertion = platform.isIonicIos() || platform.isIOSWithSafari();
               var loadedmetadataListener;
               var resolveDimensions = function () {
                 var width;
                 var height;
                 if (
-                  typeof _this.stream.getMediaStream().getVideoTracks()[0]
-                    .getSettings === 'function'
+                  typeof _this.stream.getMediaStream().getVideoTracks()[0].getSettings ===
+                  'function'
                 ) {
-                  var settings = _this.stream
-                    .getMediaStream()
-                    .getVideoTracks()[0]
-                    .getSettings();
+                  var settings = _this.stream.getMediaStream().getVideoTracks()[0].getSettings();
                   width = settings.width || _this.videoReference.videoWidth;
                   height = settings.height || _this.videoReference.videoHeight;
                 } else {
@@ -9779,10 +9001,7 @@ the event name as the first argument.
                     resolveDimensions();
                   }
                 };
-                _this.videoReference.addEventListener(
-                  'loadedmetadata',
-                  loadedmetadataListener
-                );
+                _this.videoReference.addEventListener('loadedmetadata', loadedmetadataListener);
                 if (requiresDomInsertion) {
                   document.body.appendChild(_this.videoReference);
                 }
@@ -9794,9 +9013,7 @@ the event name as the first argument.
               this.addPlayEventToFirstVideo();
             }
           };
-          Publisher.prototype.initializeVideoReference = function (
-            mediaStream
-          ) {
+          Publisher.prototype.initializeVideoReference = function (mediaStream) {
             this.videoReference = document.createElement('video');
             this.videoReference.setAttribute('muted', 'true');
             this.videoReference.style.display = 'none';
@@ -9825,10 +9042,7 @@ the event name as the first argument.
               _this.emitEvent('accessDialogOpened', []);
             }, waitTime);
           };
-          Publisher.prototype.clearPermissionDialogTimer = function (
-            startTime,
-            waitTime
-          ) {
+          Publisher.prototype.clearPermissionDialogTimer = function (startTime, waitTime) {
             clearTimeout(this.permissionDialogTimeout);
             if (Date.now() - startTime > waitTime) {
               this.emitEvent('accessDialogClosed', []);
@@ -9864,26 +9078,21 @@ the event name as the first argument.
                     d.__proto__ = b;
                   }) ||
                 function (d, b) {
-                  for (var p in b)
-                    if (Object.prototype.hasOwnProperty.call(b, p)) d[p] = b[p];
+                  for (var p in b) if (Object.prototype.hasOwnProperty.call(b, p)) d[p] = b[p];
                 };
               return extendStatics(d, b);
             };
             return function (d, b) {
               if (typeof b !== 'function' && b !== null)
                 throw new TypeError(
-                  'Class extends value ' +
-                    String(b) +
-                    ' is not a constructor or null'
+                  'Class extends value ' + String(b) + ' is not a constructor or null'
                 );
               extendStatics(d, b);
               function __() {
                 this.constructor = d;
               }
               d.prototype =
-                b === null
-                  ? Object.create(b)
-                  : ((__.prototype = b.prototype), new __());
+                b === null ? Object.create(b) : ((__.prototype = b.prototype), new __());
             };
           })();
         var __awaiter =
@@ -9912,13 +9121,9 @@ the event name as the first argument.
                 }
               }
               function step(result) {
-                result.done
-                  ? resolve(result.value)
-                  : adopt(result.value).then(fulfilled, rejected);
+                result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected);
               }
-              step(
-                (generator = generator.apply(thisArg, _arguments || [])).next()
-              );
+              step((generator = generator.apply(thisArg, _arguments || [])).next());
             });
           };
         var __generator =
@@ -9986,17 +9191,13 @@ the event name as the first argument.
                       continue;
                     default:
                       if (
-                        !((t = _.trys),
-                        (t = t.length > 0 && t[t.length - 1])) &&
+                        !((t = _.trys), (t = t.length > 0 && t[t.length - 1])) &&
                         (op[0] === 6 || op[0] === 2)
                       ) {
                         _ = 0;
                         continue;
                       }
-                      if (
-                        op[0] === 3 &&
-                        (!t || (op[1] > t[0] && op[1] < t[3]))
-                      ) {
+                      if (op[0] === 3 && (!t || (op[1] > t[0] && op[1] < t[3]))) {
                         _.label = op[1];
                         break;
                       }
@@ -10067,9 +9268,7 @@ the event name as the first argument.
                 _this.options = {
                   sessionId: _this.sessionId,
                   participantId: token,
-                  metadata: !!metadata
-                    ? _this.stringClientMetadata(metadata)
-                    : '',
+                  metadata: !!metadata ? _this.stringClientMetadata(metadata) : '',
                 };
                 _this
                   .connectAux(token)
@@ -10098,12 +9297,7 @@ the event name as the first argument.
           Session.prototype.disconnect = function () {
             this.leave(false, 'disconnect');
           };
-          Session.prototype.subscribe = function (
-            stream,
-            targetElement,
-            param3,
-            param4
-          ) {
+          Session.prototype.subscribe = function (stream, targetElement, param3, param4) {
             var properties = {};
             if (!!param3 && typeof param3 !== 'function') {
               properties = {
@@ -10114,13 +9308,9 @@ the event name as the first argument.
                       : properties.insertMode
                     : VideoInsertMode_1.VideoInsertMode.APPEND,
                 subscribeToAudio:
-                  typeof param3.subscribeToAudio !== 'undefined'
-                    ? param3.subscribeToAudio
-                    : true,
+                  typeof param3.subscribeToAudio !== 'undefined' ? param3.subscribeToAudio : true,
                 subscribeToVideo:
-                  typeof param3.subscribeToVideo !== 'undefined'
-                    ? param3.subscribeToVideo
-                    : true,
+                  typeof param3.subscribeToVideo !== 'undefined' ? param3.subscribeToVideo : true,
               };
             } else {
               properties = {
@@ -10145,9 +9335,7 @@ the event name as the first argument.
             stream
               .subscribe()
               .then(function () {
-                logger.info(
-                  'Subscribed correctly to ' + stream.connection.connectionId
-                );
+                logger.info('Subscribed correctly to ' + stream.connection.connectionId);
                 if (completionHandler !== undefined) {
                   completionHandler(undefined);
                 }
@@ -10157,11 +9345,7 @@ the event name as the first argument.
                   completionHandler(error);
                 }
               });
-            var subscriber = new Subscriber_1.Subscriber(
-              stream,
-              targetElement,
-              properties
-            );
+            var subscriber = new Subscriber_1.Subscriber(stream, targetElement, properties);
             if (!!subscriber.targetElement) {
               stream.streamManager.createVideoElement(
                 subscriber.targetElement,
@@ -10170,11 +9354,7 @@ the event name as the first argument.
             }
             return subscriber;
           };
-          Session.prototype.subscribeAsync = function (
-            stream,
-            targetElement,
-            properties
-          ) {
+          Session.prototype.subscribeAsync = function (stream, targetElement, properties) {
             var _this = this;
             return new Promise(function (resolve, reject) {
               if (!_this.sessionConnected()) {
@@ -10189,12 +9369,7 @@ the event name as the first argument.
                 }
               };
               if (!!properties) {
-                subscriber = _this.subscribe(
-                  stream,
-                  targetElement,
-                  properties,
-                  callback
-                );
+                subscriber = _this.subscribe(stream, targetElement, properties, callback);
               } else {
                 subscriber = _this.subscribe(stream, targetElement, callback);
               }
@@ -10213,14 +9388,10 @@ the event name as the first argument.
                   { sender: subscriber.stream.connection.connectionId },
                   function (error, response) {
                     if (error) {
-                      logger.error(
-                        'Error unsubscribing from ' + connectionId_1
-                      );
+                      logger.error('Error unsubscribing from ' + connectionId_1);
                       return reject(error);
                     } else {
-                      logger.info(
-                        'Unsubscribed correctly from ' + connectionId_1
-                      );
+                      logger.info('Unsubscribed correctly from ' + connectionId_1);
                       subscriber.stream.streamManager.removeAllVideos();
                       subscriber.stream.disposeWebRtcPeer();
                       subscriber.stream.disposeMediaStream();
@@ -10281,9 +9452,7 @@ the event name as the first argument.
               var stream = publisher.stream;
               if (!stream.connection) {
                 return reject(
-                  new Error(
-                    'The associated Connection object of this Publisher is null'
-                  )
+                  new Error('The associated Connection object of this Publisher is null')
                 );
               } else if (stream.connection !== _this.connection) {
                 return reject(
@@ -10293,35 +9462,28 @@ the event name as the first argument.
                   )
                 );
               } else {
-                logger.info(
-                  'Unpublishing local media (' +
-                    stream.connection.connectionId +
-                    ')'
-                );
-                _this.openvidu.sendRequest(
-                  'unpublishVideo',
-                  function (error, response) {
-                    if (error) {
-                      return reject(error);
-                    } else {
-                      logger.info('Media unpublished correctly');
-                      stream.disposeWebRtcPeer();
-                      if (stream.connection.stream == stream) {
-                        delete stream.connection.stream;
-                      }
-                      var streamEvent = new StreamEvent_1.StreamEvent(
-                        true,
-                        publisher,
-                        'streamDestroyed',
-                        publisher.stream,
-                        'unpublish'
-                      );
-                      publisher.emitEvent('streamDestroyed', [streamEvent]);
-                      streamEvent.callDefaultBehavior();
-                      return resolve();
+                logger.info('Unpublishing local media (' + stream.connection.connectionId + ')');
+                _this.openvidu.sendRequest('unpublishVideo', function (error, response) {
+                  if (error) {
+                    return reject(error);
+                  } else {
+                    logger.info('Media unpublished correctly');
+                    stream.disposeWebRtcPeer();
+                    if (stream.connection.stream == stream) {
+                      delete stream.connection.stream;
                     }
+                    var streamEvent = new StreamEvent_1.StreamEvent(
+                      true,
+                      publisher,
+                      'streamDestroyed',
+                      publisher.stream,
+                      'unpublish'
+                    );
+                    publisher.emitEvent('streamDestroyed', [streamEvent]);
+                    streamEvent.callDefaultBehavior();
+                    return resolve();
                   }
-                );
+                });
               }
             });
           };
@@ -10331,17 +9493,14 @@ the event name as the first argument.
               if (!_this.sessionConnected()) {
                 return reject(_this.notConnectedError());
               }
-              logger.info(
-                'Forcing disconnect for connection ' + connection.connectionId
-              );
+              logger.info('Forcing disconnect for connection ' + connection.connectionId);
               _this.openvidu.sendRequest(
                 'forceDisconnect',
                 { connectionId: connection.connectionId },
                 function (error, response) {
                   if (error) {
                     logger.error(
-                      'Error forcing disconnect for Connection ' +
-                        connection.connectionId,
+                      'Error forcing disconnect for Connection ' + connection.connectionId,
                       error
                     );
                     if (error.code === 401) {
@@ -10356,8 +9515,7 @@ the event name as the first argument.
                     }
                   } else {
                     logger.info(
-                      'Forcing disconnect correctly for Connection ' +
-                        connection.connectionId
+                      'Forcing disconnect correctly for Connection ' + connection.connectionId
                     );
                     return resolve();
                   }
@@ -10377,10 +9535,7 @@ the event name as the first argument.
                 { streamId: stream.streamId },
                 function (error, response) {
                   if (error) {
-                    logger.error(
-                      'Error forcing unpublish for Stream ' + stream.streamId,
-                      error
-                    );
+                    logger.error('Error forcing unpublish for Stream ' + stream.streamId, error);
                     if (error.code === 401) {
                       return reject(
                         new OpenViduError_1.OpenViduError(
@@ -10392,10 +9547,7 @@ the event name as the first argument.
                       return reject(error);
                     }
                   } else {
-                    logger.info(
-                      'Forcing unpublish correctly for Stream ' +
-                        stream.streamId
-                    );
+                    logger.info('Forcing unpublish correctly for Stream ' + stream.streamId);
                     return resolve();
                   }
                 }
@@ -10463,10 +9615,8 @@ the event name as the first argument.
                 }
               });
               if (
-                !!((_b =
-                  (_a = this.connection) === null || _a === void 0
-                    ? void 0
-                    : _a.stream) === null || _b === void 0
+                !!((_b = (_a = this.connection) === null || _a === void 0 ? void 0 : _a.stream) ===
+                  null || _b === void 0
                   ? void 0
                   : _b.hasAudio)
               ) {
@@ -10485,10 +9635,8 @@ the event name as the first argument.
                 }
               });
               if (
-                !!((_d =
-                  (_c = this.connection) === null || _c === void 0
-                    ? void 0
-                    : _c.stream) === null || _d === void 0
+                !!((_d = (_c = this.connection) === null || _c === void 0 ? void 0 : _c.stream) ===
+                  null || _d === void 0
                   ? void 0
                   : _d.hasAudio)
               ) {
@@ -10517,10 +9665,8 @@ the event name as the first argument.
                 }
               });
               if (
-                !!((_b =
-                  (_a = this.connection) === null || _a === void 0
-                    ? void 0
-                    : _a.stream) === null || _b === void 0
+                !!((_b = (_a = this.connection) === null || _a === void 0 ? void 0 : _a.stream) ===
+                  null || _b === void 0
                   ? void 0
                   : _b.hasAudio)
               ) {
@@ -10539,10 +9685,8 @@ the event name as the first argument.
                 }
               });
               if (
-                !!((_d =
-                  (_c = this.connection) === null || _c === void 0
-                    ? void 0
-                    : _c.stream) === null || _d === void 0
+                !!((_d = (_c = this.connection) === null || _c === void 0 ? void 0 : _c.stream) ===
+                  null || _d === void 0
                   ? void 0
                   : _d.hasAudio)
               ) {
@@ -10556,12 +9700,7 @@ the event name as the first argument.
             var _a, _b, _c, _d;
             _super.prototype.offAux.call(this, type, handler);
             if (type === 'publisherStartSpeaking') {
-              if (
-                !this.anySpeechEventListenerEnabled(
-                  'publisherStartSpeaking',
-                  false
-                )
-              ) {
+              if (!this.anySpeechEventListenerEnabled('publisherStartSpeaking', false)) {
                 this.remoteConnections.forEach(function (remoteConnection) {
                   var _a;
                   if (
@@ -10582,9 +9721,8 @@ the event name as the first argument.
                 });
                 if (
                   !!((_b =
-                    (_a = this.connection) === null || _a === void 0
-                      ? void 0
-                      : _a.stream) === null || _b === void 0
+                    (_a = this.connection) === null || _a === void 0 ? void 0 : _a.stream) ===
+                    null || _b === void 0
                     ? void 0
                     : _b.streamManager)
                 ) {
@@ -10601,12 +9739,7 @@ the event name as the first argument.
               }
             }
             if (type === 'publisherStopSpeaking') {
-              if (
-                !this.anySpeechEventListenerEnabled(
-                  'publisherStopSpeaking',
-                  false
-                )
-              ) {
+              if (!this.anySpeechEventListenerEnabled('publisherStopSpeaking', false)) {
                 this.remoteConnections.forEach(function (remoteConnection) {
                   var _a;
                   if (
@@ -10621,17 +9754,14 @@ the event name as the first argument.
                         remoteConnection.stream.streamManager
                       )
                     ) {
-                      remoteConnection.stream.disableHarkStoppedSpeakingEvent(
-                        false
-                      );
+                      remoteConnection.stream.disableHarkStoppedSpeakingEvent(false);
                     }
                   }
                 });
                 if (
                   !!((_d =
-                    (_c = this.connection) === null || _c === void 0
-                      ? void 0
-                      : _c.stream) === null || _d === void 0
+                    (_c = this.connection) === null || _c === void 0 ? void 0 : _c.stream) ===
+                    null || _d === void 0
                     ? void 0
                     : _d.streamManager)
                 ) {
@@ -10642,9 +9772,7 @@ the event name as the first argument.
                       this.connection.stream.streamManager
                     )
                   ) {
-                    this.connection.stream.disableHarkStoppedSpeakingEvent(
-                      false
-                    );
+                    this.connection.stream.disableHarkStoppedSpeakingEvent(false);
                   }
                 }
               }
@@ -10656,9 +9784,7 @@ the event name as the first argument.
             this.getConnection(event.id, '')
               .then(function (connection) {
                 logger.warn(
-                  'Connection ' +
-                    connection.connectionId +
-                    ' already exists in connections list'
+                  'Connection ' + connection.connectionId + ' already exists in connections list'
                 );
               })
               .catch(function (openViduError) {
@@ -10743,10 +9869,7 @@ the event name as the first argument.
             if (event.connectionId === this.connection.connectionId) {
               this.stopPublisherStream(event.reason);
             } else {
-              this.getRemoteConnection(
-                event.connectionId,
-                'onParticipantUnpublished'
-              )
+              this.getRemoteConnection(event.connectionId, 'onParticipantUnpublished')
                 .then(function (connection) {
                   var streamEvent = new StreamEvent_1.StreamEvent(
                     true,
@@ -10776,9 +9899,7 @@ the event name as the first argument.
           Session.prototype.onNewMessage = function (event) {
             var _this = this;
             logger.info('New signal: ' + JSON.stringify(event));
-            var strippedType = !!event.type
-              ? event.type.replace(/^(signal:)/, '')
-              : undefined;
+            var strippedType = !!event.type ? event.type.replace(/^(signal:)/, '') : undefined;
             if (!!event.from) {
               this.getConnection(
                 event.from,
@@ -10791,21 +9912,11 @@ the event name as the first argument.
               )
                 .then(function (connection) {
                   _this.ee.emitEvent('signal', [
-                    new SignalEvent_1.SignalEvent(
-                      _this,
-                      strippedType,
-                      event.data,
-                      connection
-                    ),
+                    new SignalEvent_1.SignalEvent(_this, strippedType, event.data, connection),
                   ]);
                   if (!!event.type && event.type !== 'signal') {
                     _this.ee.emitEvent(event.type, [
-                      new SignalEvent_1.SignalEvent(
-                        _this,
-                        strippedType,
-                        event.data,
-                        connection
-                      ),
+                      new SignalEvent_1.SignalEvent(_this, strippedType, event.data, connection),
                     ]);
                   }
                 })
@@ -10814,21 +9925,11 @@ the event name as the first argument.
                 });
             } else {
               this.ee.emitEvent('signal', [
-                new SignalEvent_1.SignalEvent(
-                  this,
-                  strippedType,
-                  event.data,
-                  undefined
-                ),
+                new SignalEvent_1.SignalEvent(this, strippedType, event.data, undefined),
               ]);
               if (!!event.type && event.type !== 'signal') {
                 this.ee.emitEvent(event.type, [
-                  new SignalEvent_1.SignalEvent(
-                    this,
-                    strippedType,
-                    event.data,
-                    undefined
-                  ),
+                  new SignalEvent_1.SignalEvent(this, strippedType, event.data, undefined),
                 ]);
               }
             }
@@ -10836,10 +9937,7 @@ the event name as the first argument.
           Session.prototype.onStreamPropertyChanged = function (event) {
             var _this = this;
             var callback = function (connection) {
-              if (
-                !!connection.stream &&
-                connection.stream.streamId === event.streamId
-              ) {
+              if (!!connection.stream && connection.stream.streamId === event.streamId) {
                 var stream = connection.stream;
                 var oldValue = void 0;
                 switch (event.property) {
@@ -10861,9 +9959,7 @@ the event name as the first argument.
                   case 'filter':
                     oldValue = stream.filter;
                     event.newValue =
-                      Object.keys(event.newValue).length > 0
-                        ? event.newValue
-                        : undefined;
+                      Object.keys(event.newValue).length > 0 ? event.newValue : undefined;
                     if (event.newValue !== undefined) {
                       stream.filter = new Filter_1.Filter(
                         event.newValue.type,
@@ -10871,8 +9967,7 @@ the event name as the first argument.
                       );
                       stream.filter.stream = stream;
                       if (event.newValue.lastExecMethod) {
-                        stream.filter.lastExecMethod =
-                          event.newValue.lastExecMethod;
+                        stream.filter.lastExecMethod = event.newValue.lastExecMethod;
                       }
                     } else {
                       delete stream.filter;
@@ -10915,10 +10010,7 @@ the event name as the first argument.
             if (event.connectionId === this.connection.connectionId) {
               callback(this.connection);
             } else {
-              this.getRemoteConnection(
-                event.connectionId,
-                'onStreamPropertyChanged'
-              )
+              this.getRemoteConnection(event.connectionId, 'onStreamPropertyChanged')
                 .then(function (connection) {
                   callback(connection);
                 })
@@ -10952,9 +10044,7 @@ the event name as the first argument.
               ),
             ]);
           };
-          Session.prototype.onNetworkQualityLevelChangedChanged = function (
-            event
-          ) {
+          Session.prototype.onNetworkQualityLevelChangedChanged = function (event) {
             var _this = this;
             if (event.connectionId === this.connection.connectionId) {
               this.ee.emitEvent('networkQualityLevelChanged', [
@@ -11036,11 +10126,7 @@ the event name as the first argument.
           };
           Session.prototype.onLostConnection = function (reason) {
             logger.warn('Lost connection in Session ' + this.sessionId);
-            if (
-              !!this.sessionId &&
-              !!this.connection &&
-              !this.connection.disposed
-            ) {
+            if (!!this.sessionId && !!this.connection && !this.connection.disposed) {
               this.leave(true, reason);
             }
           };
@@ -11064,12 +10150,7 @@ the event name as the first argument.
           };
           Session.prototype.onRecordingStarted = function (event) {
             this.ee.emitEvent('recordingStarted', [
-              new RecordingEvent_1.RecordingEvent(
-                this,
-                'recordingStarted',
-                event.id,
-                event.name
-              ),
+              new RecordingEvent_1.RecordingEvent(this, 'recordingStarted', event.id, event.name),
             ]);
           };
           Session.prototype.onRecordingStopped = function (event) {
@@ -11093,16 +10174,11 @@ the event name as the first argument.
               var _a;
               logger.info('Filter event dispatched');
               var stream = connection.stream;
-              (_a = stream.filter.handlers.get(event.eventType)) === null ||
-              _a === void 0
+              (_a = stream.filter.handlers.get(event.eventType)) === null || _a === void 0
                 ? void 0
                 : _a.call(
                     _this,
-                    new FilterEvent_1.FilterEvent(
-                      stream.filter,
-                      event.eventType,
-                      event.data
-                    )
+                    new FilterEvent_1.FilterEvent(stream.filter, event.eventType, event.data)
                   );
             });
           };
@@ -11110,19 +10186,11 @@ the event name as the first argument.
             var _this = this;
             return new Promise(function (resolve, reject) {
               _this
-                .getRemoteConnection(
-                  event.connectionId,
-                  'onForciblyReconnectSubscriber'
-                )
+                .getRemoteConnection(event.connectionId, 'onForciblyReconnectSubscriber')
                 .then(function (connection) {
-                  if (
-                    !!connection.stream &&
-                    connection.stream.streamId === event.streamId
-                  ) {
+                  if (!!connection.stream && connection.stream.streamId === event.streamId) {
                     var stream_1 = connection.stream;
-                    if (
-                      stream_1.setupReconnectionEventEmitter(resolve, reject)
-                    ) {
+                    if (stream_1.setupReconnectionEventEmitter(resolve, reject)) {
                       if (
                         stream_1.reconnectionEventEmitter[
                           'onForciblyReconnectSubscriberLastEvent'
@@ -11146,28 +10214,19 @@ the event name as the first argument.
                           ];
                           _this.onForciblyReconnectSubscriber(eventAux);
                         };
-                        stream_1.reconnectionEventEmitter.once(
-                          'success',
-                          function () {
-                            callback_1();
-                          }
-                        );
-                        stream_1.reconnectionEventEmitter.once(
-                          'error',
-                          function () {
-                            callback_1();
-                          }
-                        );
+                        stream_1.reconnectionEventEmitter.once('success', function () {
+                          callback_1();
+                        });
+                        stream_1.reconnectionEventEmitter.once('error', function () {
+                          callback_1();
+                        });
                       }
                       return;
                     }
                     stream_1
                       .completeWebRtcPeerReceive(true, true, event.sdpOffer)
                       .then(function () {
-                        return stream_1.finalResolveForSubscription(
-                          true,
-                          resolve
-                        );
+                        return stream_1.finalResolveForSubscription(true, resolve);
                       })
                       .catch(function (error) {
                         return stream_1.finalRejectForSubscription(
@@ -11202,9 +10261,7 @@ the event name as the first argument.
               !!this.connection.stream &&
               this.connection.stream.streamIceConnectionStateBroken()
             ) {
-              logger.warn(
-                'Re-establishing Publisher ' + this.connection.stream.streamId
-              );
+              logger.warn('Re-establishing Publisher ' + this.connection.stream.streamId);
               this.connection.stream.initWebRtcPeerSend(true);
               someReconnection = true;
             }
@@ -11213,18 +10270,13 @@ the event name as the first argument.
                 !!remoteConnection.stream &&
                 remoteConnection.stream.streamIceConnectionStateBroken()
               ) {
-                logger.warn(
-                  'Re-establishing Subscriber ' +
-                    remoteConnection.stream.streamId
-                );
+                logger.warn('Re-establishing Subscriber ' + remoteConnection.stream.streamId);
                 remoteConnection.stream.initWebRtcPeerReceive(true);
                 someReconnection = true;
               }
             });
             if (!someReconnection) {
-              logger.info(
-                'There were no media streams in need of a reconnection'
-              );
+              logger.info('There were no media streams in need of a reconnection');
             }
           };
           Session.prototype.emitEvent = function (type, eventArray) {
@@ -11237,36 +10289,24 @@ the event name as the first argument.
             this.stopVideoDataIntervals();
             if (!!this.connection) {
               if (!this.connection.disposed && !forced) {
-                this.openvidu.sendRequest(
-                  'leaveRoom',
-                  function (error, response) {
-                    if (error) {
-                      logger.error(
-                        'leaveRoom error: '.concat(JSON.stringify(error))
-                      );
-                    }
-                    _this.openvidu.closeWs();
+                this.openvidu.sendRequest('leaveRoom', function (error, response) {
+                  if (error) {
+                    logger.error('leaveRoom error: '.concat(JSON.stringify(error)));
                   }
-                );
+                  _this.openvidu.closeWs();
+                });
               } else {
                 this.openvidu.closeWs();
               }
               this.stopPublisherStream(reason);
               if (!this.connection.disposed) {
                 var sessionDisconnectEvent =
-                  new SessionDisconnectedEvent_1.SessionDisconnectedEvent(
-                    this,
-                    reason
-                  );
-                this.ee.emitEvent('sessionDisconnected', [
-                  sessionDisconnectEvent,
-                ]);
+                  new SessionDisconnectedEvent_1.SessionDisconnectedEvent(this, reason);
+                this.ee.emitEvent('sessionDisconnected', [sessionDisconnectEvent]);
                 sessionDisconnectEvent.callDefaultBehavior();
               }
             } else {
-              logger.warn(
-                'You were not connected to the session ' + this.sessionId
-              );
+              logger.warn('You were not connected to the session ' + this.sessionId);
             }
             logger.flush();
           };
@@ -11274,9 +10314,7 @@ the event name as the first argument.
             var joinParams = {
               token: !!token ? token : '',
               session: this.sessionId,
-              platform: !!platform.getDescription()
-                ? platform.getDescription()
-                : 'unknown',
+              platform: !!platform.getDescription() ? platform.getDescription() : 'unknown',
               sdkVersion: this.openvidu.libraryVersion,
               metadata: !!this.options.metadata ? this.options.metadata : '',
               secret: this.openvidu.getSecret(),
@@ -11322,8 +10360,7 @@ the event name as the first argument.
                     switch (_a.label) {
                       case 0:
                         pc = streamManager.stream.getRTCPeerConnection();
-                        if (!(pc.connectionState === 'connected'))
-                          return [3, 2];
+                        if (!(pc.connectionState === 'connected')) return [3, 2];
                         return [4, pc.getStats()];
                       case 1:
                         statsMap = _a.sent();
@@ -11354,10 +10391,7 @@ the event name as the first argument.
                             },
                             function (error, response) {
                               if (error) {
-                                logger.error(
-                                  "Error sending 'videoData' event",
-                                  error
-                                );
+                                logger.error("Error sending 'videoData' event", error);
                               }
                             }
                           );
@@ -11380,10 +10414,7 @@ the event name as the first argument.
                   }
                 }, intervalSeconds * 1000);
               } else {
-                this.videoDataTimeout = setTimeout(
-                  obtainAndSendVideo_1,
-                  intervalSeconds * 1000
-                );
+                this.videoDataTimeout = setTimeout(obtainAndSendVideo_1, intervalSeconds * 1000);
               }
             } else if (
               platform.isFirefoxBrowser() ||
@@ -11395,13 +10426,11 @@ the event name as the first argument.
                 'videoData',
                 {
                   height:
-                    ((_a = streamManager.stream.videoDimensions) === null ||
-                    _a === void 0
+                    ((_a = streamManager.stream.videoDimensions) === null || _a === void 0
                       ? void 0
                       : _a.height) || 0,
                   width:
-                    ((_b = streamManager.stream.videoDimensions) === null ||
-                    _b === void 0
+                    ((_b = streamManager.stream.videoDimensions) === null || _b === void 0
                       ? void 0
                       : _b.width) || 0,
                   videoActive:
@@ -11455,14 +10484,11 @@ the event name as the first argument.
             if (listenersInSession > 0) return true;
             var listenersInStreamManager = 0;
             if (!!streamManager) {
-              var handlersInStreamManager =
-                streamManager.ee.getListeners(event);
+              var handlersInStreamManager = streamManager.ee.getListeners(event);
               if (onlyOnce) {
-                handlersInStreamManager = handlersInStreamManager.filter(
-                  function (h) {
-                    return h.once;
-                  }
-                );
+                handlersInStreamManager = handlersInStreamManager.filter(function (h) {
+                  return h.once;
+                });
               }
               listenersInStreamManager = handlersInStreamManager.length;
             }
@@ -11476,82 +10502,58 @@ the event name as the first argument.
                   return reject(error);
                 } else {
                   var joinParams = _this.initializeParams(token);
-                  _this.openvidu.sendRequest(
-                    'joinRoom',
-                    joinParams,
-                    function (error, response) {
-                      if (!!error) {
-                        return reject(error);
-                      } else {
-                        _this.processJoinRoomResponse(response);
-                        OpenViduLogger_1.OpenViduLogger.configureJSNLog(
-                          _this.openvidu,
-                          token
-                        );
-                        _this.connection = new Connection_1.Connection(
+                  _this.openvidu.sendRequest('joinRoom', joinParams, function (error, response) {
+                    if (!!error) {
+                      return reject(error);
+                    } else {
+                      _this.processJoinRoomResponse(response);
+                      OpenViduLogger_1.OpenViduLogger.configureJSNLog(_this.openvidu, token);
+                      _this.connection = new Connection_1.Connection(_this, response);
+                      var events_1 = {
+                        connections: new Array(),
+                        streams: new Array(),
+                      };
+                      var existingParticipants = response.value;
+                      existingParticipants.forEach(function (remoteConnectionOptions) {
+                        var connection = new Connection_1.Connection(
                           _this,
-                          response
-                        );
-                        var events_1 = {
-                          connections: new Array(),
-                          streams: new Array(),
-                        };
-                        var existingParticipants = response.value;
-                        existingParticipants.forEach(function (
                           remoteConnectionOptions
-                        ) {
-                          var connection = new Connection_1.Connection(
-                            _this,
-                            remoteConnectionOptions
-                          );
-                          _this.remoteConnections.set(
-                            connection.connectionId,
-                            connection
-                          );
-                          events_1.connections.push(connection);
-                          if (!!connection.stream) {
-                            _this.remoteStreamsCreated.set(
-                              connection.stream.streamId,
-                              true
-                            );
-                            events_1.streams.push(connection.stream);
-                          }
-                        });
+                        );
+                        _this.remoteConnections.set(connection.connectionId, connection);
+                        events_1.connections.push(connection);
+                        if (!!connection.stream) {
+                          _this.remoteStreamsCreated.set(connection.stream.streamId, true);
+                          events_1.streams.push(connection.stream);
+                        }
+                      });
+                      _this.ee.emitEvent('connectionCreated', [
+                        new ConnectionEvent_1.ConnectionEvent(
+                          false,
+                          _this,
+                          'connectionCreated',
+                          _this.connection,
+                          ''
+                        ),
+                      ]);
+                      events_1.connections.forEach(function (connection) {
                         _this.ee.emitEvent('connectionCreated', [
                           new ConnectionEvent_1.ConnectionEvent(
                             false,
                             _this,
                             'connectionCreated',
-                            _this.connection,
+                            connection,
                             ''
                           ),
                         ]);
-                        events_1.connections.forEach(function (connection) {
-                          _this.ee.emitEvent('connectionCreated', [
-                            new ConnectionEvent_1.ConnectionEvent(
-                              false,
-                              _this,
-                              'connectionCreated',
-                              connection,
-                              ''
-                            ),
-                          ]);
-                        });
-                        events_1.streams.forEach(function (stream) {
-                          _this.ee.emitEvent('streamCreated', [
-                            new StreamEvent_1.StreamEvent(
-                              false,
-                              _this,
-                              'streamCreated',
-                              stream,
-                              ''
-                            ),
-                          ]);
-                        });
-                        return resolve();
-                      }
+                      });
+                      events_1.streams.forEach(function (stream) {
+                        _this.ee.emitEvent('streamCreated', [
+                          new StreamEvent_1.StreamEvent(false, _this, 'streamCreated', stream, ''),
+                        ]);
+                      });
+                      return resolve();
                     }
-                  );
+                  });
                 }
               });
             });
@@ -11560,9 +10562,7 @@ the event name as the first argument.
             if (!!this.connection.stream) {
               this.connection.stream.disposeWebRtcPeer();
               if (this.connection.stream.isLocalStreamPublished) {
-                this.connection.stream.ee.emitEvent('local-stream-destroyed', [
-                  reason,
-                ]);
+                this.connection.stream.ee.emitEvent('local-stream-destroyed', [reason]);
               }
             }
           };
@@ -11577,10 +10577,7 @@ the event name as the first argument.
               return metadata;
             }
           };
-          Session.prototype.getConnection = function (
-            connectionId,
-            errorMessage
-          ) {
+          Session.prototype.getConnection = function (connectionId, errorMessage) {
             var _this = this;
             return new Promise(function (resolve, reject) {
               var connection = _this.remoteConnections.get(connectionId);
@@ -11600,10 +10597,7 @@ the event name as the first argument.
               }
             });
           };
-          Session.prototype.getRemoteConnection = function (
-            connectionId,
-            operation
-          ) {
+          Session.prototype.getRemoteConnection = function (connectionId, operation) {
             var _this = this;
             return new Promise(function (resolve, reject) {
               var connection = _this.remoteConnections.get(connectionId);
@@ -11679,33 +10673,19 @@ the event name as the first argument.
           };
           Session.prototype.processJoinRoomResponse = function (opts) {
             this.sessionId = opts.session;
-            if (
-              opts.customIceServers != null &&
-              opts.customIceServers.length > 0
-            ) {
+            if (opts.customIceServers != null && opts.customIceServers.length > 0) {
               this.openvidu.iceServers = [];
-              for (
-                var _i = 0, _a = opts.customIceServers;
-                _i < _a.length;
-                _i++
-              ) {
+              for (var _i = 0, _a = opts.customIceServers; _i < _a.length; _i++) {
                 var iceServer = _a[_i];
                 var rtcIceServer = {
                   urls: [iceServer.url],
                 };
                 logger.log('STUN/TURN server IP: ' + iceServer.url);
-                if (
-                  iceServer.username != null &&
-                  iceServer.credential != null
-                ) {
+                if (iceServer.username != null && iceServer.credential != null) {
                   rtcIceServer.username = iceServer.username;
                   rtcIceServer.credential = iceServer.credential;
                   logger.log(
-                    'TURN credentials [' +
-                      iceServer.username +
-                      ':' +
-                      iceServer.credential +
-                      ']'
+                    'TURN credentials [' + iceServer.username + ':' + iceServer.credential + ']'
                   );
                 }
                 this.openvidu.iceServers.push(rtcIceServer);
@@ -11726,11 +10706,7 @@ the event name as the first argument.
               ];
               logger.log('STUN/TURN server IP: ' + opts.coturnIp);
               logger.log(
-                'TURN temp credentials [' +
-                  opts.turnUsername +
-                  ':' +
-                  opts.turnCredential +
-                  ']'
+                'TURN temp credentials [' + opts.turnUsername + ':' + opts.turnCredential + ']'
               );
             }
             this.openvidu.role = opts.role;
@@ -11748,29 +10724,21 @@ the event name as the first argument.
               this.openvidu.life = opts.life;
             }
             var minorDifference =
-              semverMinor(opts.version) -
-              semverMinor(this.openvidu.libraryVersion);
+              semverMinor(opts.version) - semverMinor(this.openvidu.libraryVersion);
             if (
-              semverMajor(opts.version) !==
-                semverMajor(this.openvidu.libraryVersion) ||
+              semverMajor(opts.version) !== semverMajor(this.openvidu.libraryVersion) ||
               !(minorDifference == 0 || minorDifference == 1)
             ) {
               logger.error(
                 'openvidu-browser ('
-                  .concat(
-                    this.openvidu.libraryVersion,
-                    ') and openvidu-server ('
-                  )
+                  .concat(this.openvidu.libraryVersion, ') and openvidu-server (')
                   .concat(opts.version, ') versions are incompatible. ') +
                   'Errors are likely to occur. openvidu-browser SDK is only compatible with the same version or the immediately following minor version of an OpenVidu deployment'
               );
             } else if (minorDifference == 1) {
               logger.warn(
                 'openvidu-browser version '
-                  .concat(
-                    this.openvidu.libraryVersion,
-                    ' does not match openvidu-server version '
-                  )
+                  .concat(this.openvidu.libraryVersion, ' does not match openvidu-server version ')
                   .concat(opts.version, '. ') +
                   'These versions are still compatible with each other, but openvidu-browser version must be updated as soon as possible to '
                     .concat(semverMajor(opts.version), '.')
@@ -11837,13 +10805,9 @@ the event name as the first argument.
                 }
               }
               function step(result) {
-                result.done
-                  ? resolve(result.value)
-                  : adopt(result.value).then(fulfilled, rejected);
+                result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected);
               }
-              step(
-                (generator = generator.apply(thisArg, _arguments || [])).next()
-              );
+              step((generator = generator.apply(thisArg, _arguments || [])).next());
             });
           };
         var __generator =
@@ -11911,17 +10875,13 @@ the event name as the first argument.
                       continue;
                     default:
                       if (
-                        !((t = _.trys),
-                        (t = t.length > 0 && t[t.length - 1])) &&
+                        !((t = _.trys), (t = t.length > 0 && t[t.length - 1])) &&
                         (op[0] === 6 || op[0] === 2)
                       ) {
                         _ = 0;
                         continue;
                       }
-                      if (
-                        op[0] === 3 &&
-                        (!t || (op[1] > t[0] && op[1] < t[3]))
-                      ) {
+                      if (op[0] === 3 && (!t || (op[1] > t[0] && op[1] < t[3]))) {
                         _.label = op[1];
                         break;
                       }
@@ -12010,8 +10970,7 @@ the event name as the first argument.
               ) {
                 if (
                   !!this.inboundStreamOpts.filter.lastExecMethod &&
-                  Object.keys(this.inboundStreamOpts.filter.lastExecMethod)
-                    .length === 0
+                  Object.keys(this.inboundStreamOpts.filter.lastExecMethod).length === 0
                 ) {
                   delete this.inboundStreamOpts.filter.lastExecMethod;
                 }
@@ -12022,18 +10981,15 @@ the event name as the first argument.
               this.hasAudio = this.isSendAudio();
               this.hasVideo = this.isSendVideo();
               if (this.hasAudio) {
-                this.audioActive =
-                  !!this.outboundStreamOpts.publisherProperties.publishAudio;
+                this.audioActive = !!this.outboundStreamOpts.publisherProperties.publishAudio;
               }
               if (this.hasVideo) {
-                this.videoActive =
-                  !!this.outboundStreamOpts.publisherProperties.publishVideo;
-                this.frameRate =
-                  this.outboundStreamOpts.publisherProperties.frameRate;
+                this.videoActive = !!this.outboundStreamOpts.publisherProperties.publishVideo;
+                this.frameRate = this.outboundStreamOpts.publisherProperties.frameRate;
                 if (
                   typeof MediaStreamTrack !== 'undefined' &&
-                  this.outboundStreamOpts.publisherProperties
-                    .videoSource instanceof MediaStreamTrack
+                  this.outboundStreamOpts.publisherProperties.videoSource instanceof
+                    MediaStreamTrack
                 ) {
                   this.typeOfVideo = TypeOfVideo_1.TypeOfVideo.CUSTOM;
                 } else {
@@ -12043,8 +10999,7 @@ the event name as the first argument.
                 }
               }
               if (!!this.outboundStreamOpts.publisherProperties.filter) {
-                this.filter =
-                  this.outboundStreamOpts.publisherProperties.filter;
+                this.filter = this.outboundStreamOpts.publisherProperties.filter;
               }
             }
             this.ee.on('mediastream-updated', function () {
@@ -12052,9 +11007,7 @@ the event name as the first argument.
               _this.streamManager.updateMediaStream(_this.mediaStream);
               logger.debug(
                 'Video srcObject [' +
-                  ((_a = _this.mediaStream) === null || _a === void 0
-                    ? void 0
-                    : _a.id) +
+                  ((_a = _this.mediaStream) === null || _a === void 0 ? void 0 : _a.id) +
                   '] updated in stream [' +
                   _this.streamId +
                   ']'
@@ -12085,10 +11038,7 @@ the event name as the first argument.
                 },
                 function (error, response) {
                   if (error) {
-                    logger.error(
-                      'Error applying filter for Stream ' + _this.streamId,
-                      error
-                    );
+                    logger.error('Error applying filter for Stream ' + _this.streamId, error);
                     if (error.code === 401) {
                       return reject(
                         new OpenViduError_1.OpenViduError(
@@ -12100,9 +11050,7 @@ the event name as the first argument.
                       return reject(error);
                     }
                   } else {
-                    logger.info(
-                      'Filter successfully applied on Stream ' + _this.streamId
-                    );
+                    logger.info('Filter successfully applied on Stream ' + _this.streamId);
                     var oldValue = _this.filter;
                     _this.filter = new Filter_1.Filter(type, options);
                     _this.filter.stream = _this;
@@ -12144,10 +11092,7 @@ the event name as the first argument.
                 { streamId: _this.streamId },
                 function (error, response) {
                   if (error) {
-                    logger.error(
-                      'Error removing filter for Stream ' + _this.streamId,
-                      error
-                    );
+                    logger.error('Error removing filter for Stream ' + _this.streamId, error);
                     if (error.code === 401) {
                       return reject(
                         new OpenViduError_1.OpenViduError(
@@ -12159,10 +11104,7 @@ the event name as the first argument.
                       return reject(error);
                     }
                   } else {
-                    logger.info(
-                      'Filter successfully removed from Stream ' +
-                        _this.streamId
-                    );
+                    logger.info('Filter successfully removed from Stream ' + _this.streamId);
                     var oldValue = _this.filter;
                     delete _this.filter;
                     _this.session.emitEvent('streamPropertyChanged', [
@@ -12209,9 +11151,7 @@ the event name as the first argument.
           Stream.prototype.subscribeToMyRemote = function (value) {
             this.isSubscribeToRemote = value;
           };
-          Stream.prototype.setOutboundStreamOptions = function (
-            outboundStreamOpts
-          ) {
+          Stream.prototype.setOutboundStreamOptions = function (outboundStreamOpts) {
             this.outboundStreamOpts = outboundStreamOpts;
           };
           Stream.prototype.subscribe = function () {
@@ -12311,30 +11251,23 @@ the event name as the first argument.
           Stream.prototype.isSendAudio = function () {
             return (
               !!this.outboundStreamOpts &&
-              this.outboundStreamOpts.publisherProperties.audioSource !==
-                null &&
+              this.outboundStreamOpts.publisherProperties.audioSource !== null &&
               this.outboundStreamOpts.publisherProperties.audioSource !== false
             );
           };
           Stream.prototype.isSendVideo = function () {
             return (
               !!this.outboundStreamOpts &&
-              this.outboundStreamOpts.publisherProperties.videoSource !==
-                null &&
+              this.outboundStreamOpts.publisherProperties.videoSource !== null &&
               this.outboundStreamOpts.publisherProperties.videoSource !== false
             );
           };
           Stream.prototype.isSendScreen = function () {
-            var screen =
-              this.outboundStreamOpts.publisherProperties.videoSource ===
-              'screen';
+            var screen = this.outboundStreamOpts.publisherProperties.videoSource === 'screen';
             if (platform.isElectron()) {
               screen =
-                typeof this.outboundStreamOpts.publisherProperties
-                  .videoSource === 'string' &&
-                this.outboundStreamOpts.publisherProperties.videoSource.startsWith(
-                  'screen:'
-                );
+                typeof this.outboundStreamOpts.publisherProperties.videoSource === 'string' &&
+                this.outboundStreamOpts.publisherProperties.videoSource.startsWith('screen:');
             }
             return !!this.outboundStreamOpts && screen;
           };
@@ -12392,9 +11325,7 @@ the event name as the first argument.
               });
             }
           };
-          Stream.prototype.disableHarkSpeakingEvent = function (
-            disabledByOnce
-          ) {
+          Stream.prototype.disableHarkSpeakingEvent = function (disabledByOnce) {
             if (!!this.speechEvent) {
               this.harkSpeakingEnabledOnce = false;
               if (disabledByOnce) {
@@ -12471,9 +11402,7 @@ the event name as the first argument.
               });
             }
           };
-          Stream.prototype.disableHarkStoppedSpeakingEvent = function (
-            disabledByOnce
-          ) {
+          Stream.prototype.disableHarkStoppedSpeakingEvent = function (disabledByOnce) {
             if (!!this.speechEvent) {
               this.harkStoppedSpeakingEnabledOnce = false;
               if (disabledByOnce) {
@@ -12541,9 +11470,7 @@ the event name as the first argument.
               this.harkVolumeChangeEnabledOnce = true;
             }
           };
-          Stream.prototype.disableHarkVolumeChangeEvent = function (
-            disabledByOnce
-          ) {
+          Stream.prototype.disableHarkVolumeChangeEvent = function (disabledByOnce) {
             if (!!this.speechEvent) {
               this.harkVolumeChangeEnabledOnce = false;
               if (disabledByOnce) {
@@ -12594,8 +11521,7 @@ the event name as the first argument.
             }
             if (
               this.isLocal() &&
-              !!this.session.openvidu.advancedConfiguration
-                .forceMediaReconnectionAfterNetworkDrop
+              !!this.session.openvidu.advancedConfiguration.forceMediaReconnectionAfterNetworkDrop
             ) {
               logger.warn(
                 'OpenVidu Browser advanced configuration option "forceMediaReconnectionAfterNetworkDrop" is enabled. Stream '
@@ -12607,38 +11533,27 @@ the event name as the first argument.
               );
               return true;
             }
-            var iceConnectionState =
-              this.getRTCPeerConnection().iceConnectionState;
-            return (
-              iceConnectionState !== 'connected' &&
-              iceConnectionState !== 'completed'
-            );
+            var iceConnectionState = this.getRTCPeerConnection().iceConnectionState;
+            return iceConnectionState !== 'connected' && iceConnectionState !== 'completed';
           };
           Stream.prototype.setHarkListenerIfNotExists = function () {
             if (!!this.mediaStream) {
               if (!this.speechEvent) {
                 var harkOptions = !!this.harkOptions
                   ? this.harkOptions
-                  : this.session.openvidu.advancedConfiguration
-                      .publisherSpeakingEventsOptions || {};
+                  : this.session.openvidu.advancedConfiguration.publisherSpeakingEventsOptions ||
+                    {};
                 harkOptions.interval =
-                  typeof harkOptions.interval === 'number'
-                    ? harkOptions.interval
-                    : 100;
+                  typeof harkOptions.interval === 'number' ? harkOptions.interval : 100;
                 harkOptions.threshold =
-                  typeof harkOptions.threshold === 'number'
-                    ? harkOptions.threshold
-                    : -50;
+                  typeof harkOptions.threshold === 'number' ? harkOptions.threshold : -50;
                 this.speechEvent = hark(this.mediaStream, harkOptions);
               }
               return true;
             }
             return false;
           };
-          Stream.prototype.setupReconnectionEventEmitter = function (
-            resolve,
-            reject
-          ) {
+          Stream.prototype.setupReconnectionEventEmitter = function (resolve, reject) {
             if (this.reconnectionEventEmitter == undefined) {
               this.reconnectionEventEmitter = new EventEmitter();
               return false;
@@ -12674,8 +11589,7 @@ the event name as the first argument.
               var finalResolve = function () {
                 var _a;
                 if (reconnect) {
-                  (_a = _this.reconnectionEventEmitter) === null ||
-                  _a === void 0
+                  (_a = _this.reconnectionEventEmitter) === null || _a === void 0
                     ? void 0
                     : _a.emitEvent('success');
                   delete _this.reconnectionEventEmitter;
@@ -12685,8 +11599,7 @@ the event name as the first argument.
               var finalReject = function (error) {
                 var _a;
                 if (reconnect) {
-                  (_a = _this.reconnectionEventEmitter) === null ||
-                  _a === void 0
+                  (_a = _this.reconnectionEventEmitter) === null || _a === void 0
                     ? void 0
                     : _a.emitEvent('error', [error]);
                   delete _this.reconnectionEventEmitter;
@@ -12694,10 +11607,7 @@ the event name as the first argument.
                 return reject(error);
               };
               var successOfferCallback = function (sdpOfferParam) {
-                logger.debug(
-                  'Sending SDP offer to publish as ' + _this.streamId,
-                  sdpOfferParam
-                );
+                logger.debug('Sending SDP offer to publish as ' + _this.streamId, sdpOfferParam);
                 var method = reconnect ? 'reconnectStream' : 'publishVideo';
                 var params;
                 if (reconnect) {
@@ -12710,8 +11620,8 @@ the event name as the first argument.
                   if (_this.isSendVideo()) {
                     typeOfVideo =
                       typeof MediaStreamTrack !== 'undefined' &&
-                      _this.outboundStreamOpts.publisherProperties
-                        .videoSource instanceof MediaStreamTrack
+                      _this.outboundStreamOpts.publisherProperties.videoSource instanceof
+                        MediaStreamTrack
                         ? TypeOfVideo_1.TypeOfVideo.CUSTOM
                         : _this.isSendScreen()
                         ? TypeOfVideo_1.TypeOfVideo.SCREEN
@@ -12730,63 +11640,50 @@ the event name as the first argument.
                     sdpOffer: sdpOfferParam,
                   };
                 }
-                _this.session.openvidu.sendRequest(
-                  method,
-                  params,
-                  function (error, response) {
-                    if (error) {
-                      if (error.code === 401) {
-                        finalReject(
-                          new OpenViduError_1.OpenViduError(
-                            OpenViduError_1.OpenViduErrorName.OPENVIDU_PERMISSION_DENIED,
-                            "You don't have permissions to publish"
-                          )
-                        );
-                      } else {
-                        finalReject(
-                          'Error on publishVideo: ' + JSON.stringify(error)
-                        );
-                      }
+                _this.session.openvidu.sendRequest(method, params, function (error, response) {
+                  if (error) {
+                    if (error.code === 401) {
+                      finalReject(
+                        new OpenViduError_1.OpenViduError(
+                          OpenViduError_1.OpenViduErrorName.OPENVIDU_PERMISSION_DENIED,
+                          "You don't have permissions to publish"
+                        )
+                      );
                     } else {
-                      _this.webRtcPeer
-                        .processRemoteAnswer(response.sdpAnswer)
-                        .then(function () {
-                          _this.streamId = response.id;
-                          _this.creationTime = response.createdAt;
-                          _this.isLocalStreamPublished = true;
-                          _this.publishedOnce = true;
-                          if (_this.displayMyRemote()) {
-                            _this.localMediaStreamWhenSubscribedToRemote =
-                              _this.mediaStream;
-                            _this.remotePeerSuccessfullyEstablished(reconnect);
-                          }
-                          if (reconnect) {
-                            _this.ee.emitEvent(
-                              'stream-reconnected-by-publisher',
-                              []
-                            );
-                          } else {
-                            _this.ee.emitEvent(
-                              'stream-created-by-publisher',
-                              []
-                            );
-                          }
-                          _this.initWebRtcStats();
-                          logger.info(
-                            "'Publisher' (" +
-                              _this.streamId +
-                              ') successfully ' +
-                              (reconnect ? 'reconnected' : 'published') +
-                              ' to session'
-                          );
-                          finalResolve();
-                        })
-                        .catch(function (error) {
-                          finalReject(error);
-                        });
+                      finalReject('Error on publishVideo: ' + JSON.stringify(error));
                     }
+                  } else {
+                    _this.webRtcPeer
+                      .processRemoteAnswer(response.sdpAnswer)
+                      .then(function () {
+                        _this.streamId = response.id;
+                        _this.creationTime = response.createdAt;
+                        _this.isLocalStreamPublished = true;
+                        _this.publishedOnce = true;
+                        if (_this.displayMyRemote()) {
+                          _this.localMediaStreamWhenSubscribedToRemote = _this.mediaStream;
+                          _this.remotePeerSuccessfullyEstablished(reconnect);
+                        }
+                        if (reconnect) {
+                          _this.ee.emitEvent('stream-reconnected-by-publisher', []);
+                        } else {
+                          _this.ee.emitEvent('stream-created-by-publisher', []);
+                        }
+                        _this.initWebRtcStats();
+                        logger.info(
+                          "'Publisher' (" +
+                            _this.streamId +
+                            ') successfully ' +
+                            (reconnect ? 'reconnected' : 'published') +
+                            ' to session'
+                        );
+                        finalResolve();
+                      })
+                      .catch(function (error) {
+                        finalReject(error);
+                      });
                   }
-                );
+                });
               };
               var config = {
                 mediaConstraints: {
@@ -12794,19 +11691,12 @@ the event name as the first argument.
                   video: _this.hasVideo,
                 },
                 simulcast:
-                  (_a =
-                    _this.outboundStreamOpts.publisherProperties
-                      .videoSimulcast) !== null && _a !== void 0
+                  (_a = _this.outboundStreamOpts.publisherProperties.videoSimulcast) !== null &&
+                  _a !== void 0
                     ? _a
                     : _this.session.openvidu.videoSimulcast,
-                onIceCandidate: _this.connection.sendIceCandidate.bind(
-                  _this.connection
-                ),
-                onIceConnectionStateException: function (
-                  exceptionName,
-                  message,
-                  data
-                ) {
+                onIceCandidate: _this.connection.sendIceCandidate.bind(_this.connection),
+                onIceConnectionStateException: function (exceptionName, message, data) {
                   _this.session.emitEvent('exception', [
                     new ExceptionEvent_1.ExceptionEvent(
                       _this.session,
@@ -12849,26 +11739,19 @@ the event name as the first argument.
                     .catch(function (error) {
                       finalReject(
                         new Error(
-                          '(publish) SDP process local offer error: ' +
-                            JSON.stringify(error)
+                          '(publish) SDP process local offer error: ' + JSON.stringify(error)
                         )
                       );
                     });
                 })
                 .catch(function (error) {
                   finalReject(
-                    new Error(
-                      '(publish) SDP create offer error: ' +
-                        JSON.stringify(error)
-                    )
+                    new Error('(publish) SDP create offer error: ' + JSON.stringify(error))
                   );
                 });
             });
           };
-          Stream.prototype.finalResolveForSubscription = function (
-            reconnect,
-            resolve
-          ) {
+          Stream.prototype.finalResolveForSubscription = function (reconnect, resolve) {
             var _a;
             logger.info(
               "'Subscriber' (" +
@@ -12886,11 +11769,7 @@ the event name as the first argument.
             }
             return resolve();
           };
-          Stream.prototype.finalRejectForSubscription = function (
-            reconnect,
-            error,
-            reject
-          ) {
+          Stream.prototype.finalRejectForSubscription = function (reconnect, error, reject) {
             var _a;
             logger.error(
               "Error for 'Subscriber' (" +
@@ -12920,40 +11799,24 @@ the event name as the first argument.
                 _this
                   .initWebRtcPeerReceiveFromServer(reconnect)
                   .then(function () {
-                    return _this.finalResolveForSubscription(
-                      reconnect,
-                      resolve
-                    );
+                    return _this.finalResolveForSubscription(reconnect, resolve);
                   })
                   .catch(function (error) {
-                    return _this.finalRejectForSubscription(
-                      reconnect,
-                      error,
-                      reject
-                    );
+                    return _this.finalRejectForSubscription(reconnect, error, reject);
                   });
               } else {
                 _this
                   .initWebRtcPeerReceiveFromClient(reconnect)
                   .then(function () {
-                    return _this.finalResolveForSubscription(
-                      reconnect,
-                      resolve
-                    );
+                    return _this.finalResolveForSubscription(reconnect, resolve);
                   })
                   .catch(function (error) {
-                    return _this.finalRejectForSubscription(
-                      reconnect,
-                      error,
-                      reject
-                    );
+                    return _this.finalRejectForSubscription(reconnect, error, reject);
                   });
               }
             });
           };
-          Stream.prototype.initWebRtcPeerReceiveFromClient = function (
-            reconnect
-          ) {
+          Stream.prototype.initWebRtcPeerReceiveFromClient = function (reconnect) {
             var _this = this;
             return new Promise(function (resolve, reject) {
               _this
@@ -12973,9 +11836,7 @@ the event name as the first argument.
                 });
             });
           };
-          Stream.prototype.initWebRtcPeerReceiveFromServer = function (
-            reconnect
-          ) {
+          Stream.prototype.initWebRtcPeerReceiveFromServer = function (reconnect) {
             var _this = this;
             return new Promise(function (resolve, reject) {
               _this.session.openvidu.sendRequest(
@@ -12984,18 +11845,11 @@ the event name as the first argument.
                 function (error, response) {
                   if (error) {
                     return reject(
-                      new Error(
-                        'Error on prepareReceiveVideoFrom: ' +
-                          JSON.stringify(error)
-                      )
+                      new Error('Error on prepareReceiveVideoFrom: ' + JSON.stringify(error))
                     );
                   } else {
                     _this
-                      .completeWebRtcPeerReceive(
-                        reconnect,
-                        false,
-                        response.sdpOffer
-                      )
+                      .completeWebRtcPeerReceive(reconnect, false, response.sdpOffer)
                       .then(function () {
                         return resolve();
                       })
@@ -13018,10 +11872,7 @@ the event name as the first argument.
               var sendSdpToServer = function (sdpString) {
                 logger.debug(
                   'Sending local SDP '
-                    .concat(
-                      !!sdpOfferByServer ? 'answer' : 'offer',
-                      ' to subscribe to '
-                    )
+                    .concat(!!sdpOfferByServer ? 'answer' : 'offer', ' to subscribe to ')
                     .concat(_this.streamId),
                   sdpString
                 );
@@ -13036,21 +11887,13 @@ the event name as the first argument.
                 if (reconnect) {
                   params['forciblyReconnect'] = forciblyReconnect;
                 }
-                _this.session.openvidu.sendRequest(
-                  method,
-                  params,
-                  function (error, response) {
-                    if (error) {
-                      return reject(
-                        new Error(
-                          'Error on ' + method + ' : ' + JSON.stringify(error)
-                        )
-                      );
-                    } else {
-                      return resolve(response);
-                    }
+                _this.session.openvidu.sendRequest(method, params, function (error, response) {
+                  if (error) {
+                    return reject(new Error('Error on ' + method + ' : ' + JSON.stringify(error)));
+                  } else {
+                    return resolve(response);
                   }
-                );
+                });
               };
               var config = {
                 mediaConstraints: {
@@ -13058,14 +11901,8 @@ the event name as the first argument.
                   video: _this.hasVideo,
                 },
                 simulcast: false,
-                onIceCandidate: _this.connection.sendIceCandidate.bind(
-                  _this.connection
-                ),
-                onIceConnectionStateException: function (
-                  exceptionName,
-                  message,
-                  data
-                ) {
+                onIceCandidate: _this.connection.sendIceCandidate.bind(_this.connection),
+                onIceConnectionStateException: function (exceptionName, message, data) {
                   _this.session.emitEvent('exception', [
                     new ExceptionEvent_1.ExceptionEvent(
                       _this.session,
@@ -13086,9 +11923,7 @@ the event name as the first argument.
                 _this.disposeWebRtcPeer();
               }
               _this.webRtcPeer = new WebRtcPeer_1.WebRtcPeerRecvonly(config);
-              _this.webRtcPeer.addIceConnectionStateChangeListener(
-                _this.streamId
-              );
+              _this.webRtcPeer.addIceConnectionStateChangeListener(_this.streamId);
               if (!!sdpOfferByServer) {
                 _this.webRtcPeer
                   .processRemoteOffer(sdpOfferByServer)
@@ -13112,18 +11947,14 @@ the event name as the first argument.
                       })
                       .catch(function (error) {
                         return reject(
-                          new Error(
-                            '(subscribe) SDP create answer error: ' +
-                              JSON.stringify(error)
-                          )
+                          new Error('(subscribe) SDP create answer error: ' + JSON.stringify(error))
                         );
                       });
                   })
                   .catch(function (error) {
                     return reject(
                       new Error(
-                        '(subscribe) SDP process remote offer error: ' +
-                          JSON.stringify(error)
+                        '(subscribe) SDP process remote offer error: ' + JSON.stringify(error)
                       )
                     );
                   });
@@ -13139,36 +11970,26 @@ the event name as the first argument.
                       .catch(function (error) {
                         return reject(
                           new Error(
-                            '(subscribe) SDP process local offer error: ' +
-                              JSON.stringify(error)
+                            '(subscribe) SDP process local offer error: ' + JSON.stringify(error)
                           )
                         );
                       });
                   })
                   .catch(function (error) {
                     return reject(
-                      new Error(
-                        '(subscribe) SDP create offer error: ' +
-                          JSON.stringify(error)
-                      )
+                      new Error('(subscribe) SDP create offer error: ' + JSON.stringify(error))
                     );
                   });
               }
             });
           };
-          Stream.prototype.remotePeerSuccessfullyEstablished = function (
-            reconnect
-          ) {
+          Stream.prototype.remotePeerSuccessfullyEstablished = function (reconnect) {
             if (reconnect && this.mediaStream != null) {
               this.disposeMediaStream();
             }
             this.mediaStream = new MediaStream();
             var receiver;
-            for (
-              var _i = 0, _a = this.webRtcPeer.pc.getReceivers();
-              _i < _a.length;
-              _i++
-            ) {
+            for (var _i = 0, _a = this.webRtcPeer.pc.getReceivers(); _i < _a.length; _i++) {
               receiver = _a[_i];
               if (!!receiver.track) {
                 this.mediaStream.addTrack(receiver.track);
@@ -13249,19 +12070,12 @@ the event name as the first argument.
               case ExceptionEvent_1.ExceptionEventName.ICE_CONNECTION_FAILED:
                 this.onIceConnectionFailed();
                 break;
-              case ExceptionEvent_1.ExceptionEventName
-                .ICE_CONNECTION_DISCONNECTED:
+              case ExceptionEvent_1.ExceptionEventName.ICE_CONNECTION_DISCONNECTED:
                 this.onIceConnectionDisconnected();
                 break;
             }
             this.session.emitEvent('exception', [
-              new ExceptionEvent_1.ExceptionEvent(
-                this.session,
-                exceptionName,
-                this,
-                message,
-                data
-              ),
+              new ExceptionEvent_1.ExceptionEvent(this.session, exceptionName, this, message, data),
             ]);
           };
           Stream.prototype.onIceConnectionFailed = function () {
@@ -13279,10 +12093,7 @@ the event name as the first argument.
             logger.log(
               '[ICE_CONNECTION_DISCONNECTED] Handling ICE_CONNECTION_DISCONNECTED event. Waiting for ICE to be restored and reconnect stream '
                 .concat(this.streamId, ' (')
-                .concat(
-                  this.isLocal() ? 'Publisher' : 'Subscriber',
-                  ') if not possible'
-                )
+                .concat(this.isLocal() ? 'Publisher' : 'Subscriber', ') if not possible')
             );
             var timeout =
               this.session.openvidu.advancedConfiguration
@@ -13326,123 +12137,108 @@ the event name as the first argument.
                       .concat(state)
                   );
                   _this.reconnectStreamAndLogResultingIceConnectionState(
-                    ExceptionEvent_1.ExceptionEventName
-                      .ICE_CONNECTION_DISCONNECTED
+                    ExceptionEvent_1.ExceptionEventName.ICE_CONNECTION_DISCONNECTED
                   );
                   break;
               }
             });
           };
-          Stream.prototype.reconnectStreamAndLogResultingIceConnectionState =
-            function (event) {
-              return __awaiter(this, void 0, void 0, function () {
-                var finalIceStateAfterReconnection, error_1;
-                return __generator(this, function (_a) {
-                  switch (_a.label) {
-                    case 0:
-                      _a.trys.push([0, 2, , 3]);
-                      return [
-                        4,
-                        this.reconnectStreamAndReturnIceConnectionState(event),
-                      ];
-                    case 1:
-                      finalIceStateAfterReconnection = _a.sent();
-                      switch (finalIceStateAfterReconnection) {
-                        case 'connected':
-                        case 'completed':
-                          logger.log(
-                            '['
-                              .concat(event, '] Stream ')
-                              .concat(this.streamId, ' (')
-                              .concat(
-                                this.isLocal() ? 'Publisher' : 'Subscriber',
-                                ') successfully reconnected after '
-                              )
-                              .concat(event, '. Current ICE connection state: ')
-                              .concat(finalIceStateAfterReconnection)
-                          );
-                          break;
-                        default:
-                          logger.error(
-                            '['
-                              .concat(event, '] Stream ')
-                              .concat(this.streamId, ' (')
-                              .concat(
-                                this.isLocal() ? 'Publisher' : 'Subscriber',
-                                ') failed to reconnect after '
-                              )
-                              .concat(event, '. Current ICE connection state: ')
-                              .concat(finalIceStateAfterReconnection)
-                          );
-                          break;
-                      }
-                      return [3, 3];
-                    case 2:
-                      error_1 = _a.sent();
-                      logger.error(
-                        '['
-                          .concat(event, '] Error reconnecting stream ')
-                          .concat(this.streamId, ' (')
-                          .concat(
-                            this.isLocal() ? 'Publisher' : 'Subscriber',
-                            ') after '
-                          )
-                          .concat(event, ': ')
-                          .concat(error_1)
-                      );
-                      return [3, 3];
-                    case 3:
-                      return [2];
-                  }
-                });
+          Stream.prototype.reconnectStreamAndLogResultingIceConnectionState = function (event) {
+            return __awaiter(this, void 0, void 0, function () {
+              var finalIceStateAfterReconnection, error_1;
+              return __generator(this, function (_a) {
+                switch (_a.label) {
+                  case 0:
+                    _a.trys.push([0, 2, , 3]);
+                    return [4, this.reconnectStreamAndReturnIceConnectionState(event)];
+                  case 1:
+                    finalIceStateAfterReconnection = _a.sent();
+                    switch (finalIceStateAfterReconnection) {
+                      case 'connected':
+                      case 'completed':
+                        logger.log(
+                          '['
+                            .concat(event, '] Stream ')
+                            .concat(this.streamId, ' (')
+                            .concat(
+                              this.isLocal() ? 'Publisher' : 'Subscriber',
+                              ') successfully reconnected after '
+                            )
+                            .concat(event, '. Current ICE connection state: ')
+                            .concat(finalIceStateAfterReconnection)
+                        );
+                        break;
+                      default:
+                        logger.error(
+                          '['
+                            .concat(event, '] Stream ')
+                            .concat(this.streamId, ' (')
+                            .concat(
+                              this.isLocal() ? 'Publisher' : 'Subscriber',
+                              ') failed to reconnect after '
+                            )
+                            .concat(event, '. Current ICE connection state: ')
+                            .concat(finalIceStateAfterReconnection)
+                        );
+                        break;
+                    }
+                    return [3, 3];
+                  case 2:
+                    error_1 = _a.sent();
+                    logger.error(
+                      '['
+                        .concat(event, '] Error reconnecting stream ')
+                        .concat(this.streamId, ' (')
+                        .concat(this.isLocal() ? 'Publisher' : 'Subscriber', ') after ')
+                        .concat(event, ': ')
+                        .concat(error_1)
+                    );
+                    return [3, 3];
+                  case 3:
+                    return [2];
+                }
               });
-            };
-          Stream.prototype.reconnectStreamAndReturnIceConnectionState =
-            function (event) {
-              return __awaiter(this, void 0, void 0, function () {
-                var timeout, error_2;
-                return __generator(this, function (_a) {
-                  switch (_a.label) {
-                    case 0:
-                      logger.log(
-                        '['
-                          .concat(event, '] Reconnecting stream ')
-                          .concat(this.streamId, ' (')
-                          .concat(
-                            this.isLocal() ? 'Publisher' : 'Subscriber',
-                            ') after event '
-                          )
-                          .concat(event)
-                      );
-                      _a.label = 1;
-                    case 1:
-                      _a.trys.push([1, 3, , 4]);
-                      return [4, this.reconnectStream(event)];
-                    case 2:
-                      _a.sent();
-                      timeout =
-                        this.session.openvidu.advancedConfiguration
-                          .iceConnectionDisconnectedExceptionTimeout || 4000;
-                      return [2, this.awaitWebRtcPeerConnectionState(timeout)];
-                    case 3:
-                      error_2 = _a.sent();
-                      logger.warn(
-                        '['
-                          .concat(event, '] Error reconnecting stream ')
-                          .concat(this.streamId, ' (')
-                          .concat(
-                            this.isLocal() ? 'Publisher' : 'Subscriber',
-                            '). Reason: '
-                          )
-                          .concat(error_2)
-                      );
-                      return [2, this.awaitWebRtcPeerConnectionState(1)];
-                    case 4:
-                      return [2];
-                  }
-                });
+            });
+          };
+          Stream.prototype.reconnectStreamAndReturnIceConnectionState = function (event) {
+            return __awaiter(this, void 0, void 0, function () {
+              var timeout, error_2;
+              return __generator(this, function (_a) {
+                switch (_a.label) {
+                  case 0:
+                    logger.log(
+                      '['
+                        .concat(event, '] Reconnecting stream ')
+                        .concat(this.streamId, ' (')
+                        .concat(this.isLocal() ? 'Publisher' : 'Subscriber', ') after event ')
+                        .concat(event)
+                    );
+                    _a.label = 1;
+                  case 1:
+                    _a.trys.push([1, 3, , 4]);
+                    return [4, this.reconnectStream(event)];
+                  case 2:
+                    _a.sent();
+                    timeout =
+                      this.session.openvidu.advancedConfiguration
+                        .iceConnectionDisconnectedExceptionTimeout || 4000;
+                    return [2, this.awaitWebRtcPeerConnectionState(timeout)];
+                  case 3:
+                    error_2 = _a.sent();
+                    logger.warn(
+                      '['
+                        .concat(event, '] Error reconnecting stream ')
+                        .concat(this.streamId, ' (')
+                        .concat(this.isLocal() ? 'Publisher' : 'Subscriber', '). Reason: ')
+                        .concat(error_2)
+                    );
+                    return [2, this.awaitWebRtcPeerConnectionState(1)];
+                  case 4:
+                    return [2];
+                }
               });
-            };
+            });
+          };
           Stream.prototype.reconnectStream = function (event) {
             return __awaiter(this, void 0, void 0, function () {
               var isWsConnected, errorMsg;
@@ -13483,45 +12279,30 @@ the event name as the first argument.
               });
             });
           };
-          Stream.prototype.isWebsocketConnected = function (
-            event,
-            msResponseTimeout
-          ) {
+          Stream.prototype.isWebsocketConnected = function (event, msResponseTimeout) {
             var _this = this;
             return new Promise(function (resolve, reject) {
               var wsReadyState = _this.session.openvidu.getWsReadyState();
               if (wsReadyState === 1) {
                 var responseTimeout_1 = setTimeout(function () {
                   console.warn(
-                    '['
-                      .concat(event, '] Websocket timeout of ')
-                      .concat(msResponseTimeout, 'ms')
+                    '['.concat(event, '] Websocket timeout of ').concat(msResponseTimeout, 'ms')
                   );
                   return resolve(false);
                 }, msResponseTimeout);
-                _this.session.openvidu.sendRequest(
-                  'echo',
-                  {},
-                  function (error, response) {
-                    clearTimeout(responseTimeout_1);
-                    if (!!error) {
-                      console.warn(
-                        '['
-                          .concat(event, "] Websocket 'echo' returned error: ")
-                          .concat(error)
-                      );
-                      return resolve(false);
-                    } else {
-                      return resolve(true);
-                    }
+                _this.session.openvidu.sendRequest('echo', {}, function (error, response) {
+                  clearTimeout(responseTimeout_1);
+                  if (!!error) {
+                    console.warn(
+                      '['.concat(event, "] Websocket 'echo' returned error: ").concat(error)
+                    );
+                    return resolve(false);
+                  } else {
+                    return resolve(true);
                   }
-                );
+                });
               } else {
-                console.warn(
-                  '['
-                    .concat(event, '] Websocket readyState is ')
-                    .concat(wsReadyState)
-                );
+                console.warn('['.concat(event, '] Websocket readyState is ').concat(wsReadyState));
                 return resolve(false);
               }
             });
@@ -13574,8 +12355,7 @@ the event name as the first argument.
             var returnValue;
             if (!!this.session.openvidu.advancedConfiguration.iceServers) {
               returnValue =
-                this.session.openvidu.advancedConfiguration.iceServers ===
-                'freeice'
+                this.session.openvidu.advancedConfiguration.iceServers === 'freeice'
                   ? undefined
                   : this.session.openvidu.advancedConfiguration.iceServers;
             } else if (this.session.openvidu.iceServers) {
@@ -13612,13 +12392,10 @@ the event name as the first argument.
                               finalReport['mediaType'] = report.mediaType;
                             } else {
                               finalReport['mediaType'] =
-                                report.id.indexOf('VideoStream') !== -1
-                                  ? 'video'
-                                  : 'audio';
+                                report.id.indexOf('VideoStream') !== -1 ? 'video' : 'audio';
                             }
                             if (finalReport['mediaType'] === 'video') {
-                              finalReport['framesEncoded'] =
-                                report.framesEncoded;
+                              finalReport['framesEncoded'] = report.framesEncoded;
                             }
                             finalReport['packetsSent'] = report.packetsSent;
                             finalReport['bytesSent'] = report.bytesSent;
@@ -13631,8 +12408,7 @@ the event name as the first argument.
                               report.availableOutgoingBitrate;
                             finalReport['rtt'] = report.currentRoundTripTime;
                             finalReport['averageRtt'] =
-                              report.totalRoundTripTime /
-                              report.responsesReceived;
+                              report.totalRoundTripTime / report.responsesReceived;
                           }
                           if (
                             report.type === 'remote-inbound-rtp' ||
@@ -13668,16 +12444,12 @@ the event name as the first argument.
                               finalReport['mediaType'] = report.mediaType;
                             } else {
                               finalReport['mediaType'] =
-                                report.id.indexOf('VideoStream') !== -1
-                                  ? 'video'
-                                  : 'audio';
+                                report.id.indexOf('VideoStream') !== -1 ? 'video' : 'audio';
                             }
                             if (finalReport['mediaType'] === 'video') {
-                              finalReport['framesDecoded'] =
-                                report.framesDecoded;
+                              finalReport['framesDecoded'] = report.framesDecoded;
                             }
-                            finalReport['packetsReceived'] =
-                              report.packetsReceived;
+                            finalReport['packetsReceived'] = report.packetsReceived;
                             finalReport['packetsLost'] = report.packetsLost;
                             finalReport['jitter'] = report.jitter;
                             finalReport['bytesReceived'] = report.bytesReceived;
@@ -13690,8 +12462,7 @@ the event name as the first argument.
                               report.availableIncomingBitrate;
                             finalReport['rtt'] = report.currentRoundTripTime;
                             finalReport['averageRtt'] =
-                              report.totalRoundTripTime /
-                              report.responsesReceived;
+                              report.totalRoundTripTime / report.responsesReceived;
                           }
                           if (
                             report.type === 'remote-inbound-rtp' ||
@@ -13710,9 +12481,7 @@ the event name as the first argument.
             return (
               (report.type === 'inbound-rtp' && !this.isLocal()) ||
               (report.type === 'outbound-rtp' && this.isLocal()) ||
-              (report.type === 'candidate-pair' &&
-                report.nominated &&
-                report.bytesSent > 0)
+              (report.type === 'candidate-pair' && report.nominated && report.bytesSent > 0)
             );
           };
           return Stream;
@@ -13750,26 +12519,21 @@ the event name as the first argument.
                     d.__proto__ = b;
                   }) ||
                 function (d, b) {
-                  for (var p in b)
-                    if (Object.prototype.hasOwnProperty.call(b, p)) d[p] = b[p];
+                  for (var p in b) if (Object.prototype.hasOwnProperty.call(b, p)) d[p] = b[p];
                 };
               return extendStatics(d, b);
             };
             return function (d, b) {
               if (typeof b !== 'function' && b !== null)
                 throw new TypeError(
-                  'Class extends value ' +
-                    String(b) +
-                    ' is not a constructor or null'
+                  'Class extends value ' + String(b) + ' is not a constructor or null'
                 );
               extendStatics(d, b);
               function __() {
                 this.constructor = d;
               }
               d.prototype =
-                b === null
-                  ? Object.create(b)
-                  : ((__.prototype = b.prototype), new __());
+                b === null ? Object.create(b) : ((__.prototype = b.prototype), new __());
             };
           })();
         Object.defineProperty(exports, '__esModule', { value: true });
@@ -13815,10 +12579,7 @@ the event name as the first argument.
                       platform.isOperaMobileBrowser() ||
                       platform.isFirefoxMobileBrowser()))
                 ) {
-                  _this.firstVideoElement.video.setAttribute(
-                    'playsinline',
-                    'true'
-                  );
+                  _this.firstVideoElement.video.setAttribute('playsinline', 'true');
                 }
                 _this.targetElement = targEl;
                 _this.element = targEl;
@@ -13827,11 +12588,7 @@ the event name as the first argument.
             _this.canPlayListener = function () {
               _this.deactivateStreamPlayingEventExceptionTimeout();
               _this.ee.emitEvent('streamPlaying', [
-                new StreamManagerEvent_1.StreamManagerEvent(
-                  _this,
-                  'streamPlaying',
-                  undefined
-                ),
+                new StreamManagerEvent_1.StreamManagerEvent(_this, 'streamPlaying', undefined),
               ]);
             };
             return _this;
@@ -13869,11 +12626,7 @@ the event name as the first argument.
                 this.videos[0].video.readyState === 4
               ) {
                 this.ee.emitEvent('streamPlaying', [
-                  new StreamManagerEvent_1.StreamManagerEvent(
-                    this,
-                    'streamPlaying',
-                    undefined
-                  ),
+                  new StreamManagerEvent_1.StreamManagerEvent(this, 'streamPlaying', undefined),
                 ]);
               }
             }
@@ -13922,11 +12675,7 @@ the event name as the first argument.
                 this.videos[0].video.readyState === 4
               ) {
                 this.ee.emitEvent('streamPlaying', [
-                  new StreamManagerEvent_1.StreamManagerEvent(
-                    this,
-                    'streamPlaying',
-                    undefined
-                  ),
+                  new StreamManagerEvent_1.StreamManagerEvent(this, 'streamPlaying', undefined),
                 ]);
               }
             }
@@ -13962,8 +12711,7 @@ the event name as the first argument.
               }
             }
             if (type === 'streamAudioVolumeChange') {
-              var remainingVolumeEventListeners =
-                this.ee.getListeners(type).length;
+              var remainingVolumeEventListeners = this.ee.getListeners(type).length;
               if (remainingVolumeEventListeners === 0) {
                 this.stream.disableHarkVolumeChangeEvent(false);
               }
@@ -13984,20 +12732,14 @@ the event name as the first argument.
               }
             }
             var returnNumber = 1;
-            for (
-              var _b = 0, _c = this.stream.session.streamManagers;
-              _b < _c.length;
-              _b++
-            ) {
+            for (var _b = 0, _c = this.stream.session.streamManagers; _b < _c.length; _b++) {
               var streamManager = _c[_b];
               if (streamManager.disassociateVideo(video)) {
                 returnNumber = -1;
                 break;
               }
             }
-            this.stream.session.streamManagers.forEach(function (
-              streamManager
-            ) {
+            this.stream.session.streamManagers.forEach(function (streamManager) {
               streamManager.disassociateVideo(video);
             });
             this.pushNewStreamManagerVideo({
@@ -14008,10 +12750,7 @@ the event name as the first argument.
             logger.info('New video element associated to ', this);
             return returnNumber;
           };
-          StreamManager.prototype.createVideoElement = function (
-            targetElement,
-            insertMode
-          ) {
+          StreamManager.prototype.createVideoElement = function (targetElement, insertMode) {
             var targEl;
             if (typeof targetElement === 'string') {
               targEl = document.getElementById(targetElement);
@@ -14031,9 +12770,7 @@ the event name as the first argument.
             }
             var video = this.createVideo();
             this.initializeVideoProperties(video);
-            var insMode = !!insertMode
-              ? insertMode
-              : VideoInsertMode_1.VideoInsertMode.APPEND;
+            var insMode = !!insertMode ? insertMode : VideoInsertMode_1.VideoInsertMode.APPEND;
             switch (insMode) {
               case VideoInsertMode_1.VideoInsertMode.AFTER:
                 targEl.parentNode.insertBefore(video, targEl.nextSibling);
@@ -14064,42 +12801,39 @@ the event name as the first argument.
             };
             this.pushNewStreamManagerVideo(v);
             this.ee.emitEvent('videoElementCreated', [
-              new VideoElementEvent_1.VideoElementEvent(
-                v.video,
-                this,
-                'videoElementCreated'
-              ),
+              new VideoElementEvent_1.VideoElementEvent(v.video, this, 'videoElementCreated'),
             ]);
             this.lazyLaunchVideoElementCreatedEvent = !!this.firstVideoElement;
             return video;
           };
-          StreamManager.prototype.updatePublisherSpeakingEventsOptions =
-            function (publisherSpeakingEventsOptions) {
-              var currentHarkOptions = !!this.stream.harkOptions
-                ? this.stream.harkOptions
-                : this.stream.session.openvidu.advancedConfiguration
-                    .publisherSpeakingEventsOptions || {};
-              var newInterval =
-                typeof publisherSpeakingEventsOptions.interval === 'number'
-                  ? publisherSpeakingEventsOptions.interval
-                  : typeof currentHarkOptions.interval === 'number'
-                  ? currentHarkOptions.interval
-                  : 100;
-              var newThreshold =
-                typeof publisherSpeakingEventsOptions.threshold === 'number'
-                  ? publisherSpeakingEventsOptions.threshold
-                  : typeof currentHarkOptions.threshold === 'number'
-                  ? currentHarkOptions.threshold
-                  : -50;
-              this.stream.harkOptions = {
-                interval: newInterval,
-                threshold: newThreshold,
-              };
-              if (!!this.stream.speechEvent) {
-                this.stream.speechEvent.setInterval(newInterval);
-                this.stream.speechEvent.setThreshold(newThreshold);
-              }
+          StreamManager.prototype.updatePublisherSpeakingEventsOptions = function (
+            publisherSpeakingEventsOptions
+          ) {
+            var currentHarkOptions = !!this.stream.harkOptions
+              ? this.stream.harkOptions
+              : this.stream.session.openvidu.advancedConfiguration.publisherSpeakingEventsOptions ||
+                {};
+            var newInterval =
+              typeof publisherSpeakingEventsOptions.interval === 'number'
+                ? publisherSpeakingEventsOptions.interval
+                : typeof currentHarkOptions.interval === 'number'
+                ? currentHarkOptions.interval
+                : 100;
+            var newThreshold =
+              typeof publisherSpeakingEventsOptions.threshold === 'number'
+                ? publisherSpeakingEventsOptions.threshold
+                : typeof currentHarkOptions.threshold === 'number'
+                ? currentHarkOptions.threshold
+                : -50;
+            this.stream.harkOptions = {
+              interval: newInterval,
+              threshold: newThreshold,
             };
+            if (!!this.stream.speechEvent) {
+              this.stream.speechEvent.setInterval(newInterval);
+              this.stream.speechEvent.setThreshold(newThreshold);
+            }
+          };
           StreamManager.prototype.initializeVideoProperties = function (video) {
             if (!(!this.remote && this.stream.displayMyRemote())) {
               if (video.srcObject !== this.stream.getMediaStream()) {
@@ -14119,10 +12853,7 @@ the event name as the first argument.
               video.setAttribute('playsinline', 'true');
             }
             if (!video.id) {
-              video.id =
-                (this.remote ? 'remote-' : 'local-') +
-                'video-' +
-                this.stream.streamId;
+              video.id = (this.remote ? 'remote-' : 'local-') + 'video-' + this.stream.streamId;
               if (!this.id && !!this.targetElement) {
                 this.id = video.id;
               }
@@ -14144,30 +12875,18 @@ the event name as the first argument.
           };
           StreamManager.prototype.removeAllVideos = function () {
             var _this = this;
-            for (
-              var i = this.stream.session.streamManagers.length - 1;
-              i >= 0;
-              --i
-            ) {
+            for (var i = this.stream.session.streamManagers.length - 1; i >= 0; --i) {
               if (this.stream.session.streamManagers[i] === this) {
                 this.stream.session.streamManagers.splice(i, 1);
               }
             }
             this.videos.forEach(function (streamManagerVideo) {
-              if (
-                !!streamManagerVideo.video &&
-                !!streamManagerVideo.video.removeEventListener
-              ) {
-                streamManagerVideo.video.removeEventListener(
-                  'canplay',
-                  _this.canPlayListener
-                );
+              if (!!streamManagerVideo.video && !!streamManagerVideo.video.removeEventListener) {
+                streamManagerVideo.video.removeEventListener('canplay', _this.canPlayListener);
               }
               streamManagerVideo.canplayListenerAdded = false;
               if (!!streamManagerVideo.targetElement) {
-                streamManagerVideo.video.parentNode.removeChild(
-                  streamManagerVideo.video
-                );
+                streamManagerVideo.video.parentNode.removeChild(streamManagerVideo.video);
                 _this.ee.emitEvent('videoElementDestroyed', [
                   new VideoElementEvent_1.VideoElementEvent(
                     streamManagerVideo.video,
@@ -14186,10 +12905,7 @@ the event name as the first argument.
             var disassociated = false;
             for (var i = 0; i < this.videos.length; i++) {
               if (this.videos[i].video === video) {
-                this.videos[i].video.removeEventListener(
-                  'canplay',
-                  this.canPlayListener
-                );
+                this.videos[i].video.removeEventListener('canplay', this.canPlayListener);
                 this.videos.splice(i, 1);
                 disassociated = true;
                 logger.info('Video element disassociated from ', this);
@@ -14205,10 +12921,7 @@ the event name as the first argument.
               !this.videos[0].canplayListenerAdded
             ) {
               this.activateStreamPlayingEventExceptionTimeout();
-              this.videos[0].video.addEventListener(
-                'canplay',
-                this.canPlayListener
-              );
+              this.videos[0].video.addEventListener('canplay', this.canPlayListener);
               this.videos[0].canplayListenerAdded = true;
             }
           };
@@ -14229,15 +12942,11 @@ the event name as the first argument.
           StreamManager.prototype.createVideo = function () {
             return document.createElement('video');
           };
-          StreamManager.prototype.removeSrcObject = function (
-            streamManagerVideo
-          ) {
+          StreamManager.prototype.removeSrcObject = function (streamManagerVideo) {
             streamManagerVideo.video.srcObject = null;
             this.deactivateStreamPlayingEventExceptionTimeout();
           };
-          StreamManager.prototype.pushNewStreamManagerVideo = function (
-            streamManagerVideo
-          ) {
+          StreamManager.prototype.pushNewStreamManagerVideo = function (streamManagerVideo) {
             this.videos.push(streamManagerVideo);
             this.addPlayEventToFirstVideo();
             if (this.stream.session.streamManagers.indexOf(this) === -1) {
@@ -14254,44 +12963,42 @@ the event name as the first argument.
             video.style.transform = 'unset';
             video.style.webkitTransform = 'unset';
           };
-          StreamManager.prototype.activateStreamPlayingEventExceptionTimeout =
-            function () {
-              var _this = this;
-              if (!this.remote) {
-                return;
-              }
-              if (this.streamPlayingEventExceptionTimeout != null) {
-                return;
-              }
-              var msTimeout =
-                this.stream.session.openvidu.advancedConfiguration
-                  .noStreamPlayingEventExceptionTimeout || 4000;
-              this.streamPlayingEventExceptionTimeout = setTimeout(function () {
-                var msg =
-                  'StreamManager of Stream ' +
-                  _this.stream.streamId +
-                  ' (' +
-                  (_this.remote ? 'Subscriber' : 'Publisher') +
-                  ') did not trigger "streamPlaying" event in ' +
-                  msTimeout +
-                  ' ms';
-                logger.warn(msg);
-                _this.stream.session.emitEvent('exception', [
-                  new ExceptionEvent_1.ExceptionEvent(
-                    _this.stream.session,
-                    ExceptionEvent_1.ExceptionEventName.NO_STREAM_PLAYING_EVENT,
-                    _this,
-                    msg
-                  ),
-                ]);
-                delete _this.streamPlayingEventExceptionTimeout;
-              }, msTimeout);
-            };
-          StreamManager.prototype.deactivateStreamPlayingEventExceptionTimeout =
-            function () {
-              clearTimeout(this.streamPlayingEventExceptionTimeout);
-              delete this.streamPlayingEventExceptionTimeout;
-            };
+          StreamManager.prototype.activateStreamPlayingEventExceptionTimeout = function () {
+            var _this = this;
+            if (!this.remote) {
+              return;
+            }
+            if (this.streamPlayingEventExceptionTimeout != null) {
+              return;
+            }
+            var msTimeout =
+              this.stream.session.openvidu.advancedConfiguration
+                .noStreamPlayingEventExceptionTimeout || 4000;
+            this.streamPlayingEventExceptionTimeout = setTimeout(function () {
+              var msg =
+                'StreamManager of Stream ' +
+                _this.stream.streamId +
+                ' (' +
+                (_this.remote ? 'Subscriber' : 'Publisher') +
+                ') did not trigger "streamPlaying" event in ' +
+                msTimeout +
+                ' ms';
+              logger.warn(msg);
+              _this.stream.session.emitEvent('exception', [
+                new ExceptionEvent_1.ExceptionEvent(
+                  _this.stream.session,
+                  ExceptionEvent_1.ExceptionEventName.NO_STREAM_PLAYING_EVENT,
+                  _this,
+                  msg
+                ),
+              ]);
+              delete _this.streamPlayingEventExceptionTimeout;
+            }, msTimeout);
+          };
+          StreamManager.prototype.deactivateStreamPlayingEventExceptionTimeout = function () {
+            clearTimeout(this.streamPlayingEventExceptionTimeout);
+            delete this.streamPlayingEventExceptionTimeout;
+          };
           return StreamManager;
         })(EventDispatcher_1.EventDispatcher);
         exports.StreamManager = StreamManager;
@@ -14320,26 +13027,21 @@ the event name as the first argument.
                     d.__proto__ = b;
                   }) ||
                 function (d, b) {
-                  for (var p in b)
-                    if (Object.prototype.hasOwnProperty.call(b, p)) d[p] = b[p];
+                  for (var p in b) if (Object.prototype.hasOwnProperty.call(b, p)) d[p] = b[p];
                 };
               return extendStatics(d, b);
             };
             return function (d, b) {
               if (typeof b !== 'function' && b !== null)
                 throw new TypeError(
-                  'Class extends value ' +
-                    String(b) +
-                    ' is not a constructor or null'
+                  'Class extends value ' + String(b) + ' is not a constructor or null'
                 );
               extendStatics(d, b);
               function __() {
                 this.constructor = d;
               }
               d.prototype =
-                b === null
-                  ? Object.create(b)
-                  : ((__.prototype = b.prototype), new __());
+                b === null ? Object.create(b) : ((__.prototype = b.prototype), new __());
             };
           })();
         Object.defineProperty(exports, '__esModule', { value: true });
@@ -14406,10 +13108,7 @@ the event name as the first argument.
           LocalRecorderState['RECORDING'] = 'RECORDING';
           LocalRecorderState['PAUSED'] = 'PAUSED';
           LocalRecorderState['FINISHED'] = 'FINISHED';
-        })(
-          (LocalRecorderState =
-            exports.LocalRecorderState || (exports.LocalRecorderState = {}))
-        );
+        })((LocalRecorderState = exports.LocalRecorderState || (exports.LocalRecorderState = {})));
       },
       {},
     ],
@@ -14424,30 +13123,19 @@ the event name as the first argument.
           OpenViduErrorName['DEVICE_ACCESS_DENIED'] = 'DEVICE_ACCESS_DENIED';
           OpenViduErrorName['DEVICE_ALREADY_IN_USE'] = 'DEVICE_ALREADY_IN_USE';
           OpenViduErrorName['SCREEN_CAPTURE_DENIED'] = 'SCREEN_CAPTURE_DENIED';
-          OpenViduErrorName['SCREEN_SHARING_NOT_SUPPORTED'] =
-            'SCREEN_SHARING_NOT_SUPPORTED';
-          OpenViduErrorName['SCREEN_EXTENSION_NOT_INSTALLED'] =
-            'SCREEN_EXTENSION_NOT_INSTALLED';
-          OpenViduErrorName['SCREEN_EXTENSION_DISABLED'] =
-            'SCREEN_EXTENSION_DISABLED';
-          OpenViduErrorName['INPUT_VIDEO_DEVICE_NOT_FOUND'] =
-            'INPUT_VIDEO_DEVICE_NOT_FOUND';
-          OpenViduErrorName['INPUT_AUDIO_DEVICE_NOT_FOUND'] =
-            'INPUT_AUDIO_DEVICE_NOT_FOUND';
+          OpenViduErrorName['SCREEN_SHARING_NOT_SUPPORTED'] = 'SCREEN_SHARING_NOT_SUPPORTED';
+          OpenViduErrorName['SCREEN_EXTENSION_NOT_INSTALLED'] = 'SCREEN_EXTENSION_NOT_INSTALLED';
+          OpenViduErrorName['SCREEN_EXTENSION_DISABLED'] = 'SCREEN_EXTENSION_DISABLED';
+          OpenViduErrorName['INPUT_VIDEO_DEVICE_NOT_FOUND'] = 'INPUT_VIDEO_DEVICE_NOT_FOUND';
+          OpenViduErrorName['INPUT_AUDIO_DEVICE_NOT_FOUND'] = 'INPUT_AUDIO_DEVICE_NOT_FOUND';
           OpenViduErrorName['INPUT_AUDIO_DEVICE_GENERIC_ERROR'] =
             'INPUT_AUDIO_DEVICE_GENERIC_ERROR';
           OpenViduErrorName['NO_INPUT_SOURCE_SET'] = 'NO_INPUT_SOURCE_SET';
-          OpenViduErrorName['PUBLISHER_PROPERTIES_ERROR'] =
-            'PUBLISHER_PROPERTIES_ERROR';
-          OpenViduErrorName['OPENVIDU_PERMISSION_DENIED'] =
-            'OPENVIDU_PERMISSION_DENIED';
-          OpenViduErrorName['OPENVIDU_NOT_CONNECTED'] =
-            'OPENVIDU_NOT_CONNECTED';
+          OpenViduErrorName['PUBLISHER_PROPERTIES_ERROR'] = 'PUBLISHER_PROPERTIES_ERROR';
+          OpenViduErrorName['OPENVIDU_PERMISSION_DENIED'] = 'OPENVIDU_PERMISSION_DENIED';
+          OpenViduErrorName['OPENVIDU_NOT_CONNECTED'] = 'OPENVIDU_NOT_CONNECTED';
           OpenViduErrorName['GENERIC_ERROR'] = 'GENERIC_ERROR';
-        })(
-          (OpenViduErrorName =
-            exports.OpenViduErrorName || (exports.OpenViduErrorName = {}))
-        );
+        })((OpenViduErrorName = exports.OpenViduErrorName || (exports.OpenViduErrorName = {})));
         var OpenViduError = (function () {
           function OpenViduError(name, message) {
             this.name = name;
@@ -14486,10 +13174,7 @@ the event name as the first argument.
           VideoInsertMode['BEFORE'] = 'BEFORE';
           VideoInsertMode['PREPEND'] = 'PREPEND';
           VideoInsertMode['REPLACE'] = 'REPLACE';
-        })(
-          (VideoInsertMode =
-            exports.VideoInsertMode || (exports.VideoInsertMode = {}))
-        );
+        })((VideoInsertMode = exports.VideoInsertMode || (exports.VideoInsertMode = {})));
       },
       {},
     ],
@@ -14507,26 +13192,21 @@ the event name as the first argument.
                     d.__proto__ = b;
                   }) ||
                 function (d, b) {
-                  for (var p in b)
-                    if (Object.prototype.hasOwnProperty.call(b, p)) d[p] = b[p];
+                  for (var p in b) if (Object.prototype.hasOwnProperty.call(b, p)) d[p] = b[p];
                 };
               return extendStatics(d, b);
             };
             return function (d, b) {
               if (typeof b !== 'function' && b !== null)
                 throw new TypeError(
-                  'Class extends value ' +
-                    String(b) +
-                    ' is not a constructor or null'
+                  'Class extends value ' + String(b) + ' is not a constructor or null'
                 );
               extendStatics(d, b);
               function __() {
                 this.constructor = d;
               }
               d.prototype =
-                b === null
-                  ? Object.create(b)
-                  : ((__.prototype = b.prototype), new __());
+                b === null ? Object.create(b) : ((__.prototype = b.prototype), new __());
             };
           })();
         Object.defineProperty(exports, '__esModule', { value: true });
@@ -14534,13 +13214,7 @@ the event name as the first argument.
         var Event_1 = require('./Event');
         var ConnectionEvent = (function (_super) {
           __extends(ConnectionEvent, _super);
-          function ConnectionEvent(
-            cancelable,
-            target,
-            type,
-            connection,
-            reason
-          ) {
+          function ConnectionEvent(cancelable, target, type, connection, reason) {
             var _this = _super.call(this, cancelable, target, type) || this;
             _this.connection = connection;
             _this.reason = reason;
@@ -14567,26 +13241,21 @@ the event name as the first argument.
                     d.__proto__ = b;
                   }) ||
                 function (d, b) {
-                  for (var p in b)
-                    if (Object.prototype.hasOwnProperty.call(b, p)) d[p] = b[p];
+                  for (var p in b) if (Object.prototype.hasOwnProperty.call(b, p)) d[p] = b[p];
                 };
               return extendStatics(d, b);
             };
             return function (d, b) {
               if (typeof b !== 'function' && b !== null)
                 throw new TypeError(
-                  'Class extends value ' +
-                    String(b) +
-                    ' is not a constructor or null'
+                  'Class extends value ' + String(b) + ' is not a constructor or null'
                 );
               extendStatics(d, b);
               function __() {
                 this.constructor = d;
               }
               d.prototype =
-                b === null
-                  ? Object.create(b)
-                  : ((__.prototype = b.prototype), new __());
+                b === null ? Object.create(b) : ((__.prototype = b.prototype), new __());
             };
           })();
         Object.defineProperty(exports, '__esModule', { value: true });
@@ -14601,17 +13270,14 @@ the event name as the first argument.
             newValue,
             oldValue
           ) {
-            var _this =
-              _super.call(this, false, target, 'connectionPropertyChanged') ||
-              this;
+            var _this = _super.call(this, false, target, 'connectionPropertyChanged') || this;
             _this.connection = connection;
             _this.changedProperty = changedProperty;
             _this.newValue = newValue;
             _this.oldValue = oldValue;
             return _this;
           }
-          ConnectionPropertyChangedEvent.prototype.callDefaultBehavior =
-            function () {};
+          ConnectionPropertyChangedEvent.prototype.callDefaultBehavior = function () {};
           return ConnectionPropertyChangedEvent;
         })(Event_1.Event);
         exports.ConnectionPropertyChangedEvent = ConnectionPropertyChangedEvent;
@@ -14657,26 +13323,21 @@ the event name as the first argument.
                     d.__proto__ = b;
                   }) ||
                 function (d, b) {
-                  for (var p in b)
-                    if (Object.prototype.hasOwnProperty.call(b, p)) d[p] = b[p];
+                  for (var p in b) if (Object.prototype.hasOwnProperty.call(b, p)) d[p] = b[p];
                 };
               return extendStatics(d, b);
             };
             return function (d, b) {
               if (typeof b !== 'function' && b !== null)
                 throw new TypeError(
-                  'Class extends value ' +
-                    String(b) +
-                    ' is not a constructor or null'
+                  'Class extends value ' + String(b) + ' is not a constructor or null'
                 );
               extendStatics(d, b);
               function __() {
                 this.constructor = d;
               }
               d.prototype =
-                b === null
-                  ? Object.create(b)
-                  : ((__.prototype = b.prototype), new __());
+                b === null ? Object.create(b) : ((__.prototype = b.prototype), new __());
             };
           })();
         Object.defineProperty(exports, '__esModule', { value: true });
@@ -14686,14 +13347,9 @@ the event name as the first argument.
         (function (ExceptionEventName) {
           ExceptionEventName['ICE_CANDIDATE_ERROR'] = 'ICE_CANDIDATE_ERROR';
           ExceptionEventName['ICE_CONNECTION_FAILED'] = 'ICE_CONNECTION_FAILED';
-          ExceptionEventName['ICE_CONNECTION_DISCONNECTED'] =
-            'ICE_CONNECTION_DISCONNECTED';
-          ExceptionEventName['NO_STREAM_PLAYING_EVENT'] =
-            'NO_STREAM_PLAYING_EVENT';
-        })(
-          (ExceptionEventName =
-            exports.ExceptionEventName || (exports.ExceptionEventName = {}))
-        );
+          ExceptionEventName['ICE_CONNECTION_DISCONNECTED'] = 'ICE_CONNECTION_DISCONNECTED';
+          ExceptionEventName['NO_STREAM_PLAYING_EVENT'] = 'NO_STREAM_PLAYING_EVENT';
+        })((ExceptionEventName = exports.ExceptionEventName || (exports.ExceptionEventName = {})));
         var ExceptionEvent = (function (_super) {
           __extends(ExceptionEvent, _super);
           function ExceptionEvent(session, name, origin, message, data) {
@@ -14725,26 +13381,21 @@ the event name as the first argument.
                     d.__proto__ = b;
                   }) ||
                 function (d, b) {
-                  for (var p in b)
-                    if (Object.prototype.hasOwnProperty.call(b, p)) d[p] = b[p];
+                  for (var p in b) if (Object.prototype.hasOwnProperty.call(b, p)) d[p] = b[p];
                 };
               return extendStatics(d, b);
             };
             return function (d, b) {
               if (typeof b !== 'function' && b !== null)
                 throw new TypeError(
-                  'Class extends value ' +
-                    String(b) +
-                    ' is not a constructor or null'
+                  'Class extends value ' + String(b) + ' is not a constructor or null'
                 );
               extendStatics(d, b);
               function __() {
                 this.constructor = d;
               }
               d.prototype =
-                b === null
-                  ? Object.create(b)
-                  : ((__.prototype = b.prototype), new __());
+                b === null ? Object.create(b) : ((__.prototype = b.prototype), new __());
             };
           })();
         Object.defineProperty(exports, '__esModule', { value: true });
@@ -14778,26 +13429,21 @@ the event name as the first argument.
                     d.__proto__ = b;
                   }) ||
                 function (d, b) {
-                  for (var p in b)
-                    if (Object.prototype.hasOwnProperty.call(b, p)) d[p] = b[p];
+                  for (var p in b) if (Object.prototype.hasOwnProperty.call(b, p)) d[p] = b[p];
                 };
               return extendStatics(d, b);
             };
             return function (d, b) {
               if (typeof b !== 'function' && b !== null)
                 throw new TypeError(
-                  'Class extends value ' +
-                    String(b) +
-                    ' is not a constructor or null'
+                  'Class extends value ' + String(b) + ' is not a constructor or null'
                 );
               extendStatics(d, b);
               function __() {
                 this.constructor = d;
               }
               d.prototype =
-                b === null
-                  ? Object.create(b)
-                  : ((__.prototype = b.prototype), new __());
+                b === null ? Object.create(b) : ((__.prototype = b.prototype), new __());
             };
           })();
         Object.defineProperty(exports, '__esModule', { value: true });
@@ -14805,26 +13451,17 @@ the event name as the first argument.
         var Event_1 = require('./Event');
         var NetworkQualityLevelChangedEvent = (function (_super) {
           __extends(NetworkQualityLevelChangedEvent, _super);
-          function NetworkQualityLevelChangedEvent(
-            target,
-            newValue,
-            oldValue,
-            connection
-          ) {
-            var _this =
-              _super.call(this, false, target, 'networkQualityLevelChanged') ||
-              this;
+          function NetworkQualityLevelChangedEvent(target, newValue, oldValue, connection) {
+            var _this = _super.call(this, false, target, 'networkQualityLevelChanged') || this;
             _this.newValue = newValue;
             _this.oldValue = oldValue;
             _this.connection = connection;
             return _this;
           }
-          NetworkQualityLevelChangedEvent.prototype.callDefaultBehavior =
-            function () {};
+          NetworkQualityLevelChangedEvent.prototype.callDefaultBehavior = function () {};
           return NetworkQualityLevelChangedEvent;
         })(Event_1.Event);
-        exports.NetworkQualityLevelChangedEvent =
-          NetworkQualityLevelChangedEvent;
+        exports.NetworkQualityLevelChangedEvent = NetworkQualityLevelChangedEvent;
       },
       { './Event': 57 },
     ],
@@ -14842,26 +13479,21 @@ the event name as the first argument.
                     d.__proto__ = b;
                   }) ||
                 function (d, b) {
-                  for (var p in b)
-                    if (Object.prototype.hasOwnProperty.call(b, p)) d[p] = b[p];
+                  for (var p in b) if (Object.prototype.hasOwnProperty.call(b, p)) d[p] = b[p];
                 };
               return extendStatics(d, b);
             };
             return function (d, b) {
               if (typeof b !== 'function' && b !== null)
                 throw new TypeError(
-                  'Class extends value ' +
-                    String(b) +
-                    ' is not a constructor or null'
+                  'Class extends value ' + String(b) + ' is not a constructor or null'
                 );
               extendStatics(d, b);
               function __() {
                 this.constructor = d;
               }
               d.prototype =
-                b === null
-                  ? Object.create(b)
-                  : ((__.prototype = b.prototype), new __());
+                b === null ? Object.create(b) : ((__.prototype = b.prototype), new __());
             };
           })();
         Object.defineProperty(exports, '__esModule', { value: true });
@@ -14897,26 +13529,21 @@ the event name as the first argument.
                     d.__proto__ = b;
                   }) ||
                 function (d, b) {
-                  for (var p in b)
-                    if (Object.prototype.hasOwnProperty.call(b, p)) d[p] = b[p];
+                  for (var p in b) if (Object.prototype.hasOwnProperty.call(b, p)) d[p] = b[p];
                 };
               return extendStatics(d, b);
             };
             return function (d, b) {
               if (typeof b !== 'function' && b !== null)
                 throw new TypeError(
-                  'Class extends value ' +
-                    String(b) +
-                    ' is not a constructor or null'
+                  'Class extends value ' + String(b) + ' is not a constructor or null'
                 );
               extendStatics(d, b);
               function __() {
                 this.constructor = d;
               }
               d.prototype =
-                b === null
-                  ? Object.create(b)
-                  : ((__.prototype = b.prototype), new __());
+                b === null ? Object.create(b) : ((__.prototype = b.prototype), new __());
             };
           })();
         Object.defineProperty(exports, '__esModule', { value: true });
@@ -14954,26 +13581,21 @@ the event name as the first argument.
                     d.__proto__ = b;
                   }) ||
                 function (d, b) {
-                  for (var p in b)
-                    if (Object.prototype.hasOwnProperty.call(b, p)) d[p] = b[p];
+                  for (var p in b) if (Object.prototype.hasOwnProperty.call(b, p)) d[p] = b[p];
                 };
               return extendStatics(d, b);
             };
             return function (d, b) {
               if (typeof b !== 'function' && b !== null)
                 throw new TypeError(
-                  'Class extends value ' +
-                    String(b) +
-                    ' is not a constructor or null'
+                  'Class extends value ' + String(b) + ' is not a constructor or null'
                 );
               extendStatics(d, b);
               function __() {
                 this.constructor = d;
               }
               d.prototype =
-                b === null
-                  ? Object.create(b)
-                  : ((__.prototype = b.prototype), new __());
+                b === null ? Object.create(b) : ((__.prototype = b.prototype), new __());
             };
           })();
         Object.defineProperty(exports, '__esModule', { value: true });
@@ -14984,50 +13606,41 @@ the event name as the first argument.
         var SessionDisconnectedEvent = (function (_super) {
           __extends(SessionDisconnectedEvent, _super);
           function SessionDisconnectedEvent(target, reason) {
-            var _this =
-              _super.call(this, true, target, 'sessionDisconnected') || this;
+            var _this = _super.call(this, true, target, 'sessionDisconnected') || this;
             _this.reason = reason;
             return _this;
           }
           SessionDisconnectedEvent.prototype.callDefaultBehavior = function () {
             logger.info(
-              "Calling default behavior upon '" +
-                this.type +
-                "' event dispatched by 'Session'"
+              "Calling default behavior upon '" + this.type + "' event dispatched by 'Session'"
             );
             var session = this.target;
             session.remoteConnections.forEach(function (remoteConnection) {
               var _a, _b, _c, _d, _e, _f, _g, _h;
               var connectionId = remoteConnection.connectionId;
               if (
-                !!((_a = session.remoteConnections.get(connectionId)) ===
-                  null || _a === void 0
+                !!((_a = session.remoteConnections.get(connectionId)) === null || _a === void 0
                   ? void 0
                   : _a.stream)
               ) {
-                (_b = session.remoteConnections.get(connectionId)) === null ||
-                _b === void 0
+                (_b = session.remoteConnections.get(connectionId)) === null || _b === void 0
                   ? void 0
                   : _b.stream.disposeWebRtcPeer();
-                (_c = session.remoteConnections.get(connectionId)) === null ||
-                _c === void 0
+                (_c = session.remoteConnections.get(connectionId)) === null || _c === void 0
                   ? void 0
                   : _c.stream.disposeMediaStream();
                 if (
-                  (_d = session.remoteConnections.get(connectionId)) === null ||
-                  _d === void 0
+                  (_d = session.remoteConnections.get(connectionId)) === null || _d === void 0
                     ? void 0
                     : _d.stream.streamManager
                 ) {
-                  (_e = session.remoteConnections.get(connectionId)) === null ||
-                  _e === void 0
+                  (_e = session.remoteConnections.get(connectionId)) === null || _e === void 0
                     ? void 0
                     : _e.stream.streamManager.removeAllVideos();
                 }
                 var streamId =
                   (_g =
-                    (_f = session.remoteConnections.get(connectionId)) ===
-                      null || _f === void 0
+                    (_f = session.remoteConnections.get(connectionId)) === null || _f === void 0
                       ? void 0
                       : _f.stream) === null || _g === void 0
                     ? void 0
@@ -15035,8 +13648,7 @@ the event name as the first argument.
                 if (!!streamId) {
                   session.remoteStreamsCreated.delete(streamId);
                 }
-                (_h = session.remoteConnections.get(connectionId)) === null ||
-                _h === void 0
+                (_h = session.remoteConnections.get(connectionId)) === null || _h === void 0
                   ? void 0
                   : _h.dispose();
               }
@@ -15063,26 +13675,21 @@ the event name as the first argument.
                     d.__proto__ = b;
                   }) ||
                 function (d, b) {
-                  for (var p in b)
-                    if (Object.prototype.hasOwnProperty.call(b, p)) d[p] = b[p];
+                  for (var p in b) if (Object.prototype.hasOwnProperty.call(b, p)) d[p] = b[p];
                 };
               return extendStatics(d, b);
             };
             return function (d, b) {
               if (typeof b !== 'function' && b !== null)
                 throw new TypeError(
-                  'Class extends value ' +
-                    String(b) +
-                    ' is not a constructor or null'
+                  'Class extends value ' + String(b) + ' is not a constructor or null'
                 );
               extendStatics(d, b);
               function __() {
                 this.constructor = d;
               }
               d.prototype =
-                b === null
-                  ? Object.create(b)
-                  : ((__.prototype = b.prototype), new __());
+                b === null ? Object.create(b) : ((__.prototype = b.prototype), new __());
             };
           })();
         Object.defineProperty(exports, '__esModule', { value: true });
@@ -15120,26 +13727,21 @@ the event name as the first argument.
                     d.__proto__ = b;
                   }) ||
                 function (d, b) {
-                  for (var p in b)
-                    if (Object.prototype.hasOwnProperty.call(b, p)) d[p] = b[p];
+                  for (var p in b) if (Object.prototype.hasOwnProperty.call(b, p)) d[p] = b[p];
                 };
               return extendStatics(d, b);
             };
             return function (d, b) {
               if (typeof b !== 'function' && b !== null)
                 throw new TypeError(
-                  'Class extends value ' +
-                    String(b) +
-                    ' is not a constructor or null'
+                  'Class extends value ' + String(b) + ' is not a constructor or null'
                 );
               extendStatics(d, b);
               function __() {
                 this.constructor = d;
               }
               d.prototype =
-                b === null
-                  ? Object.create(b)
-                  : ((__.prototype = b.prototype), new __());
+                b === null ? Object.create(b) : ((__.prototype = b.prototype), new __());
             };
           })();
         Object.defineProperty(exports, '__esModule', { value: true });
@@ -15161,9 +13763,7 @@ the event name as the first argument.
             if (this.type === 'streamDestroyed') {
               if (this.target instanceof Session_1.Session) {
                 logger.info(
-                  "Calling default behavior upon '" +
-                    this.type +
-                    "' event dispatched by 'Session'"
+                  "Calling default behavior upon '" + this.type + "' event dispatched by 'Session'"
                 );
                 this.stream.disposeWebRtcPeer();
               } else if (this.target instanceof Publisher_1.Publisher) {
@@ -15183,17 +13783,13 @@ the event name as the first argument.
                 }
               }
               this.stream.disposeMediaStream();
-              if (this.stream.streamManager)
-                this.stream.streamManager.removeAllVideos();
-              this.stream.session.remoteStreamsCreated.delete(
-                this.stream.streamId
-              );
+              if (this.stream.streamManager) this.stream.streamManager.removeAllVideos();
+              this.stream.session.remoteStreamsCreated.delete(this.stream.streamId);
               var remoteConnection = this.stream.session.remoteConnections.get(
                 this.stream.connection.connectionId
               );
               if (!!remoteConnection && !!remoteConnection.remoteOptions) {
-                var streamOptionsServer =
-                  remoteConnection.remoteOptions.streams;
+                var streamOptionsServer = remoteConnection.remoteOptions.streams;
                 for (var i = streamOptionsServer.length - 1; i >= 0; --i) {
                   if (streamOptionsServer[i].id === this.stream.streamId) {
                     streamOptionsServer.splice(i, 1);
@@ -15227,26 +13823,21 @@ the event name as the first argument.
                     d.__proto__ = b;
                   }) ||
                 function (d, b) {
-                  for (var p in b)
-                    if (Object.prototype.hasOwnProperty.call(b, p)) d[p] = b[p];
+                  for (var p in b) if (Object.prototype.hasOwnProperty.call(b, p)) d[p] = b[p];
                 };
               return extendStatics(d, b);
             };
             return function (d, b) {
               if (typeof b !== 'function' && b !== null)
                 throw new TypeError(
-                  'Class extends value ' +
-                    String(b) +
-                    ' is not a constructor or null'
+                  'Class extends value ' + String(b) + ' is not a constructor or null'
                 );
               extendStatics(d, b);
               function __() {
                 this.constructor = d;
               }
               d.prototype =
-                b === null
-                  ? Object.create(b)
-                  : ((__.prototype = b.prototype), new __());
+                b === null ? Object.create(b) : ((__.prototype = b.prototype), new __());
             };
           })();
         Object.defineProperty(exports, '__esModule', { value: true });
@@ -15280,26 +13871,21 @@ the event name as the first argument.
                     d.__proto__ = b;
                   }) ||
                 function (d, b) {
-                  for (var p in b)
-                    if (Object.prototype.hasOwnProperty.call(b, p)) d[p] = b[p];
+                  for (var p in b) if (Object.prototype.hasOwnProperty.call(b, p)) d[p] = b[p];
                 };
               return extendStatics(d, b);
             };
             return function (d, b) {
               if (typeof b !== 'function' && b !== null)
                 throw new TypeError(
-                  'Class extends value ' +
-                    String(b) +
-                    ' is not a constructor or null'
+                  'Class extends value ' + String(b) + ' is not a constructor or null'
                 );
               extendStatics(d, b);
               function __() {
                 this.constructor = d;
               }
               d.prototype =
-                b === null
-                  ? Object.create(b)
-                  : ((__.prototype = b.prototype), new __());
+                b === null ? Object.create(b) : ((__.prototype = b.prototype), new __());
             };
           })();
         Object.defineProperty(exports, '__esModule', { value: true });
@@ -15315,8 +13901,7 @@ the event name as the first argument.
             oldValue,
             reason
           ) {
-            var _this =
-              _super.call(this, false, target, 'streamPropertyChanged') || this;
+            var _this = _super.call(this, false, target, 'streamPropertyChanged') || this;
             _this.stream = stream;
             _this.changedProperty = changedProperty;
             _this.newValue = newValue;
@@ -15324,8 +13909,7 @@ the event name as the first argument.
             _this.reason = reason;
             return _this;
           }
-          StreamPropertyChangedEvent.prototype.callDefaultBehavior =
-            function () {};
+          StreamPropertyChangedEvent.prototype.callDefaultBehavior = function () {};
           return StreamPropertyChangedEvent;
         })(Event_1.Event);
         exports.StreamPropertyChangedEvent = StreamPropertyChangedEvent;
@@ -15346,26 +13930,21 @@ the event name as the first argument.
                     d.__proto__ = b;
                   }) ||
                 function (d, b) {
-                  for (var p in b)
-                    if (Object.prototype.hasOwnProperty.call(b, p)) d[p] = b[p];
+                  for (var p in b) if (Object.prototype.hasOwnProperty.call(b, p)) d[p] = b[p];
                 };
               return extendStatics(d, b);
             };
             return function (d, b) {
               if (typeof b !== 'function' && b !== null)
                 throw new TypeError(
-                  'Class extends value ' +
-                    String(b) +
-                    ' is not a constructor or null'
+                  'Class extends value ' + String(b) + ' is not a constructor or null'
                 );
               extendStatics(d, b);
               function __() {
                 this.constructor = d;
               }
               d.prototype =
-                b === null
-                  ? Object.create(b)
-                  : ((__.prototype = b.prototype), new __());
+                b === null ? Object.create(b) : ((__.prototype = b.prototype), new __());
             };
           })();
         Object.defineProperty(exports, '__esModule', { value: true });
@@ -15437,8 +14016,7 @@ the event name as the first argument.
       function (require, module, exports) {
         var RpcBuilder = require('../');
         var WebSocketWithReconnection = require('./transports/webSocketWithReconnection');
-        var OpenViduLogger =
-          require('../../../Logger/OpenViduLogger').OpenViduLogger;
+        var OpenViduLogger = require('../../../Logger/OpenViduLogger').OpenViduLogger;
         Date.now =
           Date.now ||
           function () {
@@ -15522,29 +14100,22 @@ the event name as the first argument.
             request_timeout: configuration.rpc.requestTimeout,
             ping_request_timeout: configuration.rpc.heartbeatRequestTimeout,
           };
-          var rpc = new RpcBuilder(
-            RpcBuilder.packers.JsonRPC,
-            rpcBuilderOptions,
-            ws,
-            function (request) {
-              Logger.debug('Received request: ' + JSON.stringify(request));
-              try {
-                var func = configuration.rpc[request.method];
-                if (func === undefined) {
-                  Logger.error(
-                    'Method ' + request.method + ' not registered in client'
-                  );
-                } else {
-                  func(request.params, request);
-                }
-              } catch (err) {
-                Logger.error(
-                  'Exception processing request: ' + JSON.stringify(request)
-                );
-                Logger.error(err);
+          var rpc = new RpcBuilder(RpcBuilder.packers.JsonRPC, rpcBuilderOptions, ws, function (
+            request
+          ) {
+            Logger.debug('Received request: ' + JSON.stringify(request));
+            try {
+              var func = configuration.rpc[request.method];
+              if (func === undefined) {
+                Logger.error('Method ' + request.method + ' not registered in client');
+              } else {
+                func(request.params, request);
               }
+            } catch (err) {
+              Logger.error('Exception processing request: ' + JSON.stringify(request));
+              Logger.error(err);
             }
-          );
+          });
           this.send = function (method, params, callback) {
             var requestTime = Date.now();
             rpc.encode(method, params, function (error, result) {
@@ -15587,10 +14158,7 @@ the event name as the first argument.
           function sendPing() {
             if (enabledPings) {
               var params = null;
-              if (
-                pingNextNum == 0 ||
-                pingNextNum == notReconnectIfNumLessThan
-              ) {
+              if (pingNextNum == 0 || pingNextNum == notReconnectIfNumLessThan) {
                 params = {
                   interval: configuration.heartbeat || PING_INTERVAL,
                 };
@@ -15603,11 +14171,7 @@ the event name as the first argument.
                   return function (error, result) {
                     if (error) {
                       Logger.debug(
-                        'Error in ping request #' +
-                          pingNum +
-                          ' (' +
-                          error.message +
-                          ')'
+                        'Error in ping request #' + pingNum + ' (' + error.message + ')'
                       );
                       if (pingNum > notReconnectIfNumLessThan) {
                         enabledPings = false;
@@ -15684,8 +14248,7 @@ the event name as the first argument.
     73: [
       function (require, module, exports) {
         'use strict';
-        var OpenViduLogger =
-          require('../../../../Logger/OpenViduLogger').OpenViduLogger;
+        var OpenViduLogger = require('../../../../Logger/OpenViduLogger').OpenViduLogger;
         var Logger = OpenViduLogger.getInstance();
         var MAX_RETRIES = 2000;
         var RETRY_TIME_MS = 3000;
@@ -15706,12 +14269,7 @@ the event name as the first argument.
             }
           };
           ws.onerror = function (error) {
-            Logger.error(
-              'Could not connect to ' +
-                wsUri +
-                ' (invoking onerror if defined)',
-              error
-            );
+            Logger.error('Could not connect to ' + wsUri + ' (invoking onerror if defined)', error);
             if (config.onerror) {
               config.onerror(error);
             }
@@ -15722,27 +14280,19 @@ the event name as the first argument.
                 Logger.debug('Connection closed by user');
               } else {
                 if (config.ismasternodecrashed()) {
-                  Logger.error(
-                    'Master Node has crashed. Stopping reconnection process'
-                  );
+                  Logger.error('Master Node has crashed. Stopping reconnection process');
                 } else {
-                  Logger.debug(
-                    'Connection closed unexpectedly. Reconnecting...'
-                  );
+                  Logger.debug('Connection closed unexpectedly. Reconnecting...');
                   reconnect(MAX_RETRIES, 1);
                 }
               }
             } else {
-              Logger.debug(
-                'Close callback from previous websocket. Ignoring it'
-              );
+              Logger.debug('Close callback from previous websocket. Ignoring it');
             }
           };
           ws.onclose = reconnectionOnClose;
           function reconnect(maxRetries, numRetries) {
-            Logger.debug(
-              'reconnect (attempt #' + numRetries + ', max=' + maxRetries + ')'
-            );
+            Logger.debug('reconnect (attempt #' + numRetries + ', max=' + maxRetries + ')');
             if (numRetries === 1) {
               if (reconnecting) {
                 Logger.warn(
@@ -15774,13 +14324,7 @@ the event name as the first argument.
             wsUri = addReconnectionQueryParamsIfMissing(wsUri);
             ws = new WebSocket(wsUri);
             ws.onopen = function () {
-              Logger.debug(
-                'Reconnected to ' +
-                  wsUri +
-                  ' after ' +
-                  numRetries +
-                  ' attempts...'
-              );
+              Logger.debug('Reconnected to ' + wsUri + ' after ' + numRetries + ' attempts...');
               reconnecting = false;
               registerMessageHandler();
               if (config.onreconnected()) {
@@ -15890,9 +14434,7 @@ the event name as the first argument.
           }
           if (transport.onmessage !== undefined) return;
           if (transport.pause instanceof Function) return;
-          throw new SyntaxError(
-            'Transport is not a function nor a valid object'
-          );
+          throw new SyntaxError('Transport is not a function nor a valid object');
         }
         function RpcNotification(method, params) {
           if (defineProperty_IE8) {
@@ -15912,14 +14454,11 @@ the event name as the first argument.
         function RpcBuilder(packer, options, transport, onRequest) {
           var self = this;
           if (!packer) throw new SyntaxError('Packer is not defined');
-          if (!packer.pack || !packer.unpack)
-            throw new SyntaxError('Packer is invalid');
+          if (!packer.pack || !packer.unpack) throw new SyntaxError('Packer is invalid');
           var responseMethods = unifyResponseMethods(packer.responseMethods);
           if (options instanceof Function) {
             if (transport != undefined)
-              throw new SyntaxError(
-                "There can't be parameters after onRequest"
-              );
+              throw new SyntaxError("There can't be parameters after onRequest");
             onRequest = options;
             transport = undefined;
             options = undefined;
@@ -15933,9 +14472,7 @@ the event name as the first argument.
           }
           if (transport instanceof Function) {
             if (onRequest != undefined)
-              throw new SyntaxError(
-                "There can't be parameters after onRequest"
-              );
+              throw new SyntaxError("There can't be parameters after onRequest");
             onRequest = transport;
             transport = undefined;
           }
@@ -15961,14 +14498,11 @@ the event name as the first argument.
             if (transport) {
               if (transport.removeEventListener)
                 transport.removeEventListener('message', transportMessage);
-              else if (transport.removeListener)
-                transport.removeListener('data', transportMessage);
+              else if (transport.removeListener) transport.removeListener('data', transportMessage);
             }
             if (value) {
-              if (value.addEventListener)
-                value.addEventListener('message', transportMessage);
-              else if (value.addListener)
-                value.addListener('data', transportMessage);
+              if (value.addEventListener) value.addEventListener('message', transportMessage);
+              else if (value.addListener) value.addListener('data', transportMessage);
             }
             transport = unifyTransport(value);
           };
@@ -15979,8 +14513,7 @@ the event name as the first argument.
             });
           this.setTransport(transport);
           var request_timeout = options.request_timeout || BASE_TIMEOUT;
-          var ping_request_timeout =
-            options.ping_request_timeout || request_timeout;
+          var ping_request_timeout = options.ping_request_timeout || request_timeout;
           var response_timeout = options.response_timeout || BASE_TIMEOUT;
           var duplicates_timeout = options.duplicates_timeout || BASE_TIMEOUT;
           var requestID = 0;
@@ -16027,14 +14560,9 @@ the event name as the first argument.
             var responseMethod = responseMethods[method];
             this.pack = packer.pack.bind(packer, this, id);
             this.reply = function (error, result, transport) {
-              if (
-                error instanceof Function ||
-                (error && error.send instanceof Function)
-              ) {
+              if (error instanceof Function || (error && error.send instanceof Function)) {
                 if (result != undefined)
-                  throw new SyntaxError(
-                    "There can't be parameters after callback"
-                  );
+                  throw new SyntaxError("There can't be parameters after callback");
                 transport = error;
                 result = null;
                 error = undefined;
@@ -16043,9 +14571,7 @@ the event name as the first argument.
                 (result && result.send instanceof Function)
               ) {
                 if (transport != undefined)
-                  throw new SyntaxError(
-                    "There can't be parameters after callback"
-                  );
+                  throw new SyntaxError("There can't be parameters after callback");
                 transport = result;
                 result = null;
               }
@@ -16067,9 +14593,7 @@ the event name as the first argument.
                       error: error,
                     };
                   else {
-                    var method = error
-                      ? responseMethod.error
-                      : responseMethod.response;
+                    var method = error ? responseMethod.error : responseMethod.response;
                     message = {
                       method: method,
                       params: error || result,
@@ -16090,8 +14614,7 @@ the event name as the first argument.
                   id
                 );
               storeResponse(message, id, from);
-              transport =
-                transport || this.getTransport() || self.getTransport();
+              transport = transport || this.getTransport() || self.getTransport();
               if (transport) return transport.send(message);
               return message;
             };
@@ -16112,8 +14635,7 @@ the event name as the first argument.
           };
           this.close = function () {
             var transport = this.getTransport();
-            if (transport && transport.close)
-              transport.close(4003, 'Cancel request');
+            if (transport && transport.close) transport.close(4003, 'Cancel request');
             this.cancel();
             processedResponses.forEach(clearTimeout);
             responses.forEach(function (response) {
@@ -16123,26 +14645,20 @@ the event name as the first argument.
           this.encode = function (method, params, dest, transport, callback) {
             if (params instanceof Function) {
               if (dest != undefined)
-                throw new SyntaxError(
-                  "There can't be parameters after callback"
-                );
+                throw new SyntaxError("There can't be parameters after callback");
               callback = params;
               transport = undefined;
               dest = undefined;
               params = undefined;
             } else if (dest instanceof Function) {
               if (transport != undefined)
-                throw new SyntaxError(
-                  "There can't be parameters after callback"
-                );
+                throw new SyntaxError("There can't be parameters after callback");
               callback = dest;
               transport = undefined;
               dest = undefined;
             } else if (transport instanceof Function) {
               if (callback != undefined)
-                throw new SyntaxError(
-                  "There can't be parameters after callback"
-                );
+                throw new SyntaxError("There can't be parameters after callback");
               callback = transport;
               transport = undefined;
             }
@@ -16173,19 +14689,14 @@ the event name as the first argument.
               };
               var encode_transport = unifyTransport(transport);
               function sendRequest(transport) {
-                var rt =
-                  method === 'ping' ? ping_request_timeout : request_timeout;
-                request.timeout = setTimeout(
-                  timeout,
-                  rt * Math.pow(2, retried++)
-                );
+                var rt = method === 'ping' ? ping_request_timeout : request_timeout;
+                request.timeout = setTimeout(timeout, rt * Math.pow(2, retried++));
                 message2Key[message] = {
                   id: id,
                   dest: dest,
                 };
                 requests.set(request, id, dest);
-                transport =
-                  transport || encode_transport || self.getTransport();
+                transport = transport || encode_transport || self.getTransport();
                 if (transport) return transport.send(message);
                 return message;
               }
@@ -16236,13 +14747,7 @@ the event name as the first argument.
                 if (response) return transport.send(response.message);
               }
               var idAck = id != undefined ? id : ack;
-              var request = new RpcRequest(
-                method,
-                params,
-                idAck,
-                from,
-                transport
-              );
+              var request = new RpcRequest(method, params, idAck, from, transport);
               if (self.emit('request', request)) return;
               return request;
             }
@@ -16259,8 +14764,7 @@ the event name as the first argument.
                 var request = requests.get(ack, from);
                 if (request) {
                   var responseMethods = request.responseMethods;
-                  if (method == responseMethods.error)
-                    return processResponse(request, params);
+                  if (method == responseMethods.error) return processResponse(request, params);
                   if (method == responseMethods.response)
                     return processResponse(request, null, params);
                   return processRequest();
@@ -16278,10 +14782,7 @@ the event name as the first argument.
             if (!request) {
               var processed = processedResponses.get(ack, from);
               if (processed) return duplicatedResponse(processed);
-              return console.warn(
-                'No callback was defined for this message',
-                message
-              );
+              return console.warn('No callback was defined for this message', message);
             }
             processResponse(request, error, result);
           };
@@ -16319,8 +14820,7 @@ the event name as the first argument.
               if (message.result !== undefined)
                 throw new TypeError('Both result and error are defined');
               result.error = message.error;
-            } else if (message.result !== undefined)
-              result.result = message.result;
+            } else if (message.result !== undefined) result.result = message.result;
             else throw new TypeError('No result or error is defined');
             result.id = id;
           }
@@ -16333,18 +14833,13 @@ the event name as the first argument.
           }
           var version = result.jsonrpc;
           if (version !== '2.0')
-            throw new TypeError(
-              "Invalid JsonRPC version '" + version + "': " + message
-            );
+            throw new TypeError("Invalid JsonRPC version '" + version + "': " + message);
           if (result.method == undefined) {
-            if (result.id == undefined)
-              throw new TypeError('Invalid message: ' + message);
+            if (result.id == undefined) throw new TypeError('Invalid message: ' + message);
             var result_defined = result.result !== undefined;
             var error_defined = result.error !== undefined;
             if (result_defined && error_defined)
-              throw new TypeError(
-                'Both result and error are defined: ' + message
-              );
+              throw new TypeError('Both result and error are defined: ' + message);
             if (!result_defined && !error_defined)
               throw new TypeError('No result or error is defined: ' + message);
             result.ack = result.id;
@@ -16413,9 +14908,7 @@ the event name as the first argument.
             this.MAX_JSNLOG_BATCH_LOG_MESSAGES = 100;
             this.MAX_MSECONDS_BATCH_MESSAGES = 5000;
             this.MAX_LENGTH_STRING_JSON = 1000;
-            this.defaultConsoleLogger = new ConsoleLogger_1.ConsoleLogger(
-              window.console
-            );
+            this.defaultConsoleLogger = new ConsoleLogger_1.ConsoleLogger(window.console);
             this.isProdMode = false;
             this.isJSNLogSetup = false;
           }
@@ -16431,8 +14924,7 @@ the event name as the first argument.
               ) {
                 if (
                   openVidu.sendBrowserLogs ===
-                  OpenViduLoggerConfiguration_1.OpenViduLoggerConfiguration
-                    .debug_app
+                  OpenViduLoggerConfiguration_1.OpenViduLoggerConfiguration.debug_app
                 ) {
                   this.instance.replaceWindowConsole();
                 }
@@ -16453,11 +14945,7 @@ the event name as the first argument.
                   xhr.setRequestHeader(
                     'Authorization',
                     'Basic ' +
-                      btoa(
-                        ''.concat(finalUserId_1, '%/%').concat(sessionId_1) +
-                          ':' +
-                          token
-                      )
+                      btoa(''.concat(finalUserId_1, '%/%').concat(sessionId_1) + ':' + token)
                   );
                   xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
                   xhr.setRequestHeader('OV-Final-User-Id', finalUserId_1);
@@ -16478,10 +14966,7 @@ the event name as the first argument.
                     var seen = new WeakSet();
                     return function (key, value) {
                       if (typeof value === 'object' && value != null) {
-                        if (
-                          seen.has(value) ||
-                          (HTMLElement && value instanceof HTMLElement)
-                        ) {
+                        if (seen.has(value) || (HTMLElement && value instanceof HTMLElement)) {
                           return;
                         }
                         seen.add(value);
@@ -16489,18 +14974,10 @@ the event name as the first argument.
                       return value;
                     };
                   };
-                  var stringifyJson = JSON.stringify(
-                    obj,
-                    getCircularReplacer()
-                  );
-                  if (
-                    stringifyJson.length > _this.instance.MAX_LENGTH_STRING_JSON
-                  ) {
+                  var stringifyJson = JSON.stringify(obj, getCircularReplacer());
+                  if (stringifyJson.length > _this.instance.MAX_LENGTH_STRING_JSON) {
                     stringifyJson = ''.concat(
-                      stringifyJson.substring(
-                        0,
-                        _this.instance.MAX_LENGTH_STRING_JSON
-                      ),
+                      stringifyJson.substring(0, _this.instance.MAX_LENGTH_STRING_JSON),
                       '...'
                     );
                   }
@@ -16534,29 +15011,17 @@ the event name as the first argument.
             return OpenViduLogger.instance;
           };
           OpenViduLogger.isInvalidResponse = function (xhr) {
-            return (
-              xhr.status == 401 ||
-              xhr.status == 403 ||
-              xhr.status == 404 ||
-              xhr.status == 0
-            );
+            return xhr.status == 401 || xhr.status == 403 || xhr.status == 404 || xhr.status == 0;
           };
-          OpenViduLogger.prototype.canConfigureJSNLog = function (
-            openVidu,
-            logger
-          ) {
+          OpenViduLogger.prototype.canConfigureJSNLog = function (openVidu, logger) {
             return openVidu.session.sessionId != logger.loggingSessionId;
           };
-          OpenViduLogger.prototype.isOpenViduBrowserLogsDebugActive = function (
-            openVidu
-          ) {
+          OpenViduLogger.prototype.isOpenViduBrowserLogsDebugActive = function (openVidu) {
             return (
               openVidu.sendBrowserLogs ===
-                OpenViduLoggerConfiguration_1.OpenViduLoggerConfiguration
-                  .debug ||
+                OpenViduLoggerConfiguration_1.OpenViduLoggerConfiguration.debug ||
               openVidu.sendBrowserLogs ===
-                OpenViduLoggerConfiguration_1.OpenViduLoggerConfiguration
-                  .debug_app
+                OpenViduLoggerConfiguration_1.OpenViduLoggerConfiguration.debug_app
             );
           };
           OpenViduLogger.prototype.getConsoleWithJSNLog = function () {
@@ -16653,10 +15118,7 @@ the event name as the first argument.
               args[_i] = arguments[_i];
             }
             if (!this.isProdMode) {
-              this.defaultConsoleLogger.log.apply(
-                this.defaultConsoleLogger.logger,
-                arguments
-              );
+              this.defaultConsoleLogger.log.apply(this.defaultConsoleLogger.logger, arguments);
             }
             if (this.isJSNLogSetup) {
               (0, jsnlog_1.JL)().info(arguments);
@@ -16668,10 +15130,7 @@ the event name as the first argument.
               args[_i] = arguments[_i];
             }
             if (!this.isProdMode) {
-              this.defaultConsoleLogger.debug.apply(
-                this.defaultConsoleLogger.logger,
-                arguments
-              );
+              this.defaultConsoleLogger.debug.apply(this.defaultConsoleLogger.logger, arguments);
             }
           };
           OpenViduLogger.prototype.info = function () {
@@ -16680,10 +15139,7 @@ the event name as the first argument.
               args[_i] = arguments[_i];
             }
             if (!this.isProdMode) {
-              this.defaultConsoleLogger.info.apply(
-                this.defaultConsoleLogger.logger,
-                arguments
-              );
+              this.defaultConsoleLogger.info.apply(this.defaultConsoleLogger.logger, arguments);
             }
             if (this.isJSNLogSetup) {
               (0, jsnlog_1.JL)().info(arguments);
@@ -16694,10 +15150,7 @@ the event name as the first argument.
             for (var _i = 0; _i < arguments.length; _i++) {
               args[_i] = arguments[_i];
             }
-            this.defaultConsoleLogger.warn.apply(
-              this.defaultConsoleLogger.logger,
-              arguments
-            );
+            this.defaultConsoleLogger.warn.apply(this.defaultConsoleLogger.logger, arguments);
             if (this.isJSNLogSetup) {
               (0, jsnlog_1.JL)().warn(arguments);
             }
@@ -16707,10 +15160,7 @@ the event name as the first argument.
             for (var _i = 0; _i < arguments.length; _i++) {
               args[_i] = arguments[_i];
             }
-            this.defaultConsoleLogger.error.apply(
-              this.defaultConsoleLogger.logger,
-              arguments
-            );
+            this.defaultConsoleLogger.error.apply(this.defaultConsoleLogger.logger, arguments);
             if (this.isJSNLogSetup) {
               (0, jsnlog_1.JL)().error(arguments);
             }
@@ -16741,19 +15191,14 @@ the event name as the first argument.
           OpenViduLoggerConfiguration['debug_app'] = 'debug_app';
         })(
           (OpenViduLoggerConfiguration =
-            exports.OpenViduLoggerConfiguration ||
-            (exports.OpenViduLoggerConfiguration = {}))
+            exports.OpenViduLoggerConfiguration || (exports.OpenViduLoggerConfiguration = {}))
         );
       },
       {},
     ],
     81: [
       function (require, module, exports) {
-        window.getScreenId = function (
-          firefoxString,
-          callback,
-          custom_parameter
-        ) {
+        window.getScreenId = function (firefoxString, callback, custom_parameter) {
           if (
             navigator.userAgent.indexOf('Edge') !== -1 &&
             (!!navigator.msSaveOrOpenBlob || !!navigator.msSaveBlob)
@@ -16814,10 +15259,8 @@ the event name as the first argument.
             video: {
               mandatory: {
                 chromeMediaSource: error ? 'screen' : 'desktop',
-                maxWidth:
-                  window.screen.width > 1920 ? window.screen.width : 1920,
-                maxHeight:
-                  window.screen.height > 1080 ? window.screen.height : 1080,
+                maxWidth: window.screen.width > 1920 ? window.screen.width : 1920,
+                maxHeight: window.screen.height > 1080 ? window.screen.height : 1080,
               },
               optional: [],
             },
@@ -16832,10 +15275,7 @@ the event name as the first argument.
           }
           if (sourceId) {
             screen_constraints.video.mandatory.chromeMediaSourceId = sourceId;
-            if (
-              screen_constraints.audio &&
-              screen_constraints.audio.mandatory
-            ) {
+            if (screen_constraints.audio && screen_constraints.audio.mandatory) {
               screen_constraints.audio.mandatory.chromeMediaSourceId = sourceId;
             }
           }
@@ -16900,8 +15340,7 @@ the event name as the first argument.
             iframe.isLoaded = true;
             loadCallback();
           };
-          iframe.src =
-            'https://openvidu.github.io/openvidu-screen-sharing-chrome-extension/';
+          iframe.src = 'https://openvidu.github.io/openvidu-screen-sharing-chrome-extension/';
           iframe.style.display = 'none';
           (document.body || document.documentElement).appendChild(iframe);
         }
@@ -16951,8 +15390,7 @@ the event name as the first argument.
           typeof navigator.userAgent !== 'undefined'
         ) {
           var isFirefox = typeof window.InstallTrigger !== 'undefined';
-          var isOpera =
-            !!window.opera || navigator.userAgent.indexOf(' OPR/') >= 0;
+          var isOpera = !!window.opera || navigator.userAgent.indexOf(' OPR/') >= 0;
           var isChrome = !!window.chrome && !isOpera;
           window.addEventListener('message', function (event) {
             if (event.origin != window.location.origin) {
@@ -16970,10 +15408,7 @@ the event name as the first argument.
             chromeMediaSource = 'desktop';
           }
           if (data.sourceId && screenCallback) {
-            screenCallback(
-              (sourceId = data.sourceId),
-              data.canRequestAudioTrack === true
-            );
+            screenCallback((sourceId = data.sourceId), data.canRequestAudioTrack === true);
           }
         }
         function isChromeExtensionAvailable(callback) {
@@ -16993,8 +15428,7 @@ the event name as the first argument.
           window.postMessage('get-sourceId', '*');
         }
         function getCustomSourceId(arr, callback) {
-          if (!arr || !arr.forEach)
-            throw '"arr" parameter is mandatory and it must be an array.';
+          if (!arr || !arr.forEach) throw '"arr" parameter is mandatory and it must be an array.';
           if (!callback) throw '"callback" parameter is mandatory.';
           if (sourceId) return callback(sourceId);
           screenCallback = callback;
@@ -17057,18 +15491,12 @@ the event name as the first argument.
                 if (canRequestAudioTrack) {
                   screen_constraints.canRequestAudioTrack = true;
                 }
-                callback(
-                  sourceId == 'PermissionDeniedError' ? sourceId : null,
-                  screen_constraints
-                );
+                callback(sourceId == 'PermissionDeniedError' ? sourceId : null, screen_constraints);
               });
             } else {
               getSourceId(function (sourceId) {
                 screen_constraints.mandatory.chromeMediaSourceId = sourceId;
-                callback(
-                  sourceId == 'PermissionDeniedError' ? sourceId : null,
-                  screen_constraints
-                );
+                callback(sourceId == 'PermissionDeniedError' ? sourceId : null, screen_constraints);
               });
             }
             return;
@@ -17113,10 +15541,7 @@ the event name as the first argument.
             return platform.name === 'Firefox';
           };
           PlatformUtils.prototype.isFirefoxMobileBrowser = function () {
-            return (
-              platform.name === 'Firefox Mobile' ||
-              platform.name === 'Firefox for iOS'
-            );
+            return platform.name === 'Firefox Mobile' || platform.name === 'Firefox for iOS';
           };
           PlatformUtils.prototype.isOperaBrowser = function () {
             return platform.name === 'Opera';
@@ -17125,32 +15550,20 @@ the event name as the first argument.
             return platform.name === 'Opera Mobile';
           };
           PlatformUtils.prototype.isEdgeBrowser = function () {
-            var version = (
-              platform === null || platform === void 0
-                ? void 0
-                : platform.version
-            )
+            var version = (platform === null || platform === void 0 ? void 0 : platform.version)
               ? parseFloat(platform.version)
               : -1;
             return platform.name === 'Microsoft Edge' && version >= 80;
           };
           PlatformUtils.prototype.isEdgeMobileBrowser = function () {
             var _a, _b;
-            var version = (
-              platform === null || platform === void 0
-                ? void 0
-                : platform.version
-            )
+            var version = (platform === null || platform === void 0 ? void 0 : platform.version)
               ? parseFloat(platform.version)
               : -1;
             return (
               platform.name === 'Microsoft Edge' &&
-              (((_a = platform.os) === null || _a === void 0
-                ? void 0
-                : _a.family) === 'Android' ||
-                ((_b = platform.os) === null || _b === void 0
-                  ? void 0
-                  : _b.family) === 'iOS') &&
+              (((_a = platform.os) === null || _a === void 0 ? void 0 : _a.family) === 'Android' ||
+                ((_b = platform.os) === null || _b === void 0 ? void 0 : _b.family) === 'iOS') &&
               version > 45
             );
           };
@@ -17162,8 +15575,7 @@ the event name as the first argument.
           };
           PlatformUtils.prototype.isSamsungBrowser = function () {
             return (
-              platform.name === 'Samsung Internet Mobile' ||
-              platform.name === 'Samsung Internet'
+              platform.name === 'Samsung Internet Mobile' || platform.name === 'Samsung Internet'
             );
           };
           PlatformUtils.prototype.isIPhoneOrIPad = function () {
@@ -17187,20 +15599,13 @@ the event name as the first argument.
             );
           };
           PlatformUtils.prototype.isIonicIos = function () {
-            return (
-              this.isIPhoneOrIPad() && platform.ua.indexOf('Safari') === -1
-            );
+            return this.isIPhoneOrIPad() && platform.ua.indexOf('Safari') === -1;
           };
           PlatformUtils.prototype.isIonicAndroid = function () {
-            return (
-              platform.os.family === 'Android' &&
-              platform.name == 'Android Browser'
-            );
+            return platform.os.family === 'Android' && platform.name == 'Android Browser';
           };
           PlatformUtils.prototype.isMobileDevice = function () {
-            return (
-              platform.os.family === 'iOS' || platform.os.family === 'Android'
-            );
+            return platform.os.family === 'iOS' || platform.os.family === 'Android';
           };
           PlatformUtils.prototype.isReactNative = function () {
             return false;
@@ -17220,11 +15625,7 @@ the event name as the first argument.
             );
           };
           PlatformUtils.prototype.canScreenShare = function () {
-            var version = (
-              platform === null || platform === void 0
-                ? void 0
-                : platform.version
-            )
+            var version = (platform === null || platform === void 0 ? void 0 : platform.version)
               ? parseFloat(platform.version)
               : -1;
             if (this.isMobileDevice()) {
@@ -17271,26 +15672,21 @@ the event name as the first argument.
                     d.__proto__ = b;
                   }) ||
                 function (d, b) {
-                  for (var p in b)
-                    if (Object.prototype.hasOwnProperty.call(b, p)) d[p] = b[p];
+                  for (var p in b) if (Object.prototype.hasOwnProperty.call(b, p)) d[p] = b[p];
                 };
               return extendStatics(d, b);
             };
             return function (d, b) {
               if (typeof b !== 'function' && b !== null)
                 throw new TypeError(
-                  'Class extends value ' +
-                    String(b) +
-                    ' is not a constructor or null'
+                  'Class extends value ' + String(b) + ' is not a constructor or null'
                 );
               extendStatics(d, b);
               function __() {
                 this.constructor = d;
               }
               d.prototype =
-                b === null
-                  ? Object.create(b)
-                  : ((__.prototype = b.prototype), new __());
+                b === null ? Object.create(b) : ((__.prototype = b.prototype), new __());
             };
           })();
         var __assign =
@@ -17301,8 +15697,7 @@ the event name as the first argument.
               function (t) {
                 for (var s, i = 1, n = arguments.length; i < n; i++) {
                   s = arguments[i];
-                  for (var p in s)
-                    if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+                  for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
                 }
                 return t;
               };
@@ -17334,13 +15729,9 @@ the event name as the first argument.
                 }
               }
               function step(result) {
-                result.done
-                  ? resolve(result.value)
-                  : adopt(result.value).then(fulfilled, rejected);
+                result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected);
               }
-              step(
-                (generator = generator.apply(thisArg, _arguments || [])).next()
-              );
+              step((generator = generator.apply(thisArg, _arguments || [])).next());
             });
           };
         var __generator =
@@ -17408,17 +15799,13 @@ the event name as the first argument.
                       continue;
                     default:
                       if (
-                        !((t = _.trys),
-                        (t = t.length > 0 && t[t.length - 1])) &&
+                        !((t = _.trys), (t = t.length > 0 && t[t.length - 1])) &&
                         (op[0] === 6 || op[0] === 2)
                       ) {
                         _ = 0;
                         continue;
                       }
-                      if (
-                        op[0] === 3 &&
-                        (!t || (op[1] > t[0] && op[1] < t[3]))
-                      ) {
+                      if (op[0] === 3 && (!t || (op[1] > t[0] && op[1] < t[3]))) {
                         _.label = op[1];
                         break;
                       }
@@ -17470,23 +15857,16 @@ the event name as the first argument.
             platform = Platform_1.PlatformUtils.getInstance();
             this.configuration = __assign(__assign({}, configuration), {
               iceServers:
-                !!configuration.iceServers &&
-                configuration.iceServers.length > 0
+                !!configuration.iceServers && configuration.iceServers.length > 0
                   ? configuration.iceServers
                   : freeice(),
               mediaStream:
-                configuration.mediaStream !== undefined
-                  ? configuration.mediaStream
-                  : null,
+                configuration.mediaStream !== undefined ? configuration.mediaStream : null,
               mode: !!configuration.mode ? configuration.mode : 'sendrecv',
-              id: !!configuration.id
-                ? configuration.id
-                : this.generateUniqueId(),
+              id: !!configuration.id ? configuration.id : this.generateUniqueId(),
             });
             logger.debug(
-              '[WebRtcPeer] configuration:\n'.concat(
-                JSON.stringify(this.configuration, null, 2)
-              )
+              '[WebRtcPeer] configuration:\n'.concat(JSON.stringify(this.configuration, null, 2))
             );
             this.pc = new RTCPeerConnection({
               iceServers: this.configuration.iceServers,
@@ -17531,10 +15911,8 @@ the event name as the first argument.
             var hasAudio = this.configuration.mediaConstraints.audio;
             var hasVideo = this.configuration.mediaConstraints.video;
             var options = {
-              offerToReceiveAudio:
-                this.configuration.mode !== 'sendonly' && hasAudio,
-              offerToReceiveVideo:
-                this.configuration.mode !== 'sendonly' && hasVideo,
+              offerToReceiveAudio: this.configuration.mode !== 'sendonly' && hasAudio,
+              offerToReceiveVideo: this.configuration.mode !== 'sendonly' && hasVideo,
             };
             logger.debug(
               '[createOfferLegacy] RTCPeerConnection.createOffer() options:',
@@ -17582,8 +15960,7 @@ the event name as the first argument.
                         '[createOffer] Method RTCPeerConnection.addTransceiver() is available; using it'
                       );
                     }
-                    if (!(this.configuration.mode !== 'recvonly'))
-                      return [3, 7];
+                    if (!(this.configuration.mode !== 'recvonly')) return [3, 7];
                     if (!this.configuration.mediaStream) {
                       throw new Error(
                         "[WebRtcPeer.createOffer] Direction is '".concat(
@@ -17601,10 +15978,7 @@ the event name as the first argument.
                       direction: this.configuration.mode,
                       streams: [this.configuration.mediaStream],
                     };
-                    if (
-                      track.kind === 'video' &&
-                      this.configuration.simulcast
-                    ) {
+                    if (track.kind === 'video' && this.configuration.simulcast) {
                       trackSettings = track.getSettings();
                       trackConsts = track.getConstraints();
                       trackWidth =
@@ -17612,8 +15986,7 @@ the event name as the first argument.
                           (_b =
                             (_a = trackSettings.width) !== null && _a !== void 0
                               ? _a
-                              : trackConsts.width.ideal) !== null &&
-                          _b !== void 0
+                              : trackConsts.width.ideal) !== null && _b !== void 0
                             ? _b
                             : trackConsts.width) !== null && _c !== void 0
                           ? _c
@@ -17621,11 +15994,9 @@ the event name as the first argument.
                       trackHeight =
                         (_f =
                           (_e =
-                            (_d = trackSettings.height) !== null &&
-                            _d !== void 0
+                            (_d = trackSettings.height) !== null && _d !== void 0
                               ? _d
-                              : trackConsts.height.ideal) !== null &&
-                          _e !== void 0
+                              : trackConsts.height.ideal) !== null && _e !== void 0
                             ? _e
                             : trackConsts.height) !== null && _f !== void 0
                           ? _f
@@ -17665,14 +16036,12 @@ the event name as the first argument.
                     sendParams = tc.sender.getParameters();
                     needSetParams = false;
                     if (
-                      !((_g = sendParams.degradationPreference) === null ||
-                      _g === void 0
+                      !((_g = sendParams.degradationPreference) === null || _g === void 0
                         ? void 0
                         : _g.length)
                     ) {
                       if (['detail', 'text'].includes(track.contentHint)) {
-                        sendParams.degradationPreference =
-                          'maintain-resolution';
+                        sendParams.degradationPreference = 'maintain-resolution';
                       } else {
                         sendParams.degradationPreference = 'balanced';
                       }
@@ -17694,9 +16063,7 @@ the event name as the first argument.
                       }
                     }
                     if (!needSetParams) return [3, 5];
-                    logger.debug(
-                      '[createOffer] Setting new RTCRtpSendParameters to video sender'
-                    );
+                    logger.debug('[createOffer] Setting new RTCRtpSendParameters to video sender');
                     _m.label = 2;
                   case 2:
                     _m.trys.push([2, 4, , 5]);
@@ -17718,11 +16085,7 @@ the event name as the first argument.
                   case 6:
                     return [3, 8];
                   case 7:
-                    for (
-                      _k = 0, _l = ['audio', 'video'];
-                      _k < _l.length;
-                      _k++
-                    ) {
+                    for (_k = 0, _l = ['audio', 'video']; _k < _l.length; _k++) {
                       kind = _l[_k];
                       if (!this.configuration.mediaConstraints[kind]) {
                         continue;
@@ -17742,8 +16105,7 @@ the event name as the first argument.
                     return [3, 11];
                   case 10:
                     error_2 = _m.sent();
-                    message =
-                      '[WebRtcPeer.createOffer] Browser failed creating an SDP Offer';
+                    message = '[WebRtcPeer.createOffer] Browser failed creating an SDP Offer';
                     if (error_2 instanceof Error) {
                       message += ': '.concat(error_2.message);
                     }
@@ -17793,11 +16155,7 @@ the event name as the first argument.
                     };
                   }
                 };
-                for (
-                  var _i = 0, _a = ['audio', 'video'];
-                  _i < _a.length;
-                  _i++
-                ) {
+                for (var _i = 0, _a = ['audio', 'video']; _i < _a.length; _i++) {
                   var kind = _a[_i];
                   var state_1 = _loop_1(kind);
                   if (typeof state_1 === 'object') return state_1.value;
@@ -17815,13 +16173,11 @@ the event name as the first argument.
                   offerVideo = true;
                 if (!!_this.configuration.mediaConstraints) {
                   offerAudio =
-                    typeof _this.configuration.mediaConstraints.audio ===
-                    'boolean'
+                    typeof _this.configuration.mediaConstraints.audio === 'boolean'
                       ? _this.configuration.mediaConstraints.audio
                       : true;
                   offerVideo =
-                    typeof _this.configuration.mediaConstraints.video ===
-                    'boolean'
+                    typeof _this.configuration.mediaConstraints.video === 'boolean'
                       ? _this.configuration.mediaConstraints.video
                       : true;
                   var constraints = {
@@ -17866,14 +16222,9 @@ the event name as the first argument.
                 type: 'offer',
                 sdp: sdpOffer,
               };
-              logger.debug(
-                'SDP offer received, setting remote description',
-                offer
-              );
+              logger.debug('SDP offer received, setting remote description', offer);
               if (_this.pc.signalingState === 'closed') {
-                return reject(
-                  'RTCPeerConnection is closed when trying to set remote description'
-                );
+                return reject('RTCPeerConnection is closed when trying to set remote description');
               }
               _this
                 .setRemoteDescription(offer)
@@ -17890,9 +16241,7 @@ the event name as the first argument.
             return new Promise(function (resolve, reject) {
               logger.debug('SDP answer created, setting local description');
               if (_this.pc.signalingState === 'closed') {
-                return reject(
-                  'RTCPeerConnection is closed when trying to set local description'
-                );
+                return reject('RTCPeerConnection is closed when trying to set local description');
               }
               _this.pc
                 .setLocalDescription(answer)
@@ -17913,9 +16262,7 @@ the event name as the first argument.
               };
               logger.debug('SDP answer received, setting remote description');
               if (_this.pc.signalingState === 'closed') {
-                return reject(
-                  'RTCPeerConnection is closed when trying to set remote description'
-                );
+                return reject('RTCPeerConnection is closed when trying to set remote description');
               }
               _this
                 .setRemoteDescription(answer)
@@ -17964,9 +16311,7 @@ the event name as the first argument.
               }
             });
           };
-          WebRtcPeer.prototype.addIceConnectionStateChangeListener = function (
-            otherId
-          ) {
+          WebRtcPeer.prototype.addIceConnectionStateChangeListener = function (otherId) {
             var _this = this;
             this.pc.addEventListener('iceconnectionstatechange', function () {
               var iceConnectionState = _this.pc.iceConnectionState;
@@ -17980,8 +16325,7 @@ the event name as the first argument.
                     ') change to "disconnected". Possible network disconnection';
                   logger.warn(msg1);
                   _this.configuration.onIceConnectionStateException(
-                    ExceptionEvent_1.ExceptionEventName
-                      .ICE_CONNECTION_DISCONNECTED,
+                    ExceptionEvent_1.ExceptionEventName.ICE_CONNECTION_DISCONNECTED,
                     msg1
                   );
                   break;
@@ -18123,13 +16467,9 @@ the event name as the first argument.
                 }
               }
               function step(result) {
-                result.done
-                  ? resolve(result.value)
-                  : adopt(result.value).then(fulfilled, rejected);
+                result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected);
               }
-              step(
-                (generator = generator.apply(thisArg, _arguments || [])).next()
-              );
+              step((generator = generator.apply(thisArg, _arguments || [])).next());
             });
           };
         var __generator =
@@ -18197,17 +16537,13 @@ the event name as the first argument.
                       continue;
                     default:
                       if (
-                        !((t = _.trys),
-                        (t = t.length > 0 && t[t.length - 1])) &&
+                        !((t = _.trys), (t = t.length > 0 && t[t.length - 1])) &&
                         (op[0] === 6 || op[0] === 2)
                       ) {
                         _ = 0;
                         continue;
                       }
-                      if (
-                        op[0] === 3 &&
-                        (!t || (op[1] > t[0] && op[1] < t[3]))
-                      ) {
+                      if (op[0] === 3 && (!t || (op[1] > t[0] && op[1] < t[3]))) {
                         _.label = op[1];
                         break;
                       }
@@ -18265,9 +16601,7 @@ the event name as the first argument.
                   ' of connection ' +
                   this.stream.connection.connectionId
               );
-              logger.warn(
-                'localStorage item: ' + JSON.stringify(webrtcStatsConfig)
-              );
+              logger.warn('localStorage item: ' + JSON.stringify(webrtcStatsConfig));
               this.POST_URL = webrtcStatsConfig.httpEndpoint;
               this.statsInterval = webrtcStatsConfig.interval;
               this.webRtcStatsIntervalId = setInterval(function () {
@@ -18347,11 +16681,8 @@ the event name as the first argument.
                         }
                       });
                       if (transportStat != null) {
-                        selectedCandidatePairId =
-                          transportStat.selectedCandidatePairId;
-                        selectedCandidatePair = candidatePairs.get(
-                          selectedCandidatePairId
-                        );
+                        selectedCandidatePairId = transportStat.selectedCandidatePairId;
+                        selectedCandidatePair = candidatePairs.get(selectedCandidatePairId);
                       } else {
                         length_1 = candidatePairs.size;
                         iterator = candidatePairs.values();
@@ -18364,19 +16695,15 @@ the event name as the first argument.
                         }
                       }
                       localCandidateId = selectedCandidatePair.localCandidateId;
-                      remoteCandidateId =
-                        selectedCandidatePair.remoteCandidateId;
-                      finalLocalCandidate =
-                        localCandidates.get(localCandidateId);
+                      remoteCandidateId = selectedCandidatePair.remoteCandidateId;
+                      finalLocalCandidate = localCandidates.get(localCandidateId);
                       if (!!finalLocalCandidate) {
                         candList = this.stream.getLocalIceCandidateList();
                         cand = candList.filter(function (c) {
                           return (
                             !!c.candidate &&
                             (c.candidate.indexOf(finalLocalCandidate.ip) >= 0 ||
-                              c.candidate.indexOf(
-                                finalLocalCandidate.address
-                              ) >= 0) &&
+                              c.candidate.indexOf(finalLocalCandidate.address) >= 0) &&
                             c.candidate.indexOf(finalLocalCandidate.port) >= 0
                           );
                         });
@@ -18389,18 +16716,14 @@ the event name as the first argument.
                         finalLocalCandidate =
                           'ERROR: No active local ICE candidate. Probably ICE-TCP is being used';
                       }
-                      finalRemoteCandidate =
-                        remoteCandidates.get(remoteCandidateId);
+                      finalRemoteCandidate = remoteCandidates.get(remoteCandidateId);
                       if (!!finalRemoteCandidate) {
                         candList = this.stream.getRemoteIceCandidateList();
                         cand = candList.filter(function (c) {
                           return (
                             !!c.candidate &&
-                            (c.candidate.indexOf(finalRemoteCandidate.ip) >=
-                              0 ||
-                              c.candidate.indexOf(
-                                finalRemoteCandidate.address
-                              ) >= 0) &&
+                            (c.candidate.indexOf(finalRemoteCandidate.ip) >= 0 ||
+                              c.candidate.indexOf(finalRemoteCandidate.address) >= 0) &&
                             c.candidate.indexOf(finalRemoteCandidate.port) >= 0
                           );
                         });
@@ -18456,9 +16779,7 @@ the event name as the first argument.
                     return [3, 3];
                   case 2:
                     error_1 = _a.sent();
-                    logger.error(
-                      'sendStats error: '.concat(JSON.stringify(error_1))
-                    );
+                    logger.error('sendStats error: '.concat(JSON.stringify(error_1)));
                     return [3, 3];
                   case 3:
                     return [2];
@@ -18499,20 +16820,13 @@ the event name as the first argument.
                   2,
                   new Promise(function (resolve, reject) {
                     return __awaiter(_this, void 0, void 0, function () {
-                      var statsReport,
-                        response_1,
-                        videoTrackStats_1,
-                        candidatePairStats_1,
-                        error_3;
+                      var statsReport, response_1, videoTrackStats_1, candidatePairStats_1, error_3;
                       var _this = this;
                       return __generator(this, function (_a) {
                         switch (_a.label) {
                           case 0:
                             _a.trys.push([0, 2, , 3]);
-                            return [
-                              4,
-                              this.stream.getRTCPeerConnection().getStats(),
-                            ];
+                            return [4, this.stream.getRTCPeerConnection().getStats()];
                           case 1:
                             statsReport = _a.sent();
                             response_1 = this.getWebRtcStatsResponseOutline();
@@ -18528,19 +16842,10 @@ the event name as the first argument.
                               'currentRoundTripTime',
                             ];
                             statsReport.forEach(function (stat) {
-                              var mediaType =
-                                stat.mediaType != null
-                                  ? stat.mediaType
-                                  : stat.kind;
+                              var mediaType = stat.mediaType != null ? stat.mediaType : stat.kind;
                               var addStat = function (direction, key) {
-                                if (
-                                  stat[key] != null &&
-                                  response_1[direction] != null
-                                ) {
-                                  if (
-                                    !mediaType &&
-                                    videoTrackStats_1.indexOf(key) > -1
-                                  ) {
+                                if (stat[key] != null && response_1[direction] != null) {
+                                  if (!mediaType && videoTrackStats_1.indexOf(key) > -1) {
                                     mediaType = 'video';
                                   }
                                   if (
@@ -18549,16 +16854,13 @@ the event name as the first argument.
                                     key != null &&
                                     response_1[direction][mediaType] != null
                                   ) {
-                                    response_1[direction][mediaType][key] =
-                                      Number(stat[key]);
+                                    response_1[direction][mediaType][key] = Number(stat[key]);
                                   } else if (
                                     direction != null &&
                                     key != null &&
                                     candidatePairStats_1.includes(key)
                                   ) {
-                                    response_1[direction][key] = Number(
-                                      stat[key]
-                                    );
+                                    response_1[direction][key] = Number(stat[key]);
                                   }
                                 }
                               };
@@ -18588,27 +16890,17 @@ the event name as the first argument.
                                   addStat('outbound', 'framesDropped');
                                   addStat('outbound', 'framesSent');
                                   addStat(
-                                    _this.stream.isLocal()
-                                      ? 'outbound'
-                                      : 'inbound',
+                                    _this.stream.isLocal() ? 'outbound' : 'inbound',
                                     'frameHeight'
                                   );
                                   addStat(
-                                    _this.stream.isLocal()
-                                      ? 'outbound'
-                                      : 'inbound',
+                                    _this.stream.isLocal() ? 'outbound' : 'inbound',
                                     'frameWidth'
                                   );
                                   break;
                                 case 'candidate-pair':
-                                  addStat(
-                                    'candidatepair',
-                                    'currentRoundTripTime'
-                                  );
-                                  addStat(
-                                    'candidatepair',
-                                    'availableOutgoingBitrate'
-                                  );
+                                  addStat('candidatepair', 'currentRoundTripTime');
+                                  addStat('candidatepair', 'availableOutgoingBitrate');
                                   break;
                               }
                             });
@@ -18623,10 +16915,7 @@ the event name as the first argument.
                             return [2, resolve(response_1)];
                           case 2:
                             error_3 = _a.sent();
-                            logger.error(
-                              'Error getting common stats: ',
-                              error_3
-                            );
+                            logger.error('Error getting common stats: ', error_3);
                             return [2, reject(error_3)];
                           case 3:
                             return [2];

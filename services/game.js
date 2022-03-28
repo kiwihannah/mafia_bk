@@ -362,7 +362,7 @@ module.exports = {
       });
       const prevStatus = await GameStatus.findOne({ where: { roomId } });
 
-      // 사람 랜덤투표 로직
+      // 유저용 랜덤투표 로직
       let userArr = [];
       let selectedUserId = 0;
       for (let i = 0; i < prevGameGroup.length; i++) {
@@ -370,8 +370,7 @@ module.exports = {
       }
       userId
         ? (selectedUserId = userId)
-        : (selectedUserId =
-            userArr[Math.floor(Math.random() * userArr.length)]);
+        : (selectedUserId = userArr[Math.floor(Math.random() * userArr.length)]);
       const prevdUser = await GameGroup.findOne({
         where: { userId: selectedUserId },
       });
@@ -426,8 +425,7 @@ module.exports = {
       }
       userId
         ? (selectedUserId = userId)
-        : (selectedUserId =
-            userArr[Math.floor(Math.random() * userArr.length)]);
+        : (selectedUserId = userArr[Math.floor(Math.random() * userArr.length)]);
       const prevUser = await GameGroup.findOne({
         where: { userId: selectedUserId },
       });
@@ -455,7 +453,7 @@ module.exports = {
       }
     }),
 
-    // 프론트용 투표 여부 확인
+    // 프론트 용 투표 여부 확인
     isZeroVote: ServiceAsyncWrapper(async (data) => {
       const { roomId } = data;
       const isVote = await Vote.findAll({ where: { roomId } });
@@ -497,11 +495,7 @@ module.exports = {
 
         const prevVote = await Vote.findAll({ where: { roomId, roundNo } });
         if ((prevVote.length || 0) !== prevGameGroup.length) {
-          for (
-            let i = 0;
-            i < prevGameGroup.length - (prevVote.length || 0);
-            i++
-          ) {
+          for (let i = 0; i < prevGameGroup.length - (prevVote.length || 0); i++) {
             const user = await Vote.create({
               voter: 0,
               candidacy: 0,
@@ -511,9 +505,7 @@ module.exports = {
             });
           }
         }
-        return `${
-          prevGameGroup.length - prevVote.length
-        } 개의 무효표 처리가 완료되었습니다.\n${
+        return `${prevGameGroup.length - prevVote.length} 개의 무효표 처리가 완료되었습니다.\n${
           ai.length
         } 명의 ai가 투표를 완료 했습니다.`;
       } else {
@@ -590,9 +582,7 @@ module.exports = {
           else tempResult = 0;
           await prevGameStatus.update({ isResult: tempResult });
 
-          console.log(
-            `###### 스파이 수: ${tempSpyArr.length}\n사원 수: ${tempEmplArr.length}`
-          );
+          console.log(`###### 스파이 수: ${tempSpyArr.length}\n사원 수: ${tempEmplArr.length}`);
 
           const msg =
             prevGameGroup.role === 4
@@ -626,9 +616,7 @@ module.exports = {
             ? tempSpyArr.push(leftUsers[i].userId)
             : tempEmplArr.push(leftUsers[i].userId);
         }
-        console.log(
-          `######스파이 수: ${tempSpyArr.length}\n사원 수: ${tempEmplArr.length}`
-        );
+        console.log(`######스파이 수: ${tempSpyArr.length}\n사원 수: ${tempEmplArr.length}`);
 
         // 결과 추가 & 반환
         if (tempEmplArr.length === tempSpyArr.length) {
@@ -646,9 +634,7 @@ module.exports = {
           });
         }
         const afterCnt = await GameStatus.findOne({ where: { roomId } });
-        console.log(
-          `##### 회차를 반환합니다. 현재 스테이터스: ${afterCnt.status}`
-        );
+        console.log(`##### 회차를 반환합니다. 현재 스테이터스: ${afterCnt.status}`);
         return afterCnt.isResult;
       }
     }),

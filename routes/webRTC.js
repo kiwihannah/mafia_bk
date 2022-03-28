@@ -145,13 +145,7 @@ router.post('/api-sessions/remove-user', function (req, res) {
     // Retrieve params from POST body
     var sessionName = req.body.sessionName;
     var token = req.body.token;
-    console.log(
-      'Removing user | {sessionName, token}={' +
-        sessionName +
-        ', ' +
-        token +
-        '}'
-    );
+    console.log('Removing user | {sessionName, token}={' + sessionName + ', ' + token + '}');
 
     // If the session exists
     if (mapSessions[sessionName] && mapSessionNamesTokens[sessionName]) {
@@ -197,9 +191,7 @@ function isLogged(session) {
   return session.loggedUser != null;
 }
 function getBasicAuth() {
-  return (
-    'Basic ' + new Buffer('OPENVIDUAPP:' + OPENVIDU_SECRET).toString('base64')
-  );
+  return 'Basic ' + new Buffer('OPENVIDUAPP:' + OPENVIDU_SECRET).toString('base64');
 }
 
 module.exports = router;

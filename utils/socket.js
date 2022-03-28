@@ -74,7 +74,7 @@ module.exports = (server) => {
       socket.to(roomId).emit('cancelReady', { users });
     });
 
-    // 각자 낮 투표 (사원) 처리 
+    // 각자 낮 투표 (사원) 처리
     socket.on('dayTimeVoteArr', async (data) => {
       const { roomId, userId, candidacy, roundNo } = data;
       const prevStatus = await GameStatus.findOne({ where: { roomId } });
@@ -89,12 +89,15 @@ module.exports = (server) => {
             roundNo,
           });
           const candidacyCnt = await Vote.findAll({ where: { candidacy } });
-          socket.to(roomId).emit('dayTimeVoteArr', { voter: userId, candidacy: candidacy, voteCnt: candidacyCnt.length });
+          socket.to(roomId).emit('dayTimeVoteArr', {
+            voter: userId,
+            candidacy: candidacy,
+            voteCnt: candidacyCnt.length,
+          });
         }
       } catch (error) {
         throw error;
       }
     });
-    
   });
 };

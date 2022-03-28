@@ -132,11 +132,7 @@ function joinSession() {
         // }
       })
       .catch((error) => {
-        console.warn(
-          'There was an error connecting to the session:',
-          error.code,
-          error.message
-        );
+        console.warn('There was an error connecting to the session:', error.code, error.message);
         enableBtn();
       });
   });
@@ -285,21 +281,14 @@ function appendUserData(videoElement, connection) {
   dataNode.className = 'data-node';
   dataNode.id = 'data-' + nodeId;
   dataNode.innerHTML =
-    "<p class='nickName'>" +
-    clientData +
-    "</p><p class='userName'>" +
-    serverData +
-    '</p>';
+    "<p class='nickName'>" + clientData + "</p><p class='userName'>" + serverData + '</p>';
   videoElement.parentNode.insertBefore(dataNode, videoElement.nextSibling);
   addClickListener(videoElement, clientData, serverData);
 }
 
 function removeUserData(connection) {
   var userNameRemoved = $('#data-' + connection.connectionId);
-  if (
-    $(userNameRemoved).find('p.userName').html() ===
-    $('#main-video p.userName').html()
-  ) {
+  if ($(userNameRemoved).find('p.userName').html() === $('#main-video p.userName').html()) {
     cleanMainVideo(); // The participant focused in the main video has left
   }
   $('#data-' + connection.connectionId).remove();
@@ -338,10 +327,7 @@ function initMainVideo(videoElement, userData) {
 }
 
 function initMainVideoThumbnail() {
-  $('#main-video video').css(
-    'background',
-    "url('images/subscriber-msg.jpg') round"
-  );
+  $('#main-video video').css('background', "url('images/subscriber-msg.jpg') round");
 }
 
 // function isPublisher(userName) {

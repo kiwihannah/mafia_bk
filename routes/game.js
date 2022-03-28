@@ -12,10 +12,7 @@ router.patch('/out/:roomId/user/:userId', GameController.entryAndExit.exit);
 // ai 플레이어 생성 수락한 방에 부족한 인원 인공지능으로 채우기
 router.put('/room/:roomId/ai', GameController.create.aiPlayer);
 // 방 최대인원 줄이기 -> 조건 : maxPlayer > currPlayer, aiPlayer = N, downgradePlayer = Y
-router.patch(
-  '/room/:roomId/changeMaxPlayer',
-  GameController.update.changeMaxPlayer
-);
+router.patch('/room/:roomId/changeMaxPlayer', GameController.update.changeMaxPlayer);
 // 게임 시작 전 시작 조건 메세지 확인
 router.get('/room/:roomId/user/:userId/msg', GameController.sendMsg.start);
 // 게임 시작하기
@@ -29,10 +26,7 @@ router.patch('/room/:roomId/role', GameController.gamePlay.giveRole);
 // 변호사가 일개미 지키기
 router.patch('/room/:roomId/lawyerAct', GameController.gamePlay.lawyerAct);
 // 탐정이 스파이 알아보기
-router.get(
-  '/room/:roomId/detectiveAct/:userId',
-  GameController.gamePlay.detectiveAct
-);
+router.get('/room/:roomId/detectiveAct/:userId', GameController.gamePlay.detectiveAct);
 // 스파이가 일개미 해고시키기 일개미 id body로 받음
 router.patch('/room/:roomId/spyAct', GameController.gamePlay.spyAct);
 // ai개미가 하는 투표
@@ -46,10 +40,7 @@ router.put(
   GameController.gamePlay.invalidAndAiVote
 );
 // 라운드 별 사원 투표 결과 확인
-router.get(
-  '/room/:roomId/round/:roundNo',
-  GameController.gamePlay.getVoteResult
-);
+router.get('/room/:roomId/round/:roundNo', GameController.gamePlay.getVoteResult);
 
 /**
  * 게임정보 메세지 받기
@@ -62,6 +53,5 @@ router.get('/room/:roomId/users', GameController.getGame.users);
 router.get('/room/:roomId/result', GameController.getGame.result);
 // 승리한 유저 반환
 router.get('/room/:roomId/winner', GameController.getGame.winner);
-
 
 module.exports = router;
