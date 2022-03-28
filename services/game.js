@@ -608,19 +608,17 @@ module.exports = {
 
         // 결과 추가 & 반환
         if (tempEmplArr.length === tempSpyArr.length) {
-          await prevGameStatus.update({ msg: '스파이의 승리 입니다!' });
+          // 스파이 승리
           await prevGameStatus.update({ isResult: 2 });
         } else if (tempSpyArr.length === 0) {
-          await prevGameStatus.update({ msg: '일개미들의 승리 입니다!' });
+          // 사원 승리
           await prevGameStatus.update({ isResult: 1 });
         } else {
           // 승부 없음
           const nextRoundNo = prevGameStatus.roundNo + 1;
-          await prevGameStatus.update({
-            msg: '다음 라운드로 넘어 갑니다!',
-            roundNo: nextRoundNo,
-          });
+          await prevGameStatus.update({ roundNo: nextRoundNo });
         }
+        
         const afterCnt = await GameStatus.findOne({ where: { roomId } });
         console.log(`##### 회차를 반환합니다. 현재 스테이터스: ${afterCnt.status}`);
         return afterCnt.isResult;
