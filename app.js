@@ -2,6 +2,7 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const morgan = require('morgan');
 const cors = require('cors');
+const fs = require('fs');
 const http = require('http');
 const helmet = require('helmet');
 const dotenv = require('dotenv');
@@ -18,6 +19,8 @@ const router = express.Router();
 // middlewares
 app.use(helmet());
 app.use(morgan('dev'));
+app.use(morgan('combined')); // 접속자 ip
+
 app.use(cors({ origin: '*' }));
 app.use('/api', bodyParser.json(), router);
 app.use(express.static('public'));
@@ -30,6 +33,32 @@ const httpserver = http.createServer(app).listen(port, () => {
 
 // socket.io connect
 SocketIO(httpserver);
+
+// letsencrypt 로 받은 인증서 경로를 입력 ssl
+const options = {
+  ca: fs.readFileSync(
+    '/etc/letsencrypt/live/mafia.milagros.shop/fullchain.pem'
+  ),
+  key: fs.readFileSync('/etc/letsencrypt/live/mafia.milagros.shop/privkey.pem'),
+  cert: fs.readFileSync('/etc/letsencrypt/live/mafia.milagros.shop/cert.pem'),
+};
+
+// // const httpserver = http.createServer(app);
+// http.createServer(app).listen(port);
+// const httpserver = https.createServer(options, app).listen(443, () => {
+//   console.log(`[ web & socket server ] listening on ${port}`);
+// });
+// //socket.io connect
+// SocketIO(httpserver, { cors: { origin: '*' } });
+
+// Parse application/vnd.api+json as json
+app.use('/', bodyParser.json({ type: 'application/vnd.api+json' }), router);
+// Parse application/x-www-form-urlencoded url | 요청시, 이중 json 가능?
+app.use(
+  bodyParser.urlencoded({
+    extended: 'true',
+  })
+);
 
 // connect DataBase
 const db = require('./models');
@@ -48,6 +77,7 @@ router.get('/', (_, res) => {
 const userRouter = require('./routes/user');
 const roomRouter = require('./routes/room');
 const gameRouter = require('./routes/game');
+const webcamRouter = require('./routes/webRTC');
 
 app.use('/api', [userRouter, roomRouter, gameRouter]);
 

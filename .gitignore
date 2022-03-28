@@ -8,6 +8,14 @@ app.ver2.js
 ecosystem.config.js
 nginx.conf
 .well-known/
+
+public/
+public1/
+app.ver1.js
+app.ver2.js
+ecosystem.config.js
+nginx.conf
+.well-known/
 sessions/
 test/
 socketEx.js
