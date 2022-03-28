@@ -53,5 +53,7 @@ router.get('/room/:roomId/users', GameController.getGame.users);
 router.get('/room/:roomId/result', GameController.getGame.result);
 // 승리한 유저 반환
 router.get('/room/:roomId/winner', GameController.getGame.winner);
+// 하나의 유저 정보 반환
+router.get('/room/:roomId/user/:userId/info', GameController.getGame.userInfo);
 
 module.exports = router;

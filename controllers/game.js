@@ -149,5 +149,11 @@ module.exports = {
       const users = await gameService.getGame.winner({ roomId });
       return res.status(200).json({ users });
     }),
+
+    userInfo: ControllerAsyncWrapper(async (req, res) => {
+      const { roomId, userId } = req.params;
+      const user = await gameService.getGame.userInfo({ roomId, userId });
+      return res.status(200).json({ user });
+    }),
   },
 };

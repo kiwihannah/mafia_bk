@@ -676,5 +676,12 @@ module.exports = {
         return spyGroup;
       }
     }),
+
+    userInfo: ServiceAsyncWrapper(async (data) => {
+      const { roomId, userId } = data;
+      const userInfo = await GameGroup.findOne({ where: { roomId, userId } });
+      if (!userInfo) throw { msg: '존재하지 않는 유저입니다.' };
+      else return userInfo;
+    }),
   },
 };

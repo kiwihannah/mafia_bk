@@ -1,0 +1,16 @@
+{
+    "apps" : [
+       {
+          "name"          : "app",
+          "script"        : "npm",
+          "args"          : "run start",
+          "watch"         : false,
+          "cwd"           : "/home/ubuntu/mafia_bk/",
+          "out_file"      : "/home/ubuntu/mafia_bk/hooker/hooker.out.log",
+          "err_file"      : "/home/ubuntu/mafia_bk/hooker/hooker.err.log",
+          "merge_logs"    : true,
+          "instances"     : 1,
+          "exec_mode"     : "cluster"
+       }
+    ]
+  }
