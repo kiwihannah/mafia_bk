@@ -58,24 +58,26 @@ module.exports = (server) => {
 
     // 레디 카운트 1
     socket.on('readyCnt', async (data) => {
-      const { roomId, userId } = data;
+      const { roomId, userId, socketId } = data;
       const readyUser = await GameGroup.findOne({ where: { roomId, userId } });
       await readyUser.update({ isReady: 'Y' });
       
       const users = await GameGroup.findAll({ where: { roomId, isReady: 'Y' } });
       const readyCnt = users.length;
-      socket.in(roomId).emit('readyCnt', { readyCnt });
+      socket.on(roomId).emit('readyCnt', { readyCnt });
+      socket.on(roomId).to(socketId).emit('readyCnt', { readyCnt });
     });
 
     // 레디 카운트 2
     socket.on('cancelReady', async (data) => {
-      const { roomId, userId } = data;
+      const { roomId, userId, socketId } = data;
       const readyUser = await GameGroup.findOne({ where: { roomId, userId } });
       await readyUser.update({ isReady: 'N' });
 
       const users = await GameGroup.findAll({ where: { roomId, isReady: 'Y' } });
       const readyCnt = users.length;
-      socket.in(roomId).emit('readyCnt', { readyCnt });
+      socket.on(roomId).emit('readyCnt', { readyCnt });
+      socket.on(roomId).to(socketId).emit('readyCnt', { readyCnt });
     });
 
     // 각자 낮 투표 (사원) 처리
