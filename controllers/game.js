@@ -68,7 +68,7 @@ module.exports = {
 
     aiLawyerAct: ControllerAsyncWrapper(async (req, res) => {
       const { roomId } = req.params;
-      const msg = await gameService.gamePlay.lawyerAct({ roomId });
+      const msg = await gameService.gamePlay.aiLawyerAct({ roomId });
       return res.status(200).json({ msg });
     }),
 
