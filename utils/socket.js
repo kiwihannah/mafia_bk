@@ -37,11 +37,9 @@ module.exports = (server) => {
 
     // 채팅 (귓속말 추가)
     socket.on('send_message', (data) => {
-      if (data.socketId !== '') {
-        socket.to(data.roomId).emit('receive_message', data);
-      } else {
-        socket.to(data.roomId).to(data.socketId).emit('receive_message', data);
-      }
+      data.socketId === ''
+        ? socket.to(data.roomId).emit('receive_message', data)
+        : socket.to(data.roomId).to(data.socketId).emit('receive_message', data);
     });
 
     socket.on('disconnect', () => {
@@ -61,7 +59,7 @@ module.exports = (server) => {
       const { roomId, userId, socketId } = data;
       const readyUser = await GameGroup.findOne({ where: { roomId, userId } });
       await readyUser.update({ isReady: 'Y' });
-      
+
       const users = await GameGroup.findAll({ where: { roomId, isReady: 'Y' } });
       const readyCnt = users.length;
       socket.on(roomId).emit('readyCnt', { readyCnt });
