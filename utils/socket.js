@@ -35,15 +35,13 @@ module.exports = (server) => {
       }
     });
 
-    // 일반 채팅
+    // 채팅 (귓속말 추가)
     socket.on('send_message', (data) => {
-      socket.to(data.roomId).emit('receive_message', data);
-    });
-
-    // 귓속말
-    socket.on('privateMsg', async (data) => { 
-      console.log('@@@@@@@@@ 귓속말 테스트 --->', data)
-      socket.to(data.roomId).to(data.socketId).emit('privateMsg', data); 
+      if (data.socketId !== '') {
+        socket.to(data.roomId).emit('receive_message', data);
+      } else {
+        socket.to(data.roomId).to(data.socketId).emit('receive_message', data);
+      }
     });
 
     socket.on('disconnect', () => {
