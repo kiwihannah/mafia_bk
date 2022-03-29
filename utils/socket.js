@@ -107,9 +107,8 @@ module.exports = (server) => {
     socket.on('getRoundNo', async (data) => {
       const { roomId } = data;
       const prevStatus = await GameStatus.findOne({ where: { roomId } });
-      socket.to(roomId).emit('getRoundNo', { roundNo : prevStatus.roundNo});
-      socket.emit('getRoundNo', { roundNo : prevStatus.roundNo});
+      socket.to(roomId).emit('getRoundNo', { roundNo: prevStatus.roundNo });
+      socket.emit('getRoundNo', { roundNo: prevStatus.roundNo });
     });
-
   });
 };

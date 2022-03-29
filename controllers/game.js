@@ -139,8 +139,8 @@ module.exports = {
     }),
 
     result: ControllerAsyncWrapper(async (req, res) => {
-      const { roomId } = req.params;
-      const result = await gameService.getGame.result({ roomId });
+      const { roomId, userId } = req.params;
+      const result = await gameService.getGame.result({ roomId, userId });
       return res.status(200).json({ result });
     }),
 

@@ -50,7 +50,7 @@ router.get('/room/:roomId/roundNo', GameController.getGame.roundNo);
 // 방 안 유저 리스트 조회roomId
 router.get('/room/:roomId/users', GameController.getGame.users);
 // 결과 확인
-router.get('/room/:roomId/result', GameController.getGame.result);
+router.get('/room/:roomId/user/:userId/result', GameController.getGame.result);
 // 승리한 유저 반환
 router.get('/room/:roomId/winner', GameController.getGame.winner);
 // 하나의 유저 정보 반환
