@@ -9,16 +9,12 @@ module.exports = (server) => {
   console.log('[ socket util on ] : 한나소켓시작');
   const io = SocketIO(server, { cors: { origin: '*' } });
 
-  // 라우터에서 io 객체를 쓸 수 있게 해줌. req.app.get('io')로 접근
-  app.set('io', io);
-
   io.on('connection', (socket) => {
     console.log('socket connected');
     socket['nickname'] = `Anon`;
 
     socket.on('join_room', async (data) => {
       // 방검색 socket.rooms
-      // 변수 정리
       const { userId, roomId } = data;
       const socketId = socket.id;
 
@@ -54,30 +50,26 @@ module.exports = (server) => {
       socket.to(roomId).emit('getStatus', gameStatus);
     });
 
-    // 레디 카운트 1
+    // 레디 카운트 (레디)
     socket.on('readyCnt', async (data) => {
-      const { roomId, userId, socketId } = data;
-      console.log('@@@@@@@@@@@@@@@111 받은 데이터--->' , data );
+      const { roomId, userId } = data;
       const readyUser = await GameGroup.findOne({ where: { userId } });
       await readyUser.update({ isReady: 'Y' });
 
       const users = await GameGroup.findAll({ where: { roomId, isReady: 'Y' } });
       const readyCnt = users.length;
-      console.log('@@@@@@@@@@@@@@@111 보낼 데이터--->', readyCnt)
       socket.to(roomId).emit('readyCnt', { readyCnt });
       socket.emit('myReadyCnt', { myReadyCnt: readyCnt });
     });
 
-    // 레디 카운트 2
+    // 레디 카운트 (취소)
     socket.on('cancelReady', async (data) => {
-      const { roomId, userId, socketId } = data;
-      console.log('@@@@@@@@@@@@@@@222 받은 데이터--->' , data );
+      const { roomId, userId } = data;
       const readyUser = await GameGroup.findOne({ where: { userId } });
       await readyUser.update({ isReady: 'N' });
 
       const users = await GameGroup.findAll({ where: { roomId, isReady: 'Y' } });
       const readyCnt = users.length;
-      console.log('@@@@@@@@@@@@@@@222 보낼 데이터--->', readyCnt)
       socket.to(roomId).emit('readyCnt', { readyCnt });
       socket.emit('myReadyCnt', { myReadyCnt: readyCnt });
     });
@@ -97,15 +89,27 @@ module.exports = (server) => {
             roundNo,
           });
           const candidacyCnt = await Vote.findAll({ where: { candidacy } });
-          socket.to(roomId).emit('dayTimeVoteArr', {
+          const data = {
             voter: userId,
             candidacy: candidacy,
             voteCnt: candidacyCnt.length,
-          });
+          };
+          console.log('@@@@@ 개인 낮 투표를 했다-->', data);
+          socket.to(roomId).emit('dayTimeVoteArr', data);
+          socket.emit('dayTimeVoteArr', data);
         }
       } catch (error) {
         throw error;
       }
     });
+
+    // 라운드 반환
+    socket.on('getRoundNo', async (data) => {
+      const { roomId } = data;
+      const prevStatus = await GameStatus.findOne({ where: { roomId } });
+      socket.to(roomId).emit('getRoundNo', { roundNo : prevStatus.roundNo});
+      socket.emit('getRoundNo', { roundNo : prevStatus.roundNo});
+    });
+
   });
 };
