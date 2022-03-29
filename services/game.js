@@ -379,7 +379,9 @@ module.exports = {
         where: { userId: selectedUserId },
       });
 
-      const isAlreadyProtected = await GameGroup.findOne({ where: { roomId, isProtected: `Y${prevStatus.roundNo}` } });
+      const isAlreadyProtected = await GameGroup.findOne({
+        where: { roomId, isProtected: `Y${prevStatus.roundNo}` },
+      });
 
       if (!prevdUser || !isLawyerAlive) {
         throw { msg: '존재하지 않는 유저를 선택했거나, 변호사가 이미 해고당했습니다.' };
@@ -439,30 +441,36 @@ module.exports = {
         where: { userId: selectedUserId },
       });
 
+      // 이미 이번판에 활동을 했는지 구분
+      const isAlreadyEliminated = await GameGroup.findAll({
+        where: {
+          [Op.or]: [
+            { isEliminated: `N${prevGameStatus.roundNo}` },
+            { isEliminated: `Y${prevGameStatus.roundNo}` },
+          ],
+        },
+      });
+      console.log(isAlreadyEliminated)
+
       if (!prevUser || !isSpyAlive) {
-        throw {
-          msg: '존재하지 않는 유저를 선택했거나 마피아가 모두 붙잡혔습니다.',
-        };
+        throw { msg: '존재하지 않는 유저를 선택했거나 마피아가 모두 붙잡혔습니다.' };
+      } else if (isAlreadyEliminated.length > 0) {
+        throw { msg: '이번 라운드엔 이미 스파이 활동이 끝났습니다.' };
       } else {
         // 같은 라운드 에서 1회만 보호
+        let msg = '';
         console.log(prevUser.isProtected, `Y${prevGameStatus.roundNo}`);
         if (prevUser.isProtected === `Y${prevGameStatus.roundNo}`) {
-          const firedUser = await prevUser.update({ isProtected: 'N' });
-          console.log(
-            `@@@@@@ 유저 스파이 ${isSpyAlive.userId} 가 ${prevUser.userId} 를 죽이려다 실패`
-          );
-          await prevGameStatus.update({
-            msg: `현명한 변호사가 일개미 [ ${firedUser.nickname} ] (이)의 부당 해고를 막았습니다.`,
-          });
-          return `현명한 변호사가 일개미 [ ${firedUser.nickname} ] (이)의 부당 해고를 막았습니다.`;
+          const firedUser = await prevUser.update({ isProtected: `N${prevGameStatus.roundNo}` });
+          await prevUser.update({ isEliminated: `N${prevGameStatus.roundNo}` });
+          msg = `현명한 변호사가 일개미 [ ${firedUser.nickname} ] (이)의 부당 해고를 막았습니다.`;
         } else {
-          const firedUser = await prevUser.update({ isEliminated: 'Y' });
-          console.log(`@@@@@@ 유저 스파이가 ${isSpyAlive.userId} 가 ${prevUser.userId} 를 죽임`);
-          await prevGameStatus.update({
-            msg: `스파이에 의해, 성실한 일개미 [ ${firedUser.nickname} ] (이)가 간 밤에 해고 당했습니다.`,
-          });
-          return `스파이에 의해, 성실한 일개미 [ ${firedUser.nickname} ] (이)가 간 밤에 해고 당했습니다.`;
+          const firedUser = await prevUser.update({ isEliminated: `Y${prevGameStatus.roundNo}` });
+          msg = `스파이에 의해, 성실한 일개미 [ ${firedUser.nickname} ] (이)가 간 밤에 해고 당했습니다.`;
         }
+        console.log('@@@@ 유저-->', msg);
+        await prevGameStatus.update({ msg });
+        return msg;
       }
     }),
 
