@@ -379,10 +379,12 @@ module.exports = {
         where: { userId: selectedUserId },
       });
 
+      const isAlreadyProtected = await GameGroup.findOne({ where: { roomId, isProtected: `Y${prevStatus.roundNo}` } });
+
       if (!prevdUser || !isLawyerAlive) {
         throw { msg: '존재하지 않는 유저를 선택했거나, 변호사가 이미 해고당했습니다.' };
-      } else if (prevdUser.isProtected === `Y${prevStatus.roundNo}`) {
-        throw { msg: '이미 보호한 유저 입니다.' };
+      } else if (isAlreadyProtected) {
+        throw { msg: '이번 라운드에 이미 사원을 1회 보호했습니다.' };
       } else {
         const protectedUser = await prevdUser.update({
           isProtected: `Y${prevStatus.roundNo}`,
