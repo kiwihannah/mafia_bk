@@ -65,7 +65,7 @@ module.exports = (server) => {
       
       const users = await GameGroup.findAll({ where: { roomId, isReady: 'Y' } });
       const readyCnt = users.length;
-      socket.to(roomId).emit('readyCnt', { readyCnt });
+      socket.in(roomId).emit('readyCnt', { readyCnt });
     });
 
     // 레디 카운트 2
@@ -76,7 +76,7 @@ module.exports = (server) => {
 
       const users = await GameGroup.findAll({ where: { roomId, isReady: 'Y' } });
       const readyCnt = users.length;
-      socket.to(roomId).emit('readyCnt', { readyCnt });
+      socket.in(roomId).emit('readyCnt', { readyCnt });
     });
 
     // 각자 낮 투표 (사원) 처리
