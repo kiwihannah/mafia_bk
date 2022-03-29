@@ -57,29 +57,29 @@ module.exports = (server) => {
     // 레디 카운트 1
     socket.on('readyCnt', async (data) => {
       const { roomId, userId, socketId } = data;
-      console.log('@@@@@@@@@@@@@@@111 받은 데이터--->', data);
+      console.log('@@@@@@@@@@@@@@@111 받은 데이터--->' , data );
       const readyUser = await GameGroup.findOne({ where: { userId } });
       await readyUser.update({ isReady: 'Y' });
 
       const users = await GameGroup.findAll({ where: { roomId, isReady: 'Y' } });
       const readyCnt = users.length;
-      console.log('@@@@@@@@@@@@@@@111 보낼 데이터--->', readyCnt);
+      console.log('@@@@@@@@@@@@@@@111 보낼 데이터--->', readyCnt)
       socket.to(roomId).emit('readyCnt', { readyCnt });
-      socket.to(socketId).emit('readyCnt', { readyCnt });
+      socket.to(socketId).emit('readyCnt', { readyCnt: `${readyCnt} 를 요청한 사람에게 보냅니다.` });
     });
 
     // 레디 카운트 2
     socket.on('cancelReady', async (data) => {
       const { roomId, userId, socketId } = data;
-      console.log('@@@@@@@@@@@@@@@222 받은 데이터--->', data);
+      console.log('@@@@@@@@@@@@@@@222 받은 데이터--->' , data );
       const readyUser = await GameGroup.findOne({ where: { userId } });
       await readyUser.update({ isReady: 'N' });
 
       const users = await GameGroup.findAll({ where: { roomId, isReady: 'Y' } });
       const readyCnt = users.length;
-      console.log('@@@@@@@@@@@@@@@222 보낼 데이터--->', readyCnt);
+      console.log('@@@@@@@@@@@@@@@222 보낼 데이터--->', readyCnt)
       socket.to(roomId).emit('readyCnt', { readyCnt });
-      socket.to(socketId).emit('readyCnt', { readyCnt });
+      socket.to(socketId).emit('readyCnt', { readyCnt: `${readyCnt} 를 요청한 사람에게 보냅니다.` });
     });
 
     // 각자 낮 투표 (사원) 처리
