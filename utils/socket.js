@@ -42,6 +42,7 @@ module.exports = (server) => {
 
     // 귓속말
     socket.on('privateMsg', async (data) => { 
+      console.log('@@@@@@@@@ 귓속말 테스트 --->', data)
       socket.to(data.roomId).to(data.socketId).emit('privateMsg', data); 
     });
 
