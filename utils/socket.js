@@ -65,7 +65,7 @@ module.exports = (server) => {
       const readyCnt = users.length;
       console.log('@@@@@@@@@@@@@@@111 보낼 데이터--->', readyCnt)
       socket.to(roomId).emit('readyCnt', { readyCnt });
-      socket.to(socketId).emit('myReadyCnt', { myReadyCnt: `${readyCnt} 를 요청한 사람에게 보냅니다.` });
+      socket.emit('myReadyCnt', { myReadyCnt: readyCnt });
     });
 
     // 레디 카운트 2
@@ -79,7 +79,7 @@ module.exports = (server) => {
       const readyCnt = users.length;
       console.log('@@@@@@@@@@@@@@@222 보낼 데이터--->', readyCnt)
       socket.to(roomId).emit('readyCnt', { readyCnt });
-      socket.to(socketId).emit('myReadyCnt', { myReadyCnt: `${readyCnt} 를 요청한 사람에게 보냅니다.` });
+      socket.emit('myReadyCnt', { myReadyCnt: readyCnt });
     });
 
     // 각자 낮 투표 (사원) 처리
