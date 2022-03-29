@@ -282,6 +282,7 @@ module.exports = {
       const prevGameGroup = await GameGroup.findAll({
         where: { roomId, isEliminated: { [Op.like]: 'N%' } },
       });
+
       const isAiLawyer = await GameGroup.findOne({
         where: { roomId, role: 2, isAi: 'Y', isEliminated: { [Op.like]: 'N%' } },
       });
@@ -301,19 +302,16 @@ module.exports = {
         where: { roomId, isProtected: `Y${prevStatus.roundNo}` },
       });
 
-      if (!prevUser || !isAiLawyer) {
-        throw {
-          msg: '[삭제예정문구 ai act] 존재하지 않는 유저를 선택했거나, 변호사가 이미 해고당했습니다.',
-        };
-      } else if (isAlreadyProtected) {
-        throw { msg: '[삭제예정문구 ai act] 이번 라운드에 이미 사원을 1회 보호했습니다.' };
+      let msg = '';
+      if (prevUser && isAiLawyer && !isAlreadyProtected) {
+        const protectedUser = await prevUser.update({ isProtected: `Y${prevStatus.roundNo}` });
+        msg = `[ ${protectedUser.nickname} ] (이)를 스파이로 부터 1회 보호합니다.`;
       } else {
-        const protectedUser = await prevUser.update({
-          isProtected: `Y${prevStatus.roundNo}`,
-        });
-        console.log(`@@@@@@ ai 변호사 ${isAiLawyer.userId} 가 ${protectedUser.userId} 를 보호`);
-        return `[삭제예정문구 ai act] ${protectedUser.nickname} (이)가 보호받았습니다.`;
+        // 선택한 유저가 죽었거나, ai 변호사 유저가 죽었거나, 이번 라운드 이미 보호를 한 경우
+        msg = '잘못된 정보로 요청 했습니다.';
       }
+      console.log(`[system_AI] ${msg}`);
+      return msg;
     }),
 
     // ai 스파이
@@ -339,8 +337,9 @@ module.exports = {
       const prevUser = await GameGroup.findOne({ where: { userId } });
 
       // 이미 이번판에 활동을 했는지 구분
-      const isAlreadyEliminated = await GameGroup.findAll({
+      const isAlreadyEliminated = await GameGroup.findOne({
         where: {
+          roomId,
           [Op.or]: [
             { isEliminated: `N${prevGameStatus.roundNo}` },
             { isEliminated: `Y${prevGameStatus.roundNo}` },
@@ -348,22 +347,23 @@ module.exports = {
         },
       });
 
+      let msg = '';
       if (isAiSpy && !isPlayerSpy && prevUser && !isAlreadyEliminated) {
-        let msg = '';
-        if (prevUser.isProtected === `Y${prevGameStatus}`) {
+        if (prevUser.isProtected === `Y${prevGameStatus.roundNo}`) {
           const firedUser = await prevUser.update({ isProtected: `N${prevGameStatus.roundNo}` });
           msg = `현명한 변호사가 일개미 [ ${firedUser.nickname} ] (이)의 부당 해고를 막았습니다.`;
         } else {
           const firedUser = await prevUser.update({ isEliminated: `Y${prevGameStatus.roundNo}` });
           msg = `스파이에 의해, 성실한 일개미 [ ${firedUser.nickname} ] (이)가 간 밤에 해고 당했습니다.`;
         }
-
-        console.log(`@@@@@@ ai 스파이 ${msg}`);
         await prevGameStatus.update({ msg });
-        return msg;
       } else {
-        return `잘못된 정보로 요청 했습니다.`;
+        // 선택한 유저가 죽었거나, ai 스파이가 남아있지 않거나, 스파이 유저가 살아있거나, 이번 라운드 이미 보호를 한 경우
+        msg = '잘못된 정보로 요청 했습니다.';
       }
+
+      console.log(`[system_AI] ${msg}`);
+      return msg;
     }),
 
     // 의사 기능 -> 마피아에게 죽을 것 같은 사람 1회 방어
@@ -396,19 +396,16 @@ module.exports = {
         where: { roomId, isProtected: `Y${prevStatus.roundNo}` },
       });
 
-      if (!prevUser || !isLawyerAlive) {
-        throw { msg: '존재하지 않는 유저를 선택했거나, 변호사가 이미 해고당했습니다.' };
-      } else if (isAlreadyProtected) {
-        throw { msg: '이번 라운드에 이미 사원을 1회 보호했습니다.' };
+      let msg = '';
+      if (prevUser && isLawyerAlive && !isAlreadyProtected) {
+        const protectedUser = await prevUser.update({ isProtected: `Y${prevStatus.roundNo}` });
+        msg = `[ ${protectedUser.nickname} ] (이)를 스파이로 부터 1회 보호합니다.`;
       } else {
-        const protectedUser = await prevUser.update({
-          isProtected: `Y${prevStatus.roundNo}`,
-        });
-        console.log(
-          `@@@@@@ 유저 변호사가 ${isLawyerAlive.userId} 가 ${protectedUser.userId} 를 보호`
-        );
-        return `[ ${protectedUser.nickname} ] (이)를 스파이로 부터 1회 보호합니다.`;
+        // 선택한 유저가 죽었거나, 변호사 유저가 죽었거나, 이번 라운드 이미 보호를 한 경우
+        msg = '잘못된 정보로 요청 했습니다.';
       }
+      console.log(`[system_USER] ${msg}`);
+      return msg;
     }),
 
     // 경찰 기능 -> 스파이 찾아서 본인만 알기
@@ -455,8 +452,9 @@ module.exports = {
       });
 
       // 이미 이번판에 활동을 했는지 구분
-      const isAlreadyEliminated = await GameGroup.findAll({
+      const isAlreadyEliminated = await GameGroup.findOne({
         where: {
+          roomId,
           [Op.or]: [
             { isEliminated: `N${prevGameStatus.roundNo}` },
             { isEliminated: `Y${prevGameStatus.roundNo}` },
@@ -464,22 +462,22 @@ module.exports = {
         },
       });
 
+      let msg = '';
       if (prevUser && isSpyAlive && !isAlreadyEliminated) {
-        let msg = '';
-        if (prevUser.isProtected === `Y${prevGameStatus}`) {
+        if (prevUser.isProtected === `Y${prevGameStatus.roundNo}`) {
           const firedUser = await prevUser.update({ isProtected: `N${prevGameStatus.roundNo}` });
           msg = `현명한 변호사가 일개미 [ ${firedUser.nickname} ] (이)의 부당 해고를 막았습니다.`;
         } else {
           const firedUser = await prevUser.update({ isEliminated: `Y${prevGameStatus.roundNo}` });
           msg = `스파이에 의해, 성실한 일개미 [ ${firedUser.nickname} ] (이)가 간 밤에 해고 당했습니다.`;
         }
-
-        console.log(`@@@@@@ 유저 스파이 ${msg}`);
         await prevGameStatus.update({ msg });
-        return msg;
       } else {
-        return `[system] 잘못된 정보로 요청 했습니다.`;
+        // 지목한 유저가 죽었거나, 스파이 유저가 죽었거나, 이미 이번 라운드에서 유저를 죽인 경우
+        msg = '잘못된 정보로 요청 했습니다.';
       }
+      console.log(`[system_USER] ${msg}`);
+      return msg;
     }),
 
     // 프론트 용 투표 여부 확인
@@ -539,7 +537,7 @@ module.exports = {
           ai.length
         } 명의 ai가 투표를 완료 했습니다.`;
       } else {
-        return '방장이 아닌 유저는 요청할 수 없습니다.';
+        throw { msg : '방장이 아닌 유저는 요청할 수 없습니다.' };
       }
     }),
 
@@ -594,7 +592,7 @@ module.exports = {
           await prevGameGroup.update({ isEliminated: `Y${prevGameStatus.roundNo}` });
           // 남은 유저 확인
           const leftUsers = await GameGroup.findAll({
-            where: { roomId, isEliminated: `N${prevGameStatus.roundNo}` },
+            where: { roomId, isEliminated: { [Op.like]: 'N%' } },
           });
 
           // 현재 결과가 났는지 확인
@@ -637,7 +635,7 @@ module.exports = {
 
       if (!prevGameStatus) {
         throw {
-          msg: '정보가 저장되지 않아, 게임 스테이지 불러오지 못했습니다.',
+          msg: '정보가 저장되지 않아, 게임 스테이지를 불러오지 못했습니다.',
         };
       } else {
         let tempSpyArr = [],

@@ -31,7 +31,7 @@ module.exports = {
           nickname: prevUser.nickname,
           isReady: 'Y',
           role: null,
-          isEliminated: 'N',
+          isEliminated: 'N0',
           isAi: 'N',
           isHost: 'Y',
           roomId: room.id,
@@ -51,7 +51,7 @@ module.exports = {
   },
 
   get: {
-    rooms: async (req, _) => {
+    rooms: async (data) => {
       const room = await Room.findAll({
         include: {
           model: User,
