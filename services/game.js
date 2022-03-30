@@ -769,12 +769,20 @@ module.exports = {
         where: { roomId, role: { [Op.ne]: 4 } },
       });
 
+      const winnerArr = []; 
       if (!prevStatus || prevStatus.isResult === 0) {
         throw { msg: '아직 게임결과가 나오지 않았습니다. ' };
-      } else if (prevStatus.isResult === 1) {
-        return emplGroup;
-      } else if (prevStatus.isResult === 2) {
-        return spyGroup;
+      } else {
+        if (prevStatus.isResult === 2) winnerArr.push(spyGroup);
+        if (prevStatus.isResult === 1) winnerArr.push(emplGroup);
+
+        // 게임 데이터 삭제
+        await GameGroup.destroy({ where: { roomId } });
+        await GameStatus.destroy({ where: { roomId } });
+        await Vote.destroy({ where: { roomId } });
+        await Room.destroy({ where: { id: roomId } });
+
+        return winnerArr[0] ;
       }
     }),
 
