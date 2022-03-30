@@ -518,6 +518,11 @@ module.exports = {
       });
 
       let msg = '';
+
+      console.log('@@@ 유저 스파이가 찍은 번호 (랜덤포함)', prevUser.userId);
+      console.log('@@@ 유저 스파이 번호', isSpyAlive.userId);
+      console.log('@@@ 유저 스파이 활동이력 여부',!isAlreadyEliminated);
+
       if (prevUser && isSpyAlive && !isAlreadyEliminated) {
         if (prevUser.isProtected === `Y${prevGameStatus.roundNo}`) {
           const firedUser = await prevUser.update({
