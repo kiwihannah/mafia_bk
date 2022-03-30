@@ -583,7 +583,7 @@ module.exports = {
         prevAiGroup.map((ai) => { aiArr.push(ai.userId) });
 
         let ranNum = 0;
-        for (let i = 0; i < ai.length; i++) {
+        for (let i = 0; i < prevAiGroup.length; i++) {
           ranNum = Math.floor(Math.random() * userArr.length);
           await Vote.create({
             voter: aiArr[i],
@@ -608,7 +608,7 @@ module.exports = {
         }
 
         return `${prevGameGroup.length - prevVote.length} 개의 무효표 처리가 완료되었습니다.\n${
-          ai.length
+          prevAiGroup.length
         } 명의 ai가 투표를 완료 했습니다.`;
       } else {
         throw { msg: '방장이 아닌 유저는 요청할 수 없습니다.' };
