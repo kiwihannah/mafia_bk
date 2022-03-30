@@ -684,7 +684,7 @@ module.exports = {
           else tempResult = 0;
           await prevGameStatus.update({ isResult: tempResult });
 
-          console.log(`[ ##### system ##### ] 스파이 수: ${tempSpyArr.length}\n사원 수: ${tempEmplArr.length}`);
+          console.log(`[ ##### system ##### ]\n스파이 수: ${tempSpyArr.length}\n사원 수: ${tempEmplArr.length}`);
 
           const msg =
             prevGameGroup.role === 4
@@ -738,7 +738,10 @@ module.exports = {
 
         const afterCnt = await GameStatus.findOne({ where: { roomId } });
 
-        console.log(`[ ##### system ##### ]\n회차를 반환합니다.\n현재 스테이터스: ${afterCnt.status}`);
+        console.log(`[ ##### system ##### ]
+        \n회차를 반환합니다.
+        \n현재 스테이터스: ${afterCnt.status}
+        \n결과: ${afterCnt.isResult}`);
         return afterCnt.isResult;
       }
     }),
@@ -790,7 +793,7 @@ module.exports = {
         const prevLog = await Log.findOne({ where: { date } });
         if (prevLog) prevLog.update({ compGameCnt: prevLog.compGameCnt + 1 });
 
-        console.log(`[ ##### system ##### ]게임을 종료합니다.\n방 번호:${roomId} `);
+        console.log(`[ ##### system ##### ]\n게임을 종료합니다.\n방 번호:${roomId} `);
         return winnerArr[0] ;
       }
     }),
