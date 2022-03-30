@@ -140,7 +140,7 @@ module.exports = {
         }
 
         const users = await GameGroup.findAll({ where: { roomId } });
-        console.log(`[system]\n\n\nai 봇을 생성합니다.\n방 번호:${roomId} `);
+        console.log(`[ ##### system ##### ]\nai 봇을 생성합니다.\n방 번호:${roomId} `);
         return users;
       }
     }),
@@ -225,7 +225,7 @@ module.exports = {
       const prevLog = await Log.findOne({ where: { date } });
       if (prevLog) prevLog.update({ onGameCnt: prevLog.onGameCnt + 1 });
 
-      console.log(`[system]\n\n\n게임을 시작합니다.\n방 번호:${roomId} `);
+      console.log(`[ ##### system ##### ]\n게임을 시작합니다.\n방 번호:${roomId} `);
       return room;
     }),
   },
@@ -279,7 +279,7 @@ module.exports = {
       }
 
       const users = await GameGroup.findAll({ where: { roomId } });
-      console.log(`[system]\n\n\n랜덤 역할을 부여합니다.\n방 번호:${roomId} `);
+      console.log(`[ ##### system ##### ]\n랜덤 역할을 부여합니다.\n방 번호:${roomId} `);
       return users;
     }),
 
@@ -328,7 +328,7 @@ module.exports = {
         // 선택한 유저가 죽었거나, ai 변호사 유저가 죽었거나, 이번 라운드 이미 보호를 한 경우
         throw { msg : '잘못된 정보로 요청 했습니다.' };
       }
-      console.log(`[system_AI_Lawyer]\n\n\n${msg}`);
+      console.log(`[ ##### system_AI_Lawyer ##### ]\n${msg}`);
       return msg;
     }),
 
@@ -401,7 +401,7 @@ module.exports = {
         throw { msg : '잘못된 정보로 요청 했습니다.' };
       }
 
-      console.log(`[system_AI_Spy]\n\n\n${msg}`);
+      console.log(`[ ##### system_AI_Spy ##### ]\n${msg}`);
       return msg;
     }),
 
@@ -451,7 +451,7 @@ module.exports = {
         // 선택한 유저가 죽었거나, 변호사 유저가 죽었거나, 이번 라운드 이미 보호를 한 경우
         throw { msg : '잘못된 정보로 요청 했습니다.' };
       }
-      console.log(`[system_USER_Lawyer]\n\n\n${msg}`);
+      console.log(`[ ##### system_USER_Lawyer ##### ]\n${msg}`);
       return msg;
     }),
 
@@ -482,7 +482,7 @@ module.exports = {
         const msg = prevGameUser.role === 4
           ? `[ ${prevGameUser.nickname} ] (은)는 스파이 입니다.`
           : `[ ${prevGameUser.nickname} ] (은)는 스파이가 아닙니다.`;
-          console.log(`[system_USER_Detective]\n\n\n${msg}`);
+          console.log(`[ ##### system_USER_Detective ##### ]\n${msg}`);
           return msg;
       }
     }),
@@ -549,7 +549,7 @@ module.exports = {
         // 지목한 유저가 죽었거나, 스파이 유저가 죽었거나, 이미 이번 라운드에서 유저를 죽인 경우
         throw { msg : '잘못된 정보로 요청 했습니다.' };
       }
-      console.log(`[system_USER_Spy]\n\n\n${msg}`);
+      console.log(`[ ##### system_USER_Spy ##### ]\n${msg}`);
       return msg;
     }),
 
@@ -580,7 +580,7 @@ module.exports = {
         aiArr = [];
       if (host.isHost === 'Y') {
         prevGameGroup.map((user) => { userArr.push(user.userId) });
-        prevAiGroup.map((ai) => { aiArr.push(ai.userId) });
+        prevAiGroup.map((ai) => { aiArr.push(prevAiGroup.userId) });
 
         let ranNum = 0;
         for (let i = 0; i < prevAiGroup.length; i++) {
@@ -684,7 +684,7 @@ module.exports = {
           else tempResult = 0;
           await prevGameStatus.update({ isResult: tempResult });
 
-          console.log(`###### 스파이 수: ${tempSpyArr.length}\n사원 수: ${tempEmplArr.length}`);
+          console.log(`[ ##### system ##### ] 스파이 수: ${tempSpyArr.length}\n사원 수: ${tempEmplArr.length}`);
 
           const msg =
             prevGameGroup.role === 4
@@ -719,7 +719,7 @@ module.exports = {
             ? tempSpyArr.push(leftUsers[i].userId)
             : tempEmplArr.push(leftUsers[i].userId);
         }
-        console.log(`[system]\n\n\n스파이 수: ${tempSpyArr.length}\n사원 수: ${tempEmplArr.length}`);
+        console.log(`[ ##### system ##### ]\n스파이 수: ${tempSpyArr.length}\n사원 수: ${tempEmplArr.length}`);
 
         // 결과 추가 & 반환
         if (tempEmplArr.length === tempSpyArr.length) {
@@ -738,7 +738,7 @@ module.exports = {
 
         const afterCnt = await GameStatus.findOne({ where: { roomId } });
 
-        console.log(`[system]\n\n\n회차를 반환합니다.\n현재 스테이터스: ${afterCnt.status}`);
+        console.log(`[ ##### system ##### ]\n회차를 반환합니다.\n현재 스테이터스: ${afterCnt.status}`);
         return afterCnt.isResult;
       }
     }),
@@ -790,7 +790,7 @@ module.exports = {
         const prevLog = await Log.findOne({ where: { date } });
         if (prevLog) prevLog.update({ compGameCnt: prevLog.compGameCnt + 1 });
 
-        console.log(`[system]\n\n\n게임을 종료합니다.\n방 번호:${roomId} `);
+        console.log(`[ ##### system ##### ]게임을 종료합니다.\n방 번호:${roomId} `);
         return winnerArr[0] ;
       }
     }),
