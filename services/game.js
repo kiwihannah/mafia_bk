@@ -322,8 +322,7 @@ module.exports = {
         msg = `[ ${protectedUser.nickname} ] (이)를 스파이로 부터 1회 보호합니다.`;
       } else {
         // 선택한 유저가 죽었거나, ai 변호사 유저가 죽었거나, 이번 라운드 이미 보호를 한 경우
-        msg = '잘못된 정보로 요청 했습니다.';
-        throw { msg };
+        throw { msg : '잘못된 정보로 요청 했습니다.' };
       }
       console.log(`[system_AI_Lawyer] ${msg}`);
       return msg;
@@ -395,8 +394,7 @@ module.exports = {
         await prevGameStatus.update({ msg });
       } else {
         // 선택한 유저가 죽었거나, ai 스파이가 남아있지 않거나, 스파이 유저가 살아있거나, 이번 라운드 이미 보호를 한 경우
-        msg = '잘못된 정보로 요청 했습니다.';
-        throw { msg };
+        throw { msg : '잘못된 정보로 요청 했습니다.' };
       }
 
       console.log(`[system_AI_Spy] ${msg}`);
@@ -448,8 +446,7 @@ module.exports = {
         msg = `[ ${protectedUser.nickname} ] (이)를 스파이로 부터 1회 보호합니다.`;
       } else {
         // 선택한 유저가 죽었거나, 변호사 유저가 죽었거나, 이번 라운드 이미 보호를 한 경우
-        msg = '잘못된 정보로 요청 했습니다.';
-        throw { msg };
+        throw { msg : '잘못된 정보로 요청 했습니다.' };
       }
       console.log(`[system_USER_Lawyer] ${msg}`);
       return msg;
@@ -473,8 +470,8 @@ module.exports = {
 
       const msg = '';
       if (!prevGameUser || !isDetectiveAlive) {
-        msg = '잘못된 정보로 요청 했습니다.'
-        throw { msg };
+        // 선택한 유저가 죽었거나, 탐정이 죽었거나
+        throw { msg : '잘못된 정보로 요청 했습니다.' };
       } else {
         msg = prevGameUser.role === 4
           ? `[ ${prevGameUser.nickname} ] (은)는 스파이 입니다.`
@@ -550,8 +547,7 @@ module.exports = {
         await prevGameStatus.update({ msg });
       } else {
         // 지목한 유저가 죽었거나, 스파이 유저가 죽었거나, 이미 이번 라운드에서 유저를 죽인 경우
-        msg = '잘못된 정보로 요청 했습니다.';
-        throw { msg };
+        throw { msg : '잘못된 정보로 요청 했습니다.' };
       }
       console.log(`[system_USER_Spy] ${msg}`);
       return msg;
