@@ -1,6 +1,7 @@
-const { User, Room, GameGroup, GameStatus, Vote } = require('../models');
+const { User, Room, GameGroup, GameStatus, Vote, Log } = require('../models');
 const { ServiceAsyncWrapper } = require('../utils/wrapper');
 const { Op } = require('sequelize');
+const date = new Date().toISOString().substring(0,10).replace(/-/g,'');
 
 module.exports = {
   entryAndExit: {
@@ -219,6 +220,11 @@ module.exports = {
       await status.update({
         msg: '게임이 시작되었습니다.\n게임 시작 후, 퇴장이 불가합니다.',
       });
+
+      // 게임 방 개설 로그
+      const prevLog = await Log.findOne({ where: { date } });
+      if (prevLog) prevLog.update({ onGameCnt: prevLog.onGameCnt + 1 });
+
       return room;
     }),
   },
@@ -768,7 +774,7 @@ module.exports = {
       const emplGroup = await GameGroup.findAll({
         where: { roomId, role: { [Op.ne]: 4 } },
       });
-
+      
       const winnerArr = []; 
       if (!prevStatus || prevStatus.isResult === 0) {
         throw { msg: '아직 게임결과가 나오지 않았습니다. ' };
@@ -781,6 +787,10 @@ module.exports = {
         await GameStatus.destroy({ where: { roomId } });
         await Vote.destroy({ where: { roomId } });
         await Room.destroy({ where: { id: roomId } });
+
+        // 게임 완료 로그
+        const prevLog = await Log.findOne({ where: { date } });
+        if (prevLog) prevLog.update({ compGameCnt: prevLog.compGameCnt + 1 });
 
         return winnerArr[0] ;
       }

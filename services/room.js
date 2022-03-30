@@ -1,4 +1,5 @@
-const { Room, User, GameGroup, GameStatus } = require('../models');
+const { Room, User, GameGroup, Log } = require('../models');
+const date = new Date().toISOString().substring(0,10).replace(/-/g,'');
 
 module.exports = {
   create: {
@@ -44,6 +45,24 @@ module.exports = {
             if (err) throw err;
           }
         );
+
+        // 게임 방 개설 로그
+        const prevLog = await Log.findOne({ where: { date } });
+        if (prevLog) {
+          prevLog.update({ 
+            roomCnt: prevLog.roomCnt + 1, 
+            playMemCnt: prevLog.playMemCnt +maxPlayer 
+          });
+        } else {
+          await Log.create({
+            date,
+            nicknameCnt: 0,
+            roomCnt: 1,
+            onGameCnt: 0,
+            compGameCnt: 0,
+            playMemCnt: maxPlayer,
+          });
+        }
 
         return room;
       }

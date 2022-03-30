@@ -10,6 +10,7 @@ db.Room = require('./room')(sequelize, Sequelize);
 db.GameStatus = require('./gameStatus')(sequelize, Sequelize);
 db.GameGroup = require('./gameGroup')(sequelize, Sequelize);
 db.Vote = require('./vote')(sequelize, Sequelize);
+db.Log = require('./log')(sequelize, Sequelize);
 
 Object.keys(db).forEach((modelName) => {
   if (db[modelName].associate) {

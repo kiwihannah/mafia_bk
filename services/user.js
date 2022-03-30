@@ -1,5 +1,6 @@
-const { User, Room } = require('../models');
+const { User, Log } = require('../models');
 const { ServiceAsyncWrapper } = require('../utils/wrapper');
+const date = new Date().toISOString().substring(0,10).replace(/-/g,'');
 
 module.exports = {
   create: {
@@ -14,6 +15,22 @@ module.exports = {
           nickname: data.nickname,
           isHost: 'N',
         });
+
+        // 유저 닉네임 생성 로그
+        const prevLog = await Log.findOne({ where: { date } });
+        if (prevLog) {
+          prevLog.update({ nicknameCnt: prevLog.nicknameCnt + 1 });
+        } else {
+          await Log.create({
+            date,
+            nicknameCnt: 1,
+            roomCnt: 0,
+            onGameCnt: 0,
+            compGameCnt: 0,
+            playMemCnt: 0,
+          });
+        }
+
         return user;
       }
     }),
