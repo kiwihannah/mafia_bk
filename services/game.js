@@ -1,6 +1,7 @@
 const { User, Room, GameGroup, GameStatus, Vote, Log } = require('../models');
 const { ServiceAsyncWrapper } = require('../utils/wrapper');
 const { Op } = require('sequelize');
+
 const date = new Date().toISOString().substring(0,10).replace(/-/g,'');
 
 module.exports = {
@@ -87,9 +88,8 @@ module.exports = {
           where: { roomId },
           order: [['createdAt', 'ASC']],
         });
-        if (prevUser.id === prevRoom.hostId) {
-          await prevRoom.update({ hostId: nextHost.id });
-        }
+
+        if (prevUser.id === prevRoom.hostId) await prevRoom.update({ hostId: nextHost.id });
 
         // 현재 인원 1--
         User.sequelize.query(
@@ -101,9 +101,7 @@ module.exports = {
 
         // 현재인원 < 0 방 자동 삭제
         const afterRoom = await Room.findOne({ where: { id: roomId } });
-        if (afterRoom.currPlayer === 0) {
-          await afterRoom.destroy({ where: { id: roomId } });
-        }
+        if (afterRoom.currPlayer === 0) await afterRoom.destroy({ where: { id: roomId } });
 
         return user.id;
       }
@@ -140,7 +138,9 @@ module.exports = {
           });
           await aiUser.update({ gameGroupId: gameGroup.id });
         }
+
         const users = await GameGroup.findAll({ where: { roomId } });
+        console.log(`[system] ai 봇을 생성합니다.\n방 번호:${roomId} `);
         return users;
       }
     }),
@@ -225,6 +225,7 @@ module.exports = {
       const prevLog = await Log.findOne({ where: { date } });
       if (prevLog) prevLog.update({ onGameCnt: prevLog.onGameCnt + 1 });
 
+      console.log(`[system] 게임을 시작합니다.\n방 번호:${roomId} `);
       return room;
     }),
   },
@@ -278,6 +279,7 @@ module.exports = {
       }
 
       const users = await GameGroup.findAll({ where: { roomId } });
+      console.log(`[system] 랜덤 역할을 부여합니다.\n방 번호:${roomId} `);
       return users;
     }),
 
@@ -300,12 +302,10 @@ module.exports = {
           isEliminated: { [Op.like]: 'N%' } 
         },
       });
-      const prevStatus = await GameStatus.findOne({ where: { roomId } });
 
       let userArr = [];
-      for (let i = 0; i < prevGameGroup.length; i++) {
-        userArr.push(prevGameGroup[i].userId);
-      }
+      prevGameGroup.map((user) => { userArr.push(user.userId) });
+
       const userId = userArr[Math.floor(Math.random() * userArr.length)];
       const prevUser = await GameGroup.findOne({
         where: {
@@ -315,6 +315,7 @@ module.exports = {
       });
 
       // 이미 이번판에 활동을 했는지 구분
+      const prevStatus = await GameStatus.findOne({ where: { roomId } });
       const isAlreadyProtected = await GameGroup.findOne({
         where: { roomId, isProtected: `Y${prevStatus.roundNo}` },
       });
@@ -359,10 +360,10 @@ module.exports = {
 
       const prevGameStatus = await GameStatus.findOne({ where: { roomId } });
 
+      // 랜덤으로 죽을 유저 고르기
       let userArr = [];
-      for (let i = 0; i < prevGameGroup.length; i++) {
-        userArr.push(prevGameGroup[i].userId);
-      }
+      prevGameGroup.map((user) => { userArr.push(user.userId) });
+
       const userId = userArr[Math.floor(Math.random() * userArr.length)];
       const prevUser = await GameGroup.findOne({
         where: {
@@ -426,9 +427,8 @@ module.exports = {
       // 유저용 랜덤투표 로직
       let userArr = [];
       let selectedUserId = 0;
-      for (let i = 0; i < prevGameGroup.length; i++) {
-        userArr.push(prevGameGroup[i].userId);
-      }
+      prevGameGroup.map((user) => { userArr.push(user.userId) });
+
       userId
         ? (selectedUserId = userId)
         : (selectedUserId = userArr[Math.floor(Math.random() * userArr.length)]);
@@ -508,9 +508,8 @@ module.exports = {
       // 랜덤투표 로직
       let userArr = [];
       let selectedUserId = 0;
-      for (let i = 0; i < prevGameGroup.length; i++) {
-        userArr.push(prevGameGroup[i].userId);
-      }
+      prevGameGroup.map((user) => { userArr.push(user.userId) });
+
       userId
         ? (selectedUserId = userId)
         : (selectedUserId = userArr[Math.floor(Math.random() * userArr.length)]);
@@ -565,22 +564,23 @@ module.exports = {
     invalidAndAiVote: ServiceAsyncWrapper(async (data) => {
       const { roomId, roundNo, userId } = data;
 
-      const ai = await GameGroup.findAll({
-        where: { roomId, isAi: 'Y', isEliminated: { [Op.like]: 'N%' } },
+      const prevAiGroup = await GameGroup.findAll({
+        where: { 
+          roomId, 
+          isAi: 'Y', 
+          isEliminated: { [Op.like]: 'N%' } 
+        },
       });
       const prevGameGroup = await GameGroup.findAll({
         where: { roomId, isEliminated: { [Op.like]: 'N%' } },
       });
       const host = await GameGroup.findOne({ where: { userId } });
+
       const userArr = [],
         aiArr = [];
       if (host.isHost === 'Y') {
-        for (let i = 0; i < prevGameGroup.length; i++) {
-          userArr.push(prevGameGroup[i].userId);
-        }
-        for (let i = 0; i < ai.length; i++) {
-          aiArr.push(ai[i].userId);
-        }
+        prevGameGroup.map((user) => { userArr.push(user.userId) });
+        prevAiGroup.map((ai) => { aiArr.push(ai.userId) });
 
         let ranNum = 0;
         for (let i = 0; i < ai.length; i++) {
@@ -719,7 +719,7 @@ module.exports = {
             ? tempSpyArr.push(leftUsers[i].userId)
             : tempEmplArr.push(leftUsers[i].userId);
         }
-        console.log(`######스파이 수: ${tempSpyArr.length}\n사원 수: ${tempEmplArr.length}`);
+        console.log(`[system] 스파이 수: ${tempSpyArr.length}\n사원 수: ${tempEmplArr.length}`);
 
         // 결과 추가 & 반환
         if (tempEmplArr.length === tempSpyArr.length) {
@@ -737,7 +737,8 @@ module.exports = {
         }
 
         const afterCnt = await GameStatus.findOne({ where: { roomId } });
-        console.log(`##### 회차를 반환합니다. 현재 스테이터스: ${afterCnt.status}`);
+
+        console.log(`[system] 회차를 반환합니다.\n현재 스테이터스: ${afterCnt.status}`);
         return afterCnt.isResult;
       }
     }),
@@ -789,6 +790,7 @@ module.exports = {
         const prevLog = await Log.findOne({ where: { date } });
         if (prevLog) prevLog.update({ compGameCnt: prevLog.compGameCnt + 1 });
 
+        console.log(`[system] 게임을 종료합니다.\n방 번호:${roomId} `);
         return winnerArr[0] ;
       }
     }),
