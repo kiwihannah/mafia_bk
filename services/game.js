@@ -317,8 +317,9 @@ module.exports = {
       } else {
         // 선택한 유저가 죽었거나, ai 변호사 유저가 죽었거나, 이번 라운드 이미 보호를 한 경우
         msg = '잘못된 정보로 요청 했습니다.';
+        throw { msg };
       }
-      console.log(`[system_AI] ${msg}`);
+      console.log(`[system_AI_Lawyer] ${msg}`);
       return msg;
     }),
 
@@ -389,9 +390,10 @@ module.exports = {
       } else {
         // 선택한 유저가 죽었거나, ai 스파이가 남아있지 않거나, 스파이 유저가 살아있거나, 이번 라운드 이미 보호를 한 경우
         msg = '잘못된 정보로 요청 했습니다.';
+        throw { msg };
       }
 
-      console.log(`[system_AI] ${msg}`);
+      console.log(`[system_AI_Spy] ${msg}`);
       return msg;
     }),
 
@@ -441,8 +443,9 @@ module.exports = {
       } else {
         // 선택한 유저가 죽었거나, 변호사 유저가 죽었거나, 이번 라운드 이미 보호를 한 경우
         msg = '잘못된 정보로 요청 했습니다.';
+        throw { msg };
       }
-      console.log(`[system_USER] ${msg}`);
+      console.log(`[system_USER_Lawyer] ${msg}`);
       return msg;
     }),
 
@@ -462,13 +465,17 @@ module.exports = {
         },
       });
 
+      const msg = '';
       if (!prevGameUser || !isDetectiveAlive) {
-        throw { msg: '존재하지 않는 유저이거나, 탐정이 이미 해고되었습니다.' };
+        msg = '잘못된 정보로 요청 했습니다.'
+        throw { msg };
       } else {
-        return prevGameUser.role === 4
+        msg = prevGameUser.role === 4
           ? `[ ${prevGameUser.nickname} ] (은)는 스파이 입니다.`
           : `[ ${prevGameUser.nickname} ] (은)는 스파이가 아닙니다.`;
       }
+      console.log(`[system_USER_Detective] ${msg}`);
+      return msg;
     }),
 
     // 마피아 기능
@@ -538,8 +545,9 @@ module.exports = {
       } else {
         // 지목한 유저가 죽었거나, 스파이 유저가 죽었거나, 이미 이번 라운드에서 유저를 죽인 경우
         msg = '잘못된 정보로 요청 했습니다.';
+        throw { msg };
       }
-      console.log(`[system_USER] ${msg}`);
+      console.log(`[system_USER_Spy] ${msg}`);
       return msg;
     }),
 
@@ -652,7 +660,7 @@ module.exports = {
           return { msg: '동표이므로 아무도 해고당하지 않았습니다.', result: 0 };
         } else {
           // 최다 투표자 해고
-          await prevGameGroup.update({ isEliminated: `Y${prevGameStatus.roundNo}` });
+          await prevGameGroup.update({ isEliminated: 'YD' });
           // 남은 유저 확인
           const leftUsers = await GameGroup.findAll({
             where: { roomId, isEliminated: { [Op.like]: 'N%' } },
