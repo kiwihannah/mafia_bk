@@ -284,7 +284,12 @@ module.exports = {
       });
 
       const isAiLawyer = await GameGroup.findOne({
-        where: { roomId, role: 2, isAi: 'Y', isEliminated: { [Op.like]: 'N%' } },
+        where: { 
+          roomId,
+          role: 2, 
+          isAi: 'Y', 
+          isEliminated: { [Op.like]: 'N%' } 
+        },
       });
       const prevStatus = await GameStatus.findOne({ where: { roomId } });
 
@@ -294,7 +299,10 @@ module.exports = {
       }
       const userId = userArr[Math.floor(Math.random() * userArr.length)];
       const prevUser = await GameGroup.findOne({
-        where: { userId, isEliminated: { [Op.like]: 'N%' } },
+        where: {
+          userId,
+          isEliminated: { [Op.like]: 'N%' },
+        },
       });
 
       // 이미 이번판에 활동을 했는지 구분
@@ -321,12 +329,25 @@ module.exports = {
       const prevGameGroup = await GameGroup.findAll({
         where: { roomId, isEliminated: { [Op.like]: 'N%' } },
       });
+
       const isAiSpy = await GameGroup.findOne({
-        where: { roomId, role: 4, isAi: 'Y', isEliminated: { [Op.like]: 'N%' } },
+        where: { 
+          roomId, 
+          role: 4, 
+          isAi: 'Y', 
+          isEliminated: { [Op.like]: 'N%' } 
+        },
       });
+
       const isPlayerSpy = await GameGroup.findOne({
-        where: { roomId, role: 4, isAi: 'N', isEliminated: { [Op.like]: 'N%' } },
+        where: { 
+          roomId, 
+          role: 4, 
+          isAi: 'N', 
+          isEliminated: { [Op.like]: 'N%' } 
+        },
       });
+
       const prevGameStatus = await GameStatus.findOne({ where: { roomId } });
 
       let userArr = [];
@@ -334,7 +355,12 @@ module.exports = {
         userArr.push(prevGameGroup[i].userId);
       }
       const userId = userArr[Math.floor(Math.random() * userArr.length)];
-      const prevUser = await GameGroup.findOne({ where: { userId } });
+      const prevUser = await GameGroup.findOne({
+        where: {
+          userId,
+          isEliminated: { [Op.like]: 'N%' },
+        },
+      });
 
       // 이미 이번판에 활동을 했는지 구분
       const isAlreadyEliminated = await GameGroup.findOne({
@@ -350,7 +376,10 @@ module.exports = {
       let msg = '';
       if (isAiSpy && !isPlayerSpy && prevUser && !isAlreadyEliminated) {
         if (prevUser.isProtected === `Y${prevGameStatus.roundNo}`) {
-          const firedUser = await prevUser.update({ isProtected: `N${prevGameStatus.roundNo}` });
+          const firedUser = await prevUser.update({
+            isProtected: `N${prevGameStatus.roundNo}`,
+            isEliminated: `N${prevGameStatus.roundNo}`,
+          });
           msg = `현명한 변호사가 일개미 [ ${firedUser.nickname} ] (이)의 부당 해고를 막았습니다.`;
         } else {
           const firedUser = await prevUser.update({ isEliminated: `Y${prevGameStatus.roundNo}` });
@@ -373,9 +402,16 @@ module.exports = {
       const prevGameGroup = await GameGroup.findAll({
         where: { roomId, isEliminated: { [Op.like]: 'N%' } },
       });
+
       const isLawyerAlive = await GameGroup.findOne({
-        where: { roomId, role: '2', isEliminated: { [Op.like]: 'N%' } },
+        where: { 
+          roomId, 
+          role: '2', 
+          isAi: 'N', 
+          isEliminated: { [Op.like]: 'N%' } 
+        },
       });
+
       const prevStatus = await GameStatus.findOne({ where: { roomId } });
 
       // 유저용 랜덤투표 로직
@@ -387,8 +423,10 @@ module.exports = {
       userId
         ? (selectedUserId = userId)
         : (selectedUserId = userArr[Math.floor(Math.random() * userArr.length)]);
+
       const prevUser = await GameGroup.findOne({
         where: { userId: selectedUserId },
+        isEliminated: { [Op.like]: 'N%' },
       });
 
       // 이미 활동 했는지 구분
@@ -414,8 +452,14 @@ module.exports = {
       const prevGameUser = await GameGroup.findOne({
         where: { userId, isEliminated: { [Op.like]: 'N%' } },
       });
+
       const isDetectiveAlive = await GameGroup.findOne({
-        where: { roomId, role: '3', isEliminated: { [Op.like]: 'N%' } },
+        where: { 
+          roomId, 
+          role: '3', 
+          isAi: 'N',
+          isEliminated: { [Op.like]: 'N%' } 
+        },
       });
 
       if (!prevGameUser || !isDetectiveAlive) {
@@ -433,9 +477,16 @@ module.exports = {
       const prevGameGroup = await GameGroup.findAll({
         where: { roomId, isEliminated: { [Op.like]: 'N%' } },
       });
+
       const isSpyAlive = await GameGroup.findOne({
-        where: { roomId, role: '4', isEliminated: { [Op.like]: 'N%' } },
+        where: {
+          roomId,
+          role: '4',
+          isAi: 'N',
+          isEliminated: { [Op.like]: 'N%' },
+        },
       });
+
       const prevGameStatus = await GameStatus.findOne({ where: { roomId } });
 
       // 랜덤투표 로직
@@ -447,8 +498,12 @@ module.exports = {
       userId
         ? (selectedUserId = userId)
         : (selectedUserId = userArr[Math.floor(Math.random() * userArr.length)]);
+
       const prevUser = await GameGroup.findOne({
-        where: { userId: selectedUserId },
+        where: {
+          userId: selectedUserId,
+          isEliminated: { [Op.like]: 'N%' },
+        },
       });
 
       // 이미 이번판에 활동을 했는지 구분
@@ -465,7 +520,10 @@ module.exports = {
       let msg = '';
       if (prevUser && isSpyAlive && !isAlreadyEliminated) {
         if (prevUser.isProtected === `Y${prevGameStatus.roundNo}`) {
-          const firedUser = await prevUser.update({ isProtected: `N${prevGameStatus.roundNo}` });
+          const firedUser = await prevUser.update({
+            isProtected: `N${prevGameStatus.roundNo}`,
+            isEliminated: `N${prevGameStatus.roundNo}`,
+          });
           msg = `현명한 변호사가 일개미 [ ${firedUser.nickname} ] (이)의 부당 해고를 막았습니다.`;
         } else {
           const firedUser = await prevUser.update({ isEliminated: `Y${prevGameStatus.roundNo}` });
@@ -537,7 +595,7 @@ module.exports = {
           ai.length
         } 명의 ai가 투표를 완료 했습니다.`;
       } else {
-        throw { msg : '방장이 아닌 유저는 요청할 수 없습니다.' };
+        throw { msg: '방장이 아닌 유저는 요청할 수 없습니다.' };
       }
     }),
 
