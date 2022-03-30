@@ -140,7 +140,9 @@ module.exports = {
         }
 
         const users = await GameGroup.findAll({ where: { roomId } });
-        console.log(`[ ##### system ##### ]\nai 봇을 생성합니다.\n방 번호:${roomId} `);
+        console.log(`[ ##### system ##### ]
+        \nai 봇을 생성합니다.
+        \n방 번호:${roomId} `);
         return users;
       }
     }),
@@ -151,7 +153,7 @@ module.exports = {
     changeMaxPlayer: ServiceAsyncWrapper(async (data) => {
       if (data.maxPlayer < 6) {
         throw {
-          msg: '바꾸려는 인원이 최소인원을 충족하지 못했습니다.\n( 최소인원 : 6 )',
+          msg: `바꾸려는 인원이 최소인원을 충족하지 못했습니다.\n( 최소인원 : 6 )`,
         };
       } else {
         const prevRoom = await Room.findOne({ where: { id: data.roomId } });
@@ -199,7 +201,8 @@ module.exports = {
 
             // ai 사용해서 바로 시작
             return prevRoom.currPlayer < prevRoom.maxPlayer
-              ? `부족한 인원은 인공지능 플레이어로 대체합니다.\n미리 말씀드리자면, 인공지능은 상당히 멍청합니다.`
+              ? `부족한 인원은 인공지능 플레이어로 대체합니다.
+              \n미리 말씀드리자면, 인공지능은 상당히 멍청합니다.`
               : '시작!';
           }
         }
@@ -225,7 +228,9 @@ module.exports = {
       const prevLog = await Log.findOne({ where: { date } });
       if (prevLog) prevLog.update({ onGameCnt: prevLog.onGameCnt + 1 });
 
-      console.log(`[ ##### system ##### ]\n게임을 시작합니다.\n방 번호:${roomId} `);
+      console.log(`[ ##### system ##### ]
+      \n게임을 시작합니다.
+      \n방 번호:${roomId} `);
       return room;
     }),
   },
@@ -279,7 +284,9 @@ module.exports = {
       }
 
       const users = await GameGroup.findAll({ where: { roomId } });
-      console.log(`[ ##### system ##### ]\n랜덤 역할을 부여합니다.\n방 번호:${roomId} `);
+      console.log(`[ ##### system ##### ]
+      \n랜덤 역할을 부여합니다.
+      \n방 번호:${roomId} `);
       return users;
     }),
 
@@ -328,7 +335,8 @@ module.exports = {
         // 선택한 유저가 죽었거나, ai 변호사 유저가 죽었거나, 이번 라운드 이미 보호를 한 경우
         throw { msg : '잘못된 정보로 요청 했습니다.' };
       }
-      console.log(`[ ##### system_AI_Lawyer ##### ]\n${msg}`);
+      console.log(`[ ##### system_AI_Lawyer ##### ]
+      \n${msg}`);
       return msg;
     }),
 
@@ -401,7 +409,8 @@ module.exports = {
         throw { msg : '잘못된 정보로 요청 했습니다.' };
       }
 
-      console.log(`[ ##### system_AI_Spy ##### ]\n${msg}`);
+      console.log(`[ ##### system_AI_Spy ##### ]
+      \n${msg}`);
       return msg;
     }),
 
@@ -451,7 +460,8 @@ module.exports = {
         // 선택한 유저가 죽었거나, 변호사 유저가 죽었거나, 이번 라운드 이미 보호를 한 경우
         throw { msg : '잘못된 정보로 요청 했습니다.' };
       }
-      console.log(`[ ##### system_USER_Lawyer ##### ]\n${msg}`);
+      console.log(`[ ##### system_USER_Lawyer ##### ]
+      \n${msg}`);
       return msg;
     }),
 
@@ -482,7 +492,8 @@ module.exports = {
         const msg = prevGameUser.role === 4
           ? `[ ${prevGameUser.nickname} ] (은)는 스파이 입니다.`
           : `[ ${prevGameUser.nickname} ] (은)는 스파이가 아닙니다.`;
-          console.log(`[ ##### system_USER_Detective ##### ]\n${msg}`);
+          console.log(`[ ##### system_USER_Detective ##### ]
+          \n${msg}`);
           return msg;
       }
     }),
@@ -549,7 +560,8 @@ module.exports = {
         // 지목한 유저가 죽었거나, 스파이 유저가 죽었거나, 이미 이번 라운드에서 유저를 죽인 경우
         throw { msg : '잘못된 정보로 요청 했습니다.' };
       }
-      console.log(`[ ##### system_USER_Spy ##### ]\n${msg}`);
+      console.log(`[ ##### system_USER_Spy ##### ]
+      \n${msg}`);
       return msg;
     }),
 
@@ -607,9 +619,8 @@ module.exports = {
           }
         }
 
-        return `${prevGameGroup.length - prevVote.length} 개의 무효표 처리가 완료되었습니다.\n${
-          prevAiGroup.length
-        } 명의 ai가 투표를 완료 했습니다.`;
+        return `${prevGameGroup.length - prevVote.length} 개의 무효표 처리가 완료되었습니다.
+        \n${prevAiGroup.length} 명의 ai가 투표를 완료 했습니다.`;
       } else {
         throw { msg: '방장이 아닌 유저는 요청할 수 없습니다.' };
       }
@@ -684,7 +695,9 @@ module.exports = {
           else tempResult = 0;
           await prevGameStatus.update({ isResult: tempResult });
 
-          console.log(`[ ##### system ##### ]\n스파이 수: ${tempSpyArr.length}\n사원 수: ${tempEmplArr.length}`);
+          console.log(`[ ##### system ##### ]
+          \n스파이 수: ${tempSpyArr.length}
+          \n사원 수: ${tempEmplArr.length}`);
 
           const msg =
             prevGameGroup.role === 4
@@ -719,7 +732,9 @@ module.exports = {
             ? tempSpyArr.push(leftUsers[i].userId)
             : tempEmplArr.push(leftUsers[i].userId);
         }
-        console.log(`[ ##### system ##### ]\n스파이 수: ${tempSpyArr.length}\n사원 수: ${tempEmplArr.length}`);
+        console.log(`[ ##### system ##### ]
+        \n스파이 수: ${tempSpyArr.length}
+        \n사원 수: ${tempEmplArr.length}`);
 
         // 결과 추가 & 반환
         if (tempEmplArr.length === tempSpyArr.length) {
@@ -793,7 +808,9 @@ module.exports = {
         const prevLog = await Log.findOne({ where: { date } });
         if (prevLog) prevLog.update({ compGameCnt: prevLog.compGameCnt + 1 });
 
-        console.log(`[ ##### system ##### ]\n게임을 종료합니다.\n방 번호:${roomId} `);
+        console.log(`[ ##### system ##### ]
+        \n게임을 종료합니다.
+        \n방 번호:${roomId} `);
         return winnerArr[0] ;
       }
     }),
