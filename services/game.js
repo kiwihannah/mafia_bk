@@ -286,7 +286,10 @@ module.exports = {
       const { roomId } = data;
 
       const prevGameGroup = await GameGroup.findAll({
-        where: { roomId, isEliminated: { [Op.like]: 'N%' } },
+        where: {
+          roomId, 
+          isEliminated: { [Op.like]: 'N%' } 
+        },
       });
 
       const isAiLawyer = await GameGroup.findOne({
@@ -456,7 +459,11 @@ module.exports = {
     detectiveAct: ServiceAsyncWrapper(async (data) => {
       const { userId, roomId } = data;
       const prevGameUser = await GameGroup.findOne({
-        where: { userId, isEliminated: { [Op.like]: 'N%' } },
+        where: { 
+          roomId,
+          userId, 
+          isEliminated: { [Op.like]: 'N%' } 
+        },
       });
 
       const isDetectiveAlive = await GameGroup.findOne({
@@ -468,17 +475,16 @@ module.exports = {
         },
       });
 
-      const msg = '';
       if (!prevGameUser || !isDetectiveAlive) {
         // 선택한 유저가 죽었거나, 탐정이 죽었거나
         throw { msg : '잘못된 정보로 요청 했습니다.' };
       } else {
-        msg = prevGameUser.role === 4
+        const msg = prevGameUser.role === 4
           ? `[ ${prevGameUser.nickname} ] (은)는 스파이 입니다.`
           : `[ ${prevGameUser.nickname} ] (은)는 스파이가 아닙니다.`;
+          console.log(`[system_USER_Detective] ${msg}`);
+          return msg;
       }
-      console.log(`[system_USER_Detective] ${msg}`);
-      return msg;
     }),
 
     // 마피아 기능
@@ -528,11 +534,6 @@ module.exports = {
       });
 
       let msg = '';
-
-      console.log('@@@ 유저 스파이가 찍은 번호 (랜덤포함)', prevUser.userId);
-      console.log('@@@ 유저 스파이 번호', isSpyAlive.userId);
-      console.log('@@@ 유저 스파이 활동이력 여부',!isAlreadyEliminated);
-
       if (prevUser && isSpyAlive && !isAlreadyEliminated) {
         if (prevUser.isProtected === `Y${prevGameStatus.roundNo}`) {
           const firedUser = await prevUser.update({
