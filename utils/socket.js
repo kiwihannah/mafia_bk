@@ -2,7 +2,9 @@ const express = require('express');
 const SocketIO = require('socket.io');
 const { GameStatus, GameGroup, Vote, Log, Room } = require('../models');
 const { Op } = require('sequelize');
+
 const { SocketAsyncWrapper } = require('./wrapper'); // 에러 핸들러 작업 요망
+const date = new Date().toISOString().substring(0,10).replace(/-/g,'');
 
 const app = express();
 
