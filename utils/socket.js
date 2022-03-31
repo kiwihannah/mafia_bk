@@ -141,40 +141,13 @@ module.exports = (server) => {
     // 결과 동시 반환
     socket.on('winner', async (data) => {
       console.log('@@@@@ WINNER 요청이 들어오긴 함 방번호-->', data);
-      const { roomId } = data;
-      try {
-        const prevStatus = await GameStatus.findOne({ where: { roomId } });
-        const spyGroup = await GameGroup.findAll({ where: { roomId, role: 4 } });
-        const emplGroup = await GameGroup.findAll({
-          where: { roomId, role: { [Op.ne]: 4 } },
-        });
-        
-        const winnerArr = []; 
-        if (prevStatus.isResult === 2) winnerArr.push(spyGroup);
-        if (prevStatus.isResult === 1) winnerArr.push(emplGroup);
-
-        // 게임 데이터 삭제
-        await GameGroup.destroy({ where: { roomId } });
-        await GameStatus.destroy({ where: { roomId } });
-        await Vote.destroy({ where: { roomId } });
-        await Room.destroy({ where: { id: roomId } });
-
-        // 게임 완료 로그
-        const prevLog = await Log.findOne({ where: { date } });
-        if (prevLog) prevLog.update({ compGameCnt: prevLog.compGameCnt + 1 });
-
-        console.log(`[ ##### system ##### ]
-        \n게임을 종료합니다.
-        \n방 번호:${roomId} `);
-        console.log(winnerArr[0]);
-
-        socket.to(roomId).emit('winner', { users : winnerArr[0] });
-        socket.emit('winnerForHost', { users : winnerArr[0] });
-        console.log({ users : winnerArr[0] });
-
-      } catch (error) {
-        throw error;
-      }
+      const { roomId, users } = data;
+      console.log(`[ ##### system ##### ]
+      \n게임을 종료합니다.
+      \n방 번호:${roomId} `);
+      
+      console.log(users);
+      socket.to(roomId).emit('winner', { users });
     });
 
     
