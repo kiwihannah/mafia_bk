@@ -146,9 +146,10 @@ module.exports = (server) => {
         console.log(`[ ##### system ##### ]
         \n게임을 종료합니다.
         \n방 번호:${roomId} `);
-        console.log(winnerArr[0]);
 
         socket.to(roomId).emit('winner', { users : winnerArr[0] });
+        socket.emit('winnerForHost', { users : winnerArr[0] });
+        console.log({ users : winnerArr[0] });
 
       } catch (error) {
         throw error;
