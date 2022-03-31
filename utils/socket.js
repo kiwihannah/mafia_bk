@@ -142,12 +142,14 @@ module.exports = (server) => {
     socket.on('winner', async (data) => {
       console.log('@@@@@ WINNER 요청이 들어오긴 함 방번호-->', data);
       const { roomId, users } = data;
+      
       console.log(`[ ##### system ##### ]
       \n게임을 종료합니다.
       \n방 번호:${roomId} `);
-      
+
       console.log(users);
       socket.to(roomId).emit('winner', { users });
+      socket.emit('winner', { users });
     });
 
     
