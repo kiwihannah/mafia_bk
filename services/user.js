@@ -5,14 +5,13 @@ const date = new Date().toISOString().substring(0,10).replace(/-/g,'');
 module.exports = {
   create: {
     user: ServiceAsyncWrapper(async (data) => {
-      const isNickname = await User.findOne({
-        where: { nickname: data.nickname },
-      });
-      if (isNickname) {
-        throw { msg: '이미 플레이 중인 닉네임 입니다.' };
+      const { nickname } = data;
+      const isNickname = await User.findOne({ where: { nickname } });
+      if (isNickname || !nickname) {
+        throw { msg: '사용할 수 없는 닉네임 입니다.' };
       } else {
         const user = await User.create({
-          nickname: data.nickname,
+          nickname,
           isHost: 'N',
         });
 

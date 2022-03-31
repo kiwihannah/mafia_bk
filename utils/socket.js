@@ -51,9 +51,14 @@ module.exports = (server) => {
       const prevStatus = await GameStatus.findOne({ where: { roomId } });
       const gameStatus = await prevStatus.update({ status });
 
+      // console.log(`[ ##### system ##### ]
+      // \n 현재 생성된 소켓 룸 리스트 :`);
+      // console.log(io.sockets.adapter.rooms);
+      
       console.log(`[ ##### system ##### ]
-      \n 현재 생성된 소켓 룸 리스트 :`);
-      console.log(io.sockets.adapter.rooms);
+      \n 현재 스테이터스 소켓 반환 :`);
+      console.log(gameStatus);
+
       socket.to(roomId).emit('getStatus', gameStatus);
       socket.emit('getStatusToMe', gameStatus);
     });
@@ -103,6 +108,7 @@ module.exports = (server) => {
             voteCnt: candidacyCnt.length,
           };
           console.log('@@@@@ 개인 낮 투표를 했다-->', data);
+
           socket.to(roomId).emit('dayTimeVoteArr', data);
           socket.emit('dayTimeVoteArr', data);
         }
@@ -115,6 +121,7 @@ module.exports = (server) => {
     socket.on('getRoundNo', async (data) => {
       const { roomId } = data;
       const prevStatus = await GameStatus.findOne({ where: { roomId } });
+
       socket.to(roomId).emit('getRoundNo', { roundNo: prevStatus.roundNo });
       socket.emit('getRoundNo', { roundNo: prevStatus.roundNo });
     });
@@ -147,6 +154,7 @@ module.exports = (server) => {
         console.log(`[ ##### system ##### ]
         \n게임을 종료합니다.
         \n방 번호:${roomId} `);
+        console.log(winnerArr[0]);
 
         socket.to(roomId).emit('winner', { users : winnerArr[0] });
         socket.emit('winnerForHost', { users : winnerArr[0] });

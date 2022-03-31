@@ -52,7 +52,7 @@ router.get('/room/:roomId/users', GameController.getGame.users);
 // 결과 확인
 router.get('/room/:roomId/user/:userId/result', GameController.getGame.result);
 // 승리한 유저 반환
-// router.get('/room/:roomId/winner', GameController.getGame.winner);
+router.get('/room/:roomId/winner', GameController.getGame.winner);
 // 하나의 유저 정보 반환
 router.get('/room/:roomId/user/:userId/info', GameController.getGame.userInfo);
 
