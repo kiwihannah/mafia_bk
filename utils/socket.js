@@ -63,6 +63,18 @@ module.exports = (server) => {
       socket.emit('getStatusToMe', gameStatus);
     });
 
+    // 메세지 전달
+    socket.on('getMsg', async (data) => {
+      const { roomId, msg } = data;
+
+      console.log(`[ ##### system ##### ]
+      \n 현재 메세지 소켓 반환 :`);
+      console.log(msg);
+
+      socket.to(roomId).emit('getMsg', msg);
+      socket.emit('getMsgToMe', msg);
+    });
+
     // 레디 카운트 (레디)
     socket.on('readyCnt', async (data) => {
       const { roomId, userId } = data;
