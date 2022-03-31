@@ -117,8 +117,9 @@ module.exports = (server) => {
     });
 
     // 결과 동시 반환
-    socket.on('winner', async (roomId) => {
-      console.log('@@@@@ WINNER 요청이 들어오긴 함 방번호-->', roomId);
+    socket.on('winner', async (data) => {
+      console.log('@@@@@ WINNER 요청이 들어오긴 함 방번호-->', data);
+      const { roomId } = data;
       try {
         const prevStatus = await GameStatus.findOne({ where: { roomId } });
         const spyGroup = await GameGroup.findAll({ where: { roomId, role: 4 } });
