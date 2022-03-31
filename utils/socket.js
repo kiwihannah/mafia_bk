@@ -146,6 +146,7 @@ module.exports = (server) => {
         console.log(`[ ##### system ##### ]
         \n게임을 종료합니다.
         \n방 번호:${roomId} `);
+        console.log(winnerArr[0]);
 
         socket.to(roomId).emit('winner', { users : winnerArr[0] });
 
@@ -156,7 +157,8 @@ module.exports = (server) => {
 
     
     // 방 나가기 소켓 제거 기능
-    socket.on('leaveRoom', (roomId) => {
+    socket.on('leaveRoom', (data) => {
+      const { roomId } = data;
       console.log('@@@@@ 방 나가기 요청이 들어오긴 함 방번호-->', roomId);
       socket.leave(roomId);
       // const currentRoom = socket.adapter.rooms[roomId];
