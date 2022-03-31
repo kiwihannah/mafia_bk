@@ -49,7 +49,8 @@ module.exports = (server) => {
       const gameStatus = await prevStatus.update({ status });
 
       console.log(`[ ##### system ##### ]
-      \n 현재 생성된 소켓 룸 리스트 :`, socket.rooms);
+      \n 현재 생성된 소켓 룸 리스트 :`);
+      console.log(io.sockets.adapter.rooms);
       socket.to(roomId).emit('getStatus', gameStatus);
     });
 
