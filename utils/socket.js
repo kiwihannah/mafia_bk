@@ -1,6 +1,7 @@
 const express = require('express');
 const SocketIO = require('socket.io');
 const { GameStatus, GameGroup, Vote, Log, Room } = require('../models');
+const { Op } = require('sequelize');
 const { SocketAsyncWrapper } = require('./wrapper'); // 에러 핸들러 작업 요망
 
 const app = express();
@@ -116,8 +117,8 @@ module.exports = (server) => {
     });
 
     // 결과 동시 반환
-    socket.on('winner', async (data) => {
-      const { roomId } = data;
+    socket.on('winner', async (roomId) => {
+      console.log('@@@@@ WINNER 요청이 들어오긴 함 방번호-->', roomId);
       const prevStatus = await GameStatus.findOne({ where: { roomId } });
       const spyGroup = await GameGroup.findAll({ where: { roomId, role: 4 } });
       const emplGroup = await GameGroup.findAll({
@@ -153,6 +154,7 @@ module.exports = (server) => {
     
     // 방 나가기 소켓 제거 기능
     socket.on('leaveRoom', (roomId) => {
+      console.log('@@@@@ 방 나가기 요청이 들어오긴 함 방번호-->', roomId);
       socket.leave(roomId);
       // const currentRoom = socket.adapter.rooms[roomId];
       // const userCnt = currentRoom ? currentRoom.length : 0;
