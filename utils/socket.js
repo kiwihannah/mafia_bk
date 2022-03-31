@@ -55,7 +55,7 @@ module.exports = (server) => {
       \n 현재 생성된 소켓 룸 리스트 :`);
       console.log(io.sockets.adapter.rooms);
       socket.to(roomId).emit('getStatus', gameStatus);
-      socket.emit('getStatusTome', gameStatus);
+      socket.emit('getStatusToMe', gameStatus);
     });
 
     // 레디 카운트 (레디)
