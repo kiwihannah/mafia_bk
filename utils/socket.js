@@ -1,6 +1,6 @@
 const express = require('express');
 const SocketIO = require('socket.io');
-const { GameStatus, GameGroup, Vote } = require('../models');
+const { GameStatus, GameGroup, Vote, Log, Room } = require('../models');
 const { SocketAsyncWrapper } = require('./wrapper'); // 에러 핸들러 작업 요망
 
 const app = express();
@@ -114,5 +114,50 @@ module.exports = (server) => {
       socket.to(roomId).emit('getRoundNo', { roundNo: prevStatus.roundNo });
       socket.emit('getRoundNo', { roundNo: prevStatus.roundNo });
     });
+
+    // 결과 동시 반환
+    socket.on('winner', async (data) => {
+      const { roomId } = data;
+      const prevStatus = await GameStatus.findOne({ where: { roomId } });
+      const spyGroup = await GameGroup.findAll({ where: { roomId, role: 4 } });
+      const emplGroup = await GameGroup.findAll({
+        where: { roomId, role: { [Op.ne]: 4 } },
+      });
+      
+      try {
+        const winnerArr = []; 
+        if (prevStatus.isResult === 2) winnerArr.push(spyGroup);
+        if (prevStatus.isResult === 1) winnerArr.push(emplGroup);
+
+        // 게임 데이터 삭제
+        await GameGroup.destroy({ where: { roomId } });
+        await GameStatus.destroy({ where: { roomId } });
+        await Vote.destroy({ where: { roomId } });
+        await Room.destroy({ where: { id: roomId } });
+
+        // 게임 완료 로그
+        const prevLog = await Log.findOne({ where: { date } });
+        if (prevLog) prevLog.update({ compGameCnt: prevLog.compGameCnt + 1 });
+
+        console.log(`[ ##### system ##### ]
+        \n게임을 종료합니다.
+        \n방 번호:${roomId} `);
+
+        socket.to(roomId).emit('winner', { users : winnerArr[0] });
+
+      } catch (error) {
+        throw error;
+      }
+    });
+
+    
+    // 방 나가기 소켓 제거 기능
+    socket.on('leaveRoom', (roomId) => {
+      socket.leave(roomId);
+      // const currentRoom = socket.adapter.rooms[roomId];
+      // const userCnt = currentRoom ? currentRoom.length : 0;
+      // if (userCnt === 0) axios.delete(`http://localhost:8005/room/${roomId}`)
+    });
+
   });
 };
