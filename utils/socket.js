@@ -149,7 +149,6 @@ module.exports = (server) => {
 
       console.log(users);
       socket.to(roomId).emit('winner', { users });
-      socket.emit('winner', { users });
     });
 
     
