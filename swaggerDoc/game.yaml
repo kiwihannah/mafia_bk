@@ -1,0 +1,575 @@
+paths:
+  /api/enter/:roomId/user/:userId:
+    put:
+      summary: '유저 방 입장'
+      tags: [Game]
+      responses:
+        '200':
+          description: 입장 조건 만족 시 유저를 게임그룹 테이블에 연결하고 방에 입장시킨다.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  res:
+                    type: object
+                    example: { userId }
+        'throw msg 01':
+          description: 방에 같이 이름을 가진 유저가 있는 경우
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  res:
+                    type: object
+                    example: { msg: '방에 진입할 수 없는 유저 입니다.' }
+        'throw msg 02':
+          description: 이미 게임이 시작한 방인 경우
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  res:
+                    type: object
+                    example:
+                      {
+                        msg: '이미 게임이 시작 되었거나 입장 불가능한 방입니다.',
+                      }
+        'throw msg 03':
+          description: 비밀번호가 일치하지 않는 경우
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  res:
+                    type: object
+                    example: { msg: '방 비밀번호가 일치하지 않습니다.' }
+
+  /api/out/:roomId/user/:userId:
+    patch:
+      summary: '유저 방 나가기 & 유저 강퇴하기'
+      description: '두 가지 기능에 공통으로 사용'
+      tags: [Game]
+      responses:
+        '200':
+          description: 나간 유저 아이디 전달
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  res:
+                    type: object
+                    example: { userId }
+        'throw msg 01':
+          description: 유저가 방에 없는 경우
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  res:
+                    type: object
+                    example: { msg: '존재하지 않는 유저입니다.' }
+        'throw msg 02':
+          description: 방이 없는 경우
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  res:
+                    type: object
+                    example: { msg: '존재하지 않는 방입니다.' }
+        'throw msg 03':
+          description: 게임이 시작한 경우
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  res:
+                    type: object
+                    example: { msg: '게임이 시작되면 나갈 수 없습니다.' }
+
+  /api/room/:roomId/user/:uesrId/ready:
+    patch:
+      summary: '레디하기'
+      tags: [Game]
+      responses:
+        '201':
+          description: 준비 상태 전달
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  res:
+                    type: object
+                    example: { isReady: 'Y' }
+        'throw msg':
+          description: 유저가 방에 없는 경우
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  res:
+                    type: object
+                    example: { msg: '존재하지 않는 유저입니다.' }
+  /api/room/:roomId/user/:uesrId/cancelReady:
+    patch:
+      summary: '레디취소'
+      tags: [Game]
+      responses:
+        '200':
+          description: 준비 상태 전달
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  res:
+                    type: object
+                    example: { isReady: 'N' }
+        'throw msg':
+          description: 유저가 방에 없는 경우
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  res:
+                    type: object
+                    example: { msg: '존재하지 않는 유저입니다.' }
+  /api/room/:roomId/ai:
+    put:
+      summary: 'ai 유저 생성'
+      description: '게임 진행에 필요한 인원이 부족한 경우 ai 유저로 필요한 인원을 채운다.'
+      tags: [Game]
+      responses:
+        '200':
+          description: ai 유저를 생성하고 ai 유저가 추가된 유저리스트를 전달
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  res:
+                    type: object
+                    example: { users }
+        'throw msg':
+          description: roomId에 해당하는 방이나 게임그룹이 없는 경우
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  res:
+                    type: object
+                    example:
+                      { msg: '게임 할 방이 삭제되었거나, 유저가 없습니다.' }
+  /api/room/:roomId/changemaxPlayer:
+    patch:
+      summary: '방 최대인원 줄이기'
+      description: '조건 : maxPlayer > currPlayer, aiPlayer = N, downgradePlayer = Y'
+      tags: [Game]
+      responses:
+        '200':
+          description: 수정된 방정보를 전달
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  res:
+                    type: object
+                    example: { room }
+        'throw msg':
+          description:
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  res:
+                    type: object
+                    example:
+                      {
+                        msg: '바꾸려는 인원이 최소인원을 충족하지 못했습니다.\n( 최소인원 : 6 )',
+                      }
+
+  /api//room/:roomId/user/:userId/status:
+    get:
+      summary: '게임 조건 업데이트 및 확인'
+      description:
+      tags: [Game]
+      responses:
+        '200':
+          description: 수정된 Status(진행 단계) 전달
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  res:
+                    type: object
+                    example:
+                      {
+                        nextStatus:
+                          {
+                            dayTime,
+                            voteDay,
+                            invailedVoteCnt,
+                            showResultDay,
+                            isGameResult_1,
+                            voteNightLawyer,
+                            voteNightDetective,
+                            showMsgDetective,
+                            voteNightSpy,
+                            showResultNight,
+                            isGameResult_2,
+                          },
+                      }
+
+  /api/room/:roomId/user/:userId/msg:
+    get:
+      summary: '게임 시작 버튼 클릭 시 시작 조건 메세지 확인'
+      description:
+      tags: [Game]
+      responses:
+        '200':
+          description: 조건에 따라 메세지 전달 (조건을 만족하면 game status 생성)
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  res:
+                    type: object
+                    example: { msg }
+        'throw msg 01':
+          description: 방이나 유저의 정보가 존재하지 않을 때
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  res:
+                    type: object
+                    example: { msg: '방이나 유저의 정보가 존재하지 않습니다.' }
+        'throw msg 02':
+          description: 권한이 없을 때(방장이 아닐 때)
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  res:
+                    type: object
+                    example: { msg: '권한이 없습니다.' }
+        'throw msg 03':
+          description: 준비하지 않은 참가자가 있을 때
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  res:
+                    type: object
+                    example: { msg: '모두 준비가 완료되지 않았습니다.' }
+        'throw msg 04':
+          description: 인원이 부족할 때 인공지능 대체 확인(부족하지 않으면 시작 메세지 전달)
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  res:
+                    type: object
+                    example:
+                      {
+                        {
+                          msg: '부족한 인원은 인공지능 플레이어로 대체 하시겠습니까?\n미리 말씀드리자면, 인공지능은 상당히 멍청합니다.',
+                        },
+                        { msg: '시작!' },
+                      }
+
+  /api/room/:roomId/start:
+    patch:
+      summary: '게임 시작'
+      description:
+      tags: [Game]
+      responses:
+        '200':
+          description: gamestatus를 rolegive로 업데이트 하고 게임 시작
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  res:
+                    type: object
+                    example: { room }
+
+  # 게임 플레이 로직
+  /api/room/:roomId/role:
+    patch:
+      summary: '역할 부여'
+      description: 랜덤으로 역할 분담
+      tags: [Game]
+      responses:
+        '201':
+          description: 분담 결과 전달
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  res:
+                    type: object
+                    example: { users }
+
+  /api/room/:roomId/lawyerAct:
+    patch:
+      summary: '변호사가 일개미 지키기'
+      description: 변호사의 선택에 따라 결과 확인
+      tags: [Game]
+      responses:
+        '200':
+          description:
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  res:
+                    type: object
+                    example:
+                      {
+                        { msg: '존재하지 않는 유저입니다.' },
+                        {
+                          msg: '[ ㅇㅇㅇ ] (이)를 스파이로 부터 1회 보호합니다.',
+                        },
+                      }
+
+  /api/room/:roomId/detectiveAct/:userId:
+    get:
+      summary: '탐정이 스파이 알아보기'
+      description: 스파이의 선택에 따라 결과 확인
+      tags: [Game]
+      responses:
+        '200':
+          description:
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  res:
+                    type: object
+                    example:
+                      {
+                        { msg: '[ ㅇㅇㅇ ] (은)는 스파이 입니다.' },
+                        { msg: '[ ㅇㅇㅇ ] (은)는 스파이가 아닙니다.' },
+                      }
+
+  /api/room/:roomId/spyAct:
+    patch:
+      summary: 스파이가 일개미 해고 시키기
+      description: '스파이가 일개미 해고시키기 일개미 id body로 받음'
+      tags: [Game]
+      responses:
+        '200':
+          description:
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  res:
+                    type: object
+                    example:
+                      {
+                        { msg: '존재하지 않는 유저입니다.' },
+                        {
+                          msg: '현명한 변호사가 일개미 [ ㅇㅇㅇ ] (이)의 부당 해고를 막았습니다.',
+                        },
+                        {
+                          msg: '선량한 시민 [ ㅇㅇㅇ ] (이)가 간 밤에 해고 당했습니다.',
+                        },
+                      }
+
+  /api/room/:roomId/voter/:userId/vote:
+    patch:
+      summary: 낮 투표 저장
+      description: '스파이가 일개미 해고시키기 일개미 id body로 받음'
+      tags: [Game]
+      responses:
+        '200':
+          description:
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  res:
+                    type: object
+                    example: { voteUserId: { voter: userId } }
+        'throw msg 01':
+          description: 게임이 정상적으로 진행되고 있지 않을 때
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  res:
+                    type: object
+                    example: { msg: '게임의 상태 정보가 존재하지 않습니다.' }
+        'throw msg 02':
+          description: 투표가 이뤄지지 않았을 때
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  res:
+                    type: object
+                    example: { msg: '투표한 정보가 없습니다.' }
+
+  /api/room/:roomId/round/:roundNo/invalidVote:
+    put:
+      summary: 무효표 확인
+      description: 시민 낮 투표 부결표 처리
+      tags: [Game]
+      responses:
+        '200':
+          description:
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  res:
+                    type: object
+                    example:
+                      {
+                        { msg: 1 개의 무효표 },
+                        { msg: 2 개의 무효표 },
+                        { msg: 3 개의 무효표 },
+                      }
+
+  /api/room/:roomId/round/:roundNo:
+    get:
+      summary: 라운드 별 사원 투표 결과 확인
+      description: 시민 낮 투표 결과 반환
+      tags: [Game]
+      responses:
+        '200':
+          description:
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  res:
+                    type: object
+                    example:
+                      {
+                        {
+                          result: '무효표가 가장 많으므로 다음 라운드로 갑니다.',
+                        },
+                        { result: '동표이므로 다음 라운드로 갑니다.' },
+                        {
+                          result: '산업 스파이 [ ㅇㅇㅇ ] (이)가 붙잡혔습니다.',
+                        },
+                        {
+                          result: '산업 스파이 [ ㅇㅇㅇ ] (이)가 해고 당했습니다.',
+                        },
+                      }
+        'throw msg':
+          description: 투표가 이뤄지지 않았을 때
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  res:
+                    type: object
+                    example: { msg: '투표 정보가 존재하지 않습니다.' }
+
+  # 게임정보 메세지 받기
+  /api/room/:roomId/users:
+    get:
+      summary: 방 안 유저 리스트 조회
+      description: 유저 배열 반환
+      tags: [Game]
+      responses:
+        '200':
+          description:
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  res:
+                    type: object
+                    example: { users }
+        'throw msg':
+          description: 방에 유저가 없을 때
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  res:
+                    type: object
+                    example: { msg: '방에 입장한 유저가 없습니다.' }
+
+  /api/room/:roomId/status_1:
+    get:
+      summary: 게임 스테이터스 조건 확인용
+      description:
+      tags: [Game]
+      responses:
+        '200':
+          description:
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  res:
+                    type: object
+                    example: { status }
+        'throw msg':
+          description: 게임 status가 조회되지 않을 때
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  res:
+                    type: object
+                    example:
+                      { msg: '게임이 시작하지 않았거나, 정보가 없습니다' }
+
+  /api/room/:roomId/result:
+    get:
+      summary: 결과 확인
+      description: 회차, 결과(승, 패) 반환
+      tags: [Game]
+      responses:
+        '200':
+          description:
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  res:
+                    type: object
+                    example: { result }

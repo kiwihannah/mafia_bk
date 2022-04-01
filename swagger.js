@@ -13,10 +13,17 @@ const options = {
     servers: [
       {
         url: 'http://localhost:3000',
+        description: 'test server',
+      },
+      {
+        url: 'https://mafia.milagros.shop',
+        description: 'real server',
       },
     ],
   },
-  apis: ['./routes/*.js', './swagger/*'],
+  apis: ['./swaggerDoc/*.yaml', './swagger/*'],
 };
+
 const specs = swaggereJsdoc(options);
+
 module.exports = { swaggerUi, specs };
