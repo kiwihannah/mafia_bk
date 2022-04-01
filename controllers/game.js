@@ -145,8 +145,8 @@ module.exports = {
     }),
 
     winner: ControllerAsyncWrapper(async (req, res) => {
-      const { roomId } = req.params;
-      const users = await gameService.getGame.winner({ roomId });
+      const { roomId, userId } = req.params;
+      const users = await gameService.getGame.winner({ roomId, userId });
       return res.status(200).json({ users });
     }),
 
