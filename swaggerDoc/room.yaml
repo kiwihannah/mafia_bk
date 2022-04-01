@@ -1,0 +1,56 @@
+paths:
+  /api/room/user/:userId:
+    post:
+      summary: '게임방 생성'
+      description: '방장이 입력한 설정에 따라 방 생성'
+      tags: [Room]
+      responses:
+        '201':
+          description: 방생성 후 방 정보 전달
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  res:
+                    type: object
+                    example:
+                      {
+                        room:
+                          {
+                            nickname: prevUser.nickname,
+                            roomName,
+                            maxPlayer,
+                            roomPwd,
+                            onPlay,
+                            currPlayer,
+                            userId,
+                          },
+                      }
+        'throw msg':
+          description: 방을 생성하려는 유저가 정상적인 방법으로 접근한 유저가 아닐 때
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  res:
+                    type: object
+                    example: { msg: '존재하지 않는 유저입니다.' }
+
+  /api/lobby:
+    get:
+      summary: '로비에 게임방 리스트 전달'
+      description: '방장이 입력한 설정에 따라 방 생성'
+      tags: [Room]
+      responses:
+        '200':
+          description: 사람이 많은 방부터 내림차순으로 전달
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  res:
+                    type: object
+                    example: { rooms: room }

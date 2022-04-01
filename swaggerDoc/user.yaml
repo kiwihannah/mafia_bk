@@ -1,0 +1,68 @@
+paths:
+  /api/user:
+    post:
+      summary: '유저 닉네임 생성'
+      description: '유저가 작성한 닉네임으로 유저 생성 후 세션에 유저 정보 저장'
+      tags: [User]
+      responses:
+        '201':
+          description: 닉네임 생성 결과와 생성 직후 호스트 권한 상태 전달
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  res:
+                    type: object
+                    example: { nickname: data.nickname, isHost: 'N' }
+        'throw msg':
+          description: 닉네임이 이미 사용 중일 때
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  res:
+                    type: object
+                    example: { msg: '이미 플레이 중인 닉네임 입니다.' }
+
+  /api/randomNick:
+    get:
+      summary: '랜덤 닉네임 생성 요청'
+      description: 'String 반환'
+      tags: [User]
+      responses:
+        '200':
+          description: 랜덤 닉네임 전달
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  res:
+                    type: object
+                    example:
+                      {
+                        '사랑스럽고 허세있는 닭',
+                        '매력적이고 집착이심한 똥멍청이',
+                        자신감있고 강압적인 돼지,
+                      }
+
+  /api/user/:userId:
+    delete:
+      summary: '유저 삭제'
+      description: 'userId에 해당하는 유저 삭제'
+      tags: [User]
+      responses:
+        '202':
+          description: 삭제후 status만 전달
+        'throw msg':
+          description: userId에 해당하는 유저가 없을 때
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  res:
+                    type: object
+                    example: { msg: '존재하지 않는 유저입니다.' }
