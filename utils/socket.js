@@ -155,31 +155,22 @@ module.exports = (server) => {
         },
       });
 
+      // 배열 반환
+      const winnerArr = [];
+      if (prevStatus.isResult === 2) winnerArr.push(spyGroup);
+      if (prevStatus.isResult === 1) winnerArr.push(emplGroup);
+
+      console.log(`[ ##### system ##### ]
+        \n게임을 종료합니다.
+        \n방 번호:${roomId} `);
+      console.log(winnerArr[0]);
+
+      socket.to(roomId).emit('winner', { users: winnerArr[0] });
+      socket.emit('winnerToMe', { users: winnerArr[0] });
+
       try {
-        if (!prevStatus || prevStatus.isResult === 0 || !isHost) {
-          throw {
-            msg: `[ #### system #### ]
-            \n아직 게임결과가 나오지 않았거나, 호스트의 요청이 아닙니다.`,
-          };
-        } else {
-          // 배열 반환
-          const winnerArr = [];
-          if (prevStatus.isResult === 2) winnerArr.push(spyGroup);
-          if (prevStatus.isResult === 1) winnerArr.push(emplGroup);
-
-          console.log(`[ ##### system ##### ]
-          \n게임을 종료합니다.
-          \n방 번호:${roomId} `);
-          console.log(winnerArr[0]);
-
-          socket.to(roomId).emit('winner', { 
-            users: winnerArr[0] 
-          }, console.log('@@@@ winner 요청을 반환해버림~'));
-
-          socket.emit('winnerToMe', { 
-            users: winnerArr[0] 
-          }, console.log('@@@@ winnerToMe 요청을 반환해버림~'));
-
+        // 최초 요청자만 DB 접근
+        if (prevStatus || prevStatus.isResult !== 0 || isHost) {
           // 게임 완료 로그
           const prevLog = await Log.findOne({ where: { date } });
           if (prevLog) prevLog.update({ compGameCnt: prevLog.compGameCnt + 1 });
