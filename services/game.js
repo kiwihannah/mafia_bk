@@ -845,15 +845,17 @@ module.exports = {
         if (prevLog) prevLog.update({ compGameCnt: prevLog.compGameCnt + 1 });
 
         // 게임 데이터 삭제
-        await GameGroup.destroy({ where: { roomId } });
-        await GameStatus.destroy({ where: { roomId } });
-        await Vote.destroy({ where: { roomId } });
-        await Room.destroy({ where: { id: roomId } });
+        await User.update(
+          { roomId: null },
+          { where: { roomId } },
+        );
         await User.destroy({
-          where: {
-            nickname: { [Op.like]: `AI_${roomId}%` },
-          },
+          where: { nickname: { [Op.like]: `AI_${roomId}%` } },
         });
+        await GameGroup.destroy({ where: { roomId } });
+        await Vote.destroy({ where: { roomId } });
+        await GameStatus.destroy({ where: { roomId } });
+        await Room.destroy({ where: { id: roomId } });
       } else {
         throw { msg : '이미 존재하지 않는 게임입니다.' };
       }
