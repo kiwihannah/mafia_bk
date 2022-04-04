@@ -45,6 +45,19 @@ module.exports = (server) => {
       console.log('User Disconnected', socket.id);
     });
 
+    // 현재 유저 테이블 반환
+    socket.on('currUsers', async (data) => {
+      const { roomId } = data;
+      const users = await GameGroup.findAll({ where: { roomId } });
+      
+      console.log(`[ ##### system ##### ]
+      \n 현재 유저 테이블 반환 :`);
+      console.log(users);
+
+      socket.to(roomId).emit('currUsers', users);
+      socket.emit('currUsersToMe', users);
+    });
+
     // 상태 데이터 반환 data: { roomId: 0, status: 'blah'};
     socket.on('getStatus', async (data) => {
       const { roomId, status } = data;
