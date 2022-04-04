@@ -76,7 +76,7 @@ module.exports = {
           model: User,
           attributes: ['id', 'nickname'],
         },
-        order: [['currPlayer', 'DESC']],
+        order: [['createdAt', 'DESC']],
       });
 
       return room;
