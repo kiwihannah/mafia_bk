@@ -41,7 +41,6 @@ module.exports = (server) => {
       data.socketId === ''
         ? socket.to(data.roomId).emit('receive_message', data)
         : socket.to(data.socketId).emit('receive_message', data);
-
       if(data.socketId) console.log('귓속말 emit 보낸 상태', data);
     });
 
