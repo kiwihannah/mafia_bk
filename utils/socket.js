@@ -46,8 +46,7 @@ module.exports = (server) => {
     });
 
     // 현재 유저 테이블 반환
-    socket.on('currUsers', async (data) => {
-      const { roomId } = data;
+    socket.on('currUsers', async (roomId) => {
       console.log('currentUser 요청하기는 함-->', roomId);
       const users = await GameGroup.findAll({ where: { roomId } });
 
@@ -59,8 +58,7 @@ module.exports = (server) => {
       socket.emit('currUsersToMe', users);
     });
 
-    socket.on('currUsersToMe', async (data) => {
-      const { roomId } = data;
+    socket.on('currUsersToMe', async (roomId) => {
       console.log('currentUserToMe 요청하기는 함-->', roomId);
       const users = await GameGroup.findAll({ where: { roomId } });
 
