@@ -36,9 +36,13 @@ module.exports = (server) => {
 
     // 채팅 (귓속말 추가)
     socket.on('send_message', (data) => {
+      console.log(data.socketId);
+      
       data.socketId === ''
         ? socket.to(data.roomId).emit('receive_message', data)
         : socket.to(data.socketId).emit('receive_message', data);
+
+      if(data.socketId) console.log('귓속말 emit 보낸 상태', data);
     });
 
     socket.on('disconnect', () => {
@@ -47,7 +51,7 @@ module.exports = (server) => {
 
     // 현재 유저 테이블 반환
     socket.on('currUsers', async (data) => {
-      console.log('currentUser 요청하기는 함-->', data);
+      console.log('currentUser 요청하기는 함-->', data); //function ()
       const { roomId } = data;
       const users = await GameGroup.findAll({ where: { roomId } });
 
