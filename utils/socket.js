@@ -48,13 +48,26 @@ module.exports = (server) => {
     // 현재 유저 테이블 반환
     socket.on('currUsers', async (data) => {
       const { roomId } = data;
+      console.log('currentUser 요청하기는 함-->', roomId);
       const users = await GameGroup.findAll({ where: { roomId } });
-      
+
       console.log(`[ ##### system ##### ]
       \n 현재 유저 테이블 반환 :`);
       console.log(users);
 
       socket.to(roomId).emit('currUsers', users);
+      socket.emit('currUsersToMe', users);
+    });
+
+    socket.on('currUsersToMe', async (data) => {
+      const { roomId } = data;
+      console.log('currentUserToMe 요청하기는 함-->', roomId);
+      const users = await GameGroup.findAll({ where: { roomId } });
+
+      console.log(`[ ##### system ##### ]
+      \n 현재 유저 테이블 반환 :`);
+      console.log(users);
+
       socket.emit('currUsersToMe', users);
     });
 
