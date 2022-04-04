@@ -167,28 +167,6 @@ module.exports = (server) => {
 
       socket.to(roomId).emit('winner', { users: winnerArr[0] });
       socket.emit('winnerToMe', { users: winnerArr[0] });
-
-      // try {
-      //   // 최초 요청자만 DB 접근
-      //   if (prevStatus || prevStatus.isResult !== 0 || isHost) {
-      //     // 게임 완료 로그
-      //     const prevLog = await Log.findOne({ where: { date } });
-      //     if (prevLog) prevLog.update({ compGameCnt: prevLog.compGameCnt + 1 });
-
-      //     // 게임 데이터 삭제
-      //     await GameGroup.destroy({ where: { roomId } });
-      //     await GameStatus.destroy({ where: { roomId } });
-      //     await Vote.destroy({ where: { roomId } });
-      //     await Room.destroy({ where: { id: roomId } });
-      //     await User.destroy({
-      //       where: {
-      //         nickname: { [Op.like]: `AI_${roomId}%` },
-      //       },
-      //     });
-      //   }
-      // } catch (error) {
-      //   throw error;
-      // }
     });
 
     // 방 나가기 소켓 제거 기능

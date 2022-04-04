@@ -832,4 +832,31 @@ module.exports = {
       else return userInfo;
     }),
   },
+
+  delete: {
+    // 게임 시작하기
+    game: ServiceAsyncWrapper(async (data) => {
+      const { roomId } = data;
+      const prevStatus = await GameStatus.findOne({ where: { roomId } });
+
+      if (prevStatus || prevStatus.isResult !== 0) {
+        // 게임 완료 로그
+        const prevLog = await Log.findOne({ where: { date } });
+        if (prevLog) prevLog.update({ compGameCnt: prevLog.compGameCnt + 1 });
+
+        // 게임 데이터 삭제
+        await GameGroup.destroy({ where: { roomId } });
+        await GameStatus.destroy({ where: { roomId } });
+        await Vote.destroy({ where: { roomId } });
+        await Room.destroy({ where: { id: roomId } });
+        await User.destroy({
+          where: {
+            nickname: { [Op.like]: `AI_${roomId}%` },
+          },
+        });
+      } else {
+        throw { msg : '이미 존재하지 않는 게임입니다.' };
+      }
+    }),
+  },
 };

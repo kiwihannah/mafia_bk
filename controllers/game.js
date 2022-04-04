@@ -156,4 +156,12 @@ module.exports = {
       return res.status(200).json({ user });
     }),
   },
+
+  delete: {
+    game: ControllerAsyncWrapper(async (req, res) => {
+      const { roomId } = req.params;
+      await gameService.delete.game({ roomId });
+      return res.status(204).json({ });
+    }),
+  },
 };
