@@ -70,7 +70,7 @@ module.exports = {
       const prevGameGroup = await GameGroup.findOne({ where: { userId } });
       const prevRoom = await Room.findOne({ where: { id: roomId } });
 
-      if (!prevUser || !prevGameGroup) {
+      if (!prevUser) {
         // 유저 예외 처리
         throw { msg: '존재하지 않는 유저입니다.' };
       } else if (!prevRoom) {
