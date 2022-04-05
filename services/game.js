@@ -80,16 +80,19 @@ module.exports = {
         // 게임 예외 처리
         throw { msg: '게임이 시작되면 나갈 수 없습니다.' };
       } else {
+        // 방 나가기 로직
+        const user = await prevUser.update({ roomId: null }); // 유저 테이블 유지
+        await GameGroup.destroy({ where: { userId } }); // 게임 그룹 테이블 삭제
+
         // 방장이 나가면 두번째로 오래된 멤버가 방장
         const nextHost = await GameGroup.findOne({
           where: { roomId },
           order: [['createdAt', 'ASC']],
         });
-        if (prevGameGroup && prevGameGroup.isHost === 'Y') await nextHost.update({ isHost: 'Y' });
-
-        // 방 나가기 로직
-        const user = await prevUser.update({ roomId: null }); // 유저 테이블 유지
-        await GameGroup.destroy({ where: { userId } }); // 게임 그룹 테이블 삭제
+        if (prevGameGroup && prevGameGroup.isHost === 'Y') {
+          const nextHostUser = await nextHost.update({ isHost: 'Y' });
+          console.log('다음 호스트는 누구???????', nextHostUser.nickname);
+        }
 
         // 현재 인원 1--
         User.sequelize.query(
