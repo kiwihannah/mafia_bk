@@ -29,15 +29,9 @@ module.exports = {
           throw { msg: '방 비밀번호가 일치하지 않습니다.' };
         } else {
           // 방 입장 로직 : 현재 인원 1++, 유저 리스트에 추가
-          User.sequelize.query(
-            `UPDATE rooms SET currPlayer = currPlayer + 1 WHERE id=${roomId};`,
-            (err) => {
-              if (err) throw err;
-            }
-          );
+          await prevRoom.update({ currPlayer: prevRoom.currPlayer +1 });
 
-          await prevUser.update({ roomId });
-
+          // 유저 게임 그룹 테이블 연결
           const gameGroup = await GameGroup.create({
             userId,
             nickname: prevUser.nickname,
@@ -48,16 +42,9 @@ module.exports = {
             isHost: 'N',
             roomId,
           });
+          await prevUser.update({ roomId, gameGroupId: gameGroup.id });
 
-          // 유저 게임 그룹 테이블 연결
-          User.sequelize.query(
-            `UPDATE users SET gameGroupId = ${gameGroup.id} WHERE id=${userId};`,
-            (err) => {
-              if (err) throw err;
-            }
-          );
-
-          // 유저 리스트 반환
+          // 유저 id 반환
           return gameGroup.userId;
         }
       }
@@ -221,7 +208,7 @@ module.exports = {
 
       // 게임 방 개설 로그
       const prevLog = await Log.findOne({ where: { date } });
-      if (prevLog) prevLog.update({ onGameCnt: prevLog.onGameCnt + 1 });
+      if (prevLog) prevLog.update({ onGameCnt: prevLog.onGameCnt +1 });
 
       console.log(`[ ##### system ##### ]
       \n게임을 시작합니다.
@@ -255,8 +242,7 @@ module.exports = {
         case 10: // 사원5, 탐정, 변호사1, 스파이3
           tempRoleArr.push(1, 1, 1, 1, 1, 2, 3, 4, 4, 4);
           break;
-        default:
-          // 테스트 용
+        default: // 테스트 용
           tempRoleArr.push(1, 2, 3, 4);
       }
 
@@ -595,12 +581,8 @@ module.exports = {
       const userArr = [],
         aiArr = [];
       if (host.isHost === 'Y') {
-        prevGameGroup.map((user) => {
-          userArr.push(user.userId);
-        });
-        prevAiGroup.map((ai) => {
-          aiArr.push(prevAiGroup.userId);
-        });
+        prevGameGroup.map((user) => { userArr.push(user.userId); });
+        prevAiGroup.map((ai) => { aiArr.push(ai.userId); });
 
         let ranNum = 0;
         for (let i = 0; i < prevAiGroup.length; i++) {
@@ -798,13 +780,6 @@ module.exports = {
       const emplGroup = await GameGroup.findAll({
         where: { roomId, role: { [Op.ne]: 4 } },
       });
-      const isHost = await GameGroup.findOne({
-        where: {
-          roomId,
-          userId,
-          isHost: 'Y',
-        },
-      });
 
       // 배열 반환
       const winnerArr = [];
@@ -826,6 +801,7 @@ module.exports = {
       if (!userInfo) throw { msg: '존재하지 않는 유저입니다.' };
       else return userInfo;
     }),
+
   },
 
   delete: {
@@ -838,7 +814,7 @@ module.exports = {
       if (prevStatus || prevStatus.isResult !== 0) {
         // 게임 완료 로그
         const prevLog = await Log.findOne({ where: { date } });
-        if (prevLog) prevLog.update({ compGameCnt: prevLog.compGameCnt + 1 });
+        if (prevLog) prevLog.update({ compGameCnt: prevLog.compGameCnt +1 });
 
         // 게임 데이터 삭제
         await User.update(
@@ -857,4 +833,5 @@ module.exports = {
       }
     }),
   },
+  
 };
