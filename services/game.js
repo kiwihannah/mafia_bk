@@ -67,9 +67,10 @@ module.exports = {
     exitRoom: ServiceAsyncWrapper(async (data) => {
       const { userId, roomId } = data;
       const prevUser = await User.findOne({ where: { id: userId } });
+      const prevGameGroup = await GameGroup.findOne({ where: { userId } });
       const prevRoom = await Room.findOne({ where: { id: roomId } });
 
-      if (!prevUser) {
+      if (!prevUser || !prevGameGroup) {
         // 유저 예외 처리
         throw { msg: '존재하지 않는 유저입니다.' };
       } else if (!prevRoom) {
@@ -84,12 +85,12 @@ module.exports = {
         await GameGroup.destroy({ where: { userId } }); // 게임 그룹 테이블 삭제
 
         // 방장이 나가면 두번째로 오래된 멤버가 방장
-        const nextHost = await User.findOne({
+        const nextHost = await GameGroup.findOne({
           where: { roomId },
           order: [['createdAt', 'ASC']],
         });
 
-        if (prevUser.id === prevRoom.hostId) await prevRoom.update({ hostId: nextHost.id });
+        if (prevGameGroup.isHost === 'Y') await nextHost.update({ isHost: 'Y' });
 
         // 현재 인원 1--
         User.sequelize.query(
@@ -838,6 +839,7 @@ module.exports = {
     game: ServiceAsyncWrapper(async (data) => {
       const { roomId } = data;
       const prevStatus = await GameStatus.findOne({ where: { roomId } });
+      // const prevRoom = await Room.findAll({ where: { createdAt:  } });
 
       if (prevStatus || prevStatus.isResult !== 0) {
         // 게임 완료 로그
