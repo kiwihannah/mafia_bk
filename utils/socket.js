@@ -209,7 +209,7 @@ module.exports = (server) => {
     });
 
     // 방 리스트 소켓 반환
-    socket.on('getRooms', (data) => {
+    socket.on('getRooms', async () => {
       const rooms = await Room.findAll({
         include: {
           model: User,
