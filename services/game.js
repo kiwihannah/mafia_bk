@@ -811,28 +811,17 @@ module.exports = {
         },
       });
 
+      // 배열 반환
       const winnerArr = [];
-      if (!prevStatus || prevStatus.isResult === 0 || !isHost) {
-        throw { msg: '[ #### system #### ] 아직 게임결과가 나오지 않았거나, 호스트의 요청이 아닙니다. ' };
-      } else {
-        if (prevStatus.isResult === 2) winnerArr.push(spyGroup);
-        if (prevStatus.isResult === 1) winnerArr.push(emplGroup);
+      if (prevStatus.isResult === 2) winnerArr.push(spyGroup);
+      if (prevStatus.isResult === 1) winnerArr.push(emplGroup);
 
-        // 게임 데이터 삭제
-        await GameGroup.destroy({ where: { roomId } });
-        await GameStatus.destroy({ where: { roomId } });
-        await Vote.destroy({ where: { roomId } });
-        await Room.destroy({ where: { id: roomId } });
-
-        // 게임 완료 로그
-        const prevLog = await Log.findOne({ where: { date } });
-        if (prevLog) prevLog.update({ compGameCnt: prevLog.compGameCnt + 1 });
-
-        console.log(`[ ##### system ##### ]
+      console.log(`[ ##### system ##### ]
         \n게임을 종료합니다.
         \n방 번호:${roomId} `);
-        return winnerArr[0];
-      }
+      console.log(winnerArr[0]);
+
+      return winnerArr[0];
     }),
 
     // 하나의 유저 정보
@@ -841,6 +830,35 @@ module.exports = {
       const userInfo = await GameGroup.findOne({ where: { roomId, userId } });
       if (!userInfo) throw { msg: '존재하지 않는 유저입니다.' };
       else return userInfo;
+    }),
+  },
+
+  delete: {
+    // 게임 시작하기
+    game: ServiceAsyncWrapper(async (data) => {
+      const { roomId } = data;
+      const prevStatus = await GameStatus.findOne({ where: { roomId } });
+
+      if (prevStatus || prevStatus.isResult !== 0) {
+        // 게임 완료 로그
+        const prevLog = await Log.findOne({ where: { date } });
+        if (prevLog) prevLog.update({ compGameCnt: prevLog.compGameCnt + 1 });
+
+        // 게임 데이터 삭제
+        await User.update(
+          { roomId: null },
+          { where: { roomId } },
+        );
+        await User.destroy({
+          where: { nickname: { [Op.like]: `AI_${roomId}%` } },
+        });
+        await GameGroup.destroy({ where: { roomId } });
+        await Vote.destroy({ where: { roomId } });
+        await GameStatus.destroy({ where: { roomId } });
+        await Room.destroy({ where: { id: roomId } });
+      } else {
+        throw { msg : '이미 존재하지 않는 게임입니다.' };
+      }
     }),
   },
 };

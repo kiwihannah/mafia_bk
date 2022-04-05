@@ -55,5 +55,7 @@ router.get('/room/:roomId/user/:userId/result', GameController.getGame.result);
 router.get('/room/:roomId/user/:userId/winner', GameController.getGame.winner);
 // 하나의 유저 정보 반환
 router.get('/room/:roomId/user/:userId/info', GameController.getGame.userInfo);
+// 다 한 게임 삭제
+router.delete('/room/:roomId/delete', GameController.delete.game);
 
 module.exports = router;
