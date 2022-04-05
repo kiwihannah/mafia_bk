@@ -76,7 +76,7 @@ module.exports = {
           where: { roomId },
           order: [['createdAt', 'ASC']],
         });
-        if (nextHost && prevGameGroup.isHost === 'Y') await nextHost.update({ isHost: 'Y' });
+        if (nextHost && prevGameGroup.isHost === 'Y') await nextHost.update({ isHost: 'Y', isReady: 'Y' });
 
         // 현재 인원 1--
         await prevRoom.update({ currPlayer: prevRoom.currPlayer -1 });
@@ -709,6 +709,7 @@ module.exports = {
         where: { roomId, isEliminated: { [Op.like]: 'N%' } },
       });
       const isHost = await GameGroup.findOne({ where: { userId, isHost: 'Y' } });
+      const prevRoom = await Room.findOne({ where: { id: roomId } });
 
       if (!prevGameStatus) {
         throw {
@@ -727,27 +728,28 @@ module.exports = {
         \n사원 수: ${tempEmplArr.length}`);
 
         // 결과 추가 & 반환
-        if (tempEmplArr.length === tempSpyArr.length) {
-          // 스파이 승리
-          await prevGameStatus.update({ isResult: 2 });
-        } else if (tempSpyArr.length === 0) {
-          // 사원 승리
-          await prevGameStatus.update({ isResult: 1 });
-        } else {
-          // 승부 없음, 방장 일때만 라운드 추가
+        let isResult = 0, onPlay = '';
+        if (tempEmplArr.length === tempSpyArr.length) { // 스파이 승리
+          isResult = 2; onPlay = 'N';
+        } else if (tempSpyArr.length === 0) { // 사원 승리
+          isResult = 1; onPlay = 'N';
+        } else { // 승부 없음, 방장 일때만 라운드 추가
+          isResult = 0; onPlay = 'Y';
           if (isHost) {
             const nextRoundNo = prevGameStatus.roundNo + 1;
             await prevGameStatus.update({ roundNo: nextRoundNo });
           }
         }
+        await prevGameStatus.update({ isResult });
+        await prevRoom.update({ onPlay });
 
-        const afterCnt = await GameStatus.findOne({ where: { roomId } });
+        const finalResult = await GameStatus.findOne({ where: { roomId } });
 
         console.log(`[ ##### system ##### ]
         \n회차를 반환합니다.
-        \n현재 스테이터스: ${afterCnt.status}
-        \n결과: ${afterCnt.isResult}`);
-        return afterCnt.isResult;
+        \n현재 스테이터스: ${finalResult.status}
+        \n결과: ${finalResult.isResult}`);
+        return finalResult.isResult;
       }
     }),
 
@@ -805,7 +807,7 @@ module.exports = {
   },
 
   delete: {
-    // 게임 시작하기
+    // 게임 데이터 정리
     game: ServiceAsyncWrapper(async (data) => {
       const { roomId } = data;
       const prevStatus = await GameStatus.findOne({ where: { roomId } });
@@ -833,5 +835,5 @@ module.exports = {
       }
     }),
   },
-  
+
 };
