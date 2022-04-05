@@ -1,4 +1,5 @@
 paths:
+  # 게임 시작 전 로직
   /api/enter/:roomId/user/:userId:
     put:
       summary: '유저 방 입장'
@@ -93,58 +94,8 @@ paths:
                 properties:
                   res:
                     type: object
-                    example: { msg: '게임이 시작되면 나갈 수 없습니다.' }
-
-  /api/room/:roomId/user/:uesrId/ready:
-    patch:
-      summary: '레디하기'
-      tags: [Game]
-      responses:
-        '201':
-          description: 준비 상태 전달
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  res:
-                    type: object
-                    example: { isReady: 'Y' }
-        'throw msg':
-          description: 유저가 방에 없는 경우
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  res:
-                    type: object
-                    example: { msg: '존재하지 않는 유저입니다.' }
-  /api/room/:roomId/user/:uesrId/cancelReady:
-    patch:
-      summary: '레디취소'
-      tags: [Game]
-      responses:
-        '200':
-          description: 준비 상태 전달
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  res:
-                    type: object
-                    example: { isReady: 'N' }
-        'throw msg':
-          description: 유저가 방에 없는 경우
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  res:
-                    type: object
-                    example: { msg: '존재하지 않는 유저입니다.' }
+                    example: { msg: '게임이 시작되면 나갈 수 없습니다.' }  
+ 
   /api/room/:roomId/ai:
     put:
       summary: 'ai 유저 생성'
@@ -172,6 +123,7 @@ paths:
                     type: object
                     example:
                       { msg: '게임 할 방이 삭제되었거나, 유저가 없습니다.' }
+
   /api/room/:roomId/changemaxPlayer:
     patch:
       summary: '방 최대인원 줄이기'
@@ -200,40 +152,7 @@ paths:
                     example:
                       {
                         msg: '바꾸려는 인원이 최소인원을 충족하지 못했습니다.\n( 최소인원 : 6 )',
-                      }
-
-  /api//room/:roomId/user/:userId/status:
-    get:
-      summary: '게임 조건 업데이트 및 확인'
-      description:
-      tags: [Game]
-      responses:
-        '200':
-          description: 수정된 Status(진행 단계) 전달
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  res:
-                    type: object
-                    example:
-                      {
-                        nextStatus:
-                          {
-                            dayTime,
-                            voteDay,
-                            invailedVoteCnt,
-                            showResultDay,
-                            isGameResult_1,
-                            voteNightLawyer,
-                            voteNightDetective,
-                            showMsgDetective,
-                            voteNightSpy,
-                            showResultNight,
-                            isGameResult_2,
-                          },
-                      }
+                      }  
 
   /api/room/:roomId/user/:userId/msg:
     get:
@@ -403,10 +322,10 @@ paths:
                         },
                       }
 
-  /api/room/:roomId/voter/:userId/vote:
+  /api/room/:roomId/aiLawyerAct:
     patch:
-      summary: 낮 투표 저장
-      description: '스파이가 일개미 해고시키기 일개미 id body로 받음'
+      summary: ai 변호사 개미의 투표 진행
+      description: 
       tags: [Game]
       responses:
         '200':
@@ -418,9 +337,9 @@ paths:
                 properties:
                   res:
                     type: object
-                    example: { voteUserId: { voter: userId } }
-        'throw msg 01':
-          description: 게임이 정상적으로 진행되고 있지 않을 때
+                    example: { msg: '[ o o o] (이)를 스파이로 부터 1회 보호합니다.' }
+        'throw msg':
+          description: 선택한 유저가 죽었거나, ai 변호사 유저가 죽었거나, 이번 라운드 이미 보호를 한 경우
           content:
             application/json:
               schema:
@@ -428,22 +347,56 @@ paths:
                 properties:
                   res:
                     type: object
-                    example: { msg: '게임의 상태 정보가 존재하지 않습니다.' }
-        'throw msg 02':
-          description: 투표가 이뤄지지 않았을 때
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  res:
-                    type: object
-                    example: { msg: '투표한 정보가 없습니다.' }
+                    example: { msg: '잘못된 정보로 요청 했습니다.' }
 
-  /api/room/:roomId/round/:roundNo/invalidVote:
+  /api/room/:roomId/aiSpyAct:
+    patch:
+      summary: ai 스파이 개미의 투표 진행
+      description: 
+      tags: [Game]
+      responses:
+        '200':
+          description:
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  res:
+                    type: object
+                    example: { {msg: '현명한 변호사가 일개미 [ ㅇ ㅇ ㅇ ] (이)의 부당 해고를 막았습니다.'}, {msg: '스파이에 의해, 성실한 일개미 [ ㅇ ㅇ ㅇ ] (이)가 간 밤에 해고 당했습니다.'} }
+        'throw msg':
+          description: 선택한 유저가 죽었거나, ai 스파이가 남아있지 않거나, 스파이 유저가 살아있거나, 이번 라운드 이미 보호를 한 경우
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  res:
+                    type: object
+                    example: { msg: '잘못된 정보로 요청 했습니다.' }
+
+  /api/room/:roomId/isZeroVote:
+    get:
+      summary: 유저가 투표를 하나도 하지 않은 경우 확인
+      description: 
+      tags: [Game]
+      responses:
+        '200':
+          description:
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  res:
+                    type: object
+                    example: { {isVote: true}, {isVote: false} }  
+
+  /api/room/:roomId/round/:roundNo/user/:userId/invalidAndAiVote:
     put:
-      summary: 무효표 확인
-      description: 시민 낮 투표 부결표 처리
+      summary: 무효표 처리 & ai 랜덤 낮 투표 진행
+      description: 무효표를 처리하고 ai의 낮 투표를 진행
       tags: [Game]
       responses:
         '200':
@@ -457,10 +410,18 @@ paths:
                     type: object
                     example:
                       {
-                        { msg: 1 개의 무효표 },
-                        { msg: 2 개의 무효표 },
-                        { msg: 3 개의 무효표 },
+                        msg: 2 개의 무효표 처리가 완료되었습니다. 3명의 ai가 투표를 완료 했습니다.
                       }
+        'throw msg':
+          description: api 요청자가 방장이 아닌경우
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  res:
+                    type: object
+                    example: { msg: '방장이 아닌 유저는 요청할 수 없습니다.' }
 
   /api/room/:roomId/round/:roundNo:
     get:
@@ -502,6 +463,33 @@ paths:
                     example: { msg: '투표 정보가 존재하지 않습니다.' }
 
   # 게임정보 메세지 받기
+  /api/room/:roomId/roundNo:
+    get:
+      summary: 라운드 넘버 구하기
+      description:
+      tags: [Game]
+      responses:
+        '200':
+          description:
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  res:
+                    type: object
+                    example: { {roundNo: '1'},  {roundNo: '2'} }
+        'throw msg':
+          description: roomId에 해당하는 게임 정보가 없을 때
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  res:
+                    type: object
+                    example: { msg: '게임 정보가 존재하지 않습니다.' }
+
   /api/room/:roomId/users:
     get:
       summary: 방 안 유저 리스트 조회
@@ -529,14 +517,41 @@ paths:
                     type: object
                     example: { msg: '방에 입장한 유저가 없습니다.' }
 
-  /api/room/:roomId/status_1:
+  /api/room/:roomId/user/:userId/result:
     get:
-      summary: 게임 스테이터스 조건 확인용
+      summary: 결과 확인
+      description: 회차 결과(승, 패) 반환
+      tags: [Game]
+      responses:
+        '200':
+          description:
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  res:
+                    type: object
+                    example: { {result: 1}, {result: 2} }
+        'throw msg':
+          description: roomId에 해당하는 게임 status 정보가 없을 때
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  res:
+                    type: object
+                    example: { msg: '정보가 저장되지 않아, 게임 스테이지를 불러오지 못했습니다.' }  
+
+  /api/room/:roomId/user/:userId/winner:
+    get:
+      summary: 승리한 유저 목록 반환
       description:
       tags: [Game]
       responses:
         '200':
-          description:
+          description: 배열 반환
           content:
             application/json:
               schema:
@@ -544,26 +559,42 @@ paths:
                 properties:
                   res:
                     type: object
-                    example: { status }
-        'throw msg':
-          description: 게임 status가 조회되지 않을 때
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  res:
-                    type: object
-                    example:
-                      { msg: '게임이 시작하지 않았거나, 정보가 없습니다' }
+                    example: { {users: spyGroup}, {users: emplGroup} }
 
-  /api/room/:roomId/result:
+  /api/room/:roomId/user/:userId/info:
     get:
-      summary: 결과 확인
-      description: 회차, 결과(승, 패) 반환
+      summary: 특정 유저의 정보 반환
+      description:
       tags: [Game]
       responses:
         '200':
+          description: 배열 반환
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  res:
+                    type: object
+                    example: { {user} }
+        'throw msg':
+          description: 방에 userId에 해당하는 유저가 없을 때
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  res:
+                    type: object
+                    example: { msg: '존재하지 않는 유저입니다.' }
+
+  /api/room/:roomId/delete:
+    delete:
+      summary: 다 한 게임 삭제
+      description:
+      tags: [Game]
+      responses:
+        '204':
           description:
           content:
             application/json:
@@ -572,4 +603,15 @@ paths:
                 properties:
                   res:
                     type: object
-                    example: { result }
+                    example: {}
+        'throw msg':
+          description: 이미 삭제됐거나 없는 방일 때
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  res:
+                    type: object
+                    example: { msg: '이미 존재하지 않는 게임입니다.' }
+        
