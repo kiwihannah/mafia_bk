@@ -70,7 +70,7 @@ module.exports = {
       const prevGameGroup = await GameGroup.findOne({ where: { userId } });
       const prevRoom = await Room.findOne({ where: { id: roomId } });
 
-      if (!prevUser) {
+      if (!prevUser || !prevGameGroup) {
         // 유저 예외 처리
         throw { msg: '존재하지 않는 유저입니다.' };
       } else if (!prevRoom) {
@@ -89,22 +89,14 @@ module.exports = {
           where: { roomId },
           order: [['createdAt', 'ASC']],
         });
-        if (prevGameGroup && prevGameGroup.isHost === 'Y') {
-          const nextHostUser = await nextHost.update({ isHost: 'Y' });
-          console.log('다음 호스트는 누구???????', nextHostUser.nickname);
-        }
+        if (nextHost && prevGameGroup.isHost === 'Y') await nextHost.update({ isHost: 'Y' });
 
         // 현재 인원 1--
-        User.sequelize.query(
-          `UPDATE rooms SET currPlayer = currPlayer - 1 WHERE id=${roomId};`,
-          (err) => {
-            if (err) throw err;
-          }
-        );
+        await prevRoom.update({ currPlayer: prevRoom.currPlayer -1 });
 
         // 현재인원 < 0 방 자동 삭제
         const afterRoom = await Room.findOne({ where: { id: roomId } });
-        if (afterRoom.currPlayer === 0) await afterRoom.destroy({ where: { id: roomId } });
+        if (afterRoom.currPlayer === 0) await afterRoom.destroy();
 
         return user.id;
       }
