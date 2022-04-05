@@ -207,5 +207,20 @@ module.exports = (server) => {
       // const userCnt = currentRoom ? currentRoom.length : 0;
       // if (userCnt === 0) axios.delete(`http://localhost:8005/room/${roomId}`)
     });
+
+    // 방 리스트 소켓 반환
+    socket.on('getRooms', (data) => {
+      const rooms = await Room.findAll({
+        include: {
+          model: User,
+          attributes: ['id', 'nickname'],
+        },
+        order: [['createdAt', 'DESC']],
+      });
+
+      console.log('[ ##### system #### ]', rooms)
+      socket.emit('getRooms', rooms);
+    });
+
   });
 };
