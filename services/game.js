@@ -90,7 +90,7 @@ module.exports = {
           order: [['createdAt', 'ASC']],
         });
 
-        if (prevGameGroup.isHost === 'Y') await nextHost.update({ isHost: 'Y' });
+        if (prevGameGroup && prevGameGroup.isHost === 'Y') await nextHost.update({ isHost: 'Y' });
 
         // 현재 인원 1--
         User.sequelize.query(
