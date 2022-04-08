@@ -32,7 +32,7 @@
 
 ## 🖥 Project Architecture
 
-![industrialSPY_final](https://user-images.githubusercontent.com/83942678/161703516-543bfb52-5b01-40bb-b08a-5f84918ad327.png)
+![image](https://user-images.githubusercontent.com/83942678/162379827-eab2374c-a4ee-4fe8-87f2-e80fed1e0c02.png)
 
 ---
 
