@@ -44,6 +44,24 @@ module.exports = (server) => {
       if(data.socketId) console.log('귓속말 emit 보낸 상태', data);
     });
 
+    // 채팅 (귓속말 추가)
+    // socket.on('send_message', async (data) => {
+    //   const { roomId, socketId } = data;
+    //   const sender = socket.id;
+    //   const isSenderAlive = await GameGroup.findOne({ socketId: sender, isEliminated: 'N' });
+      
+    //   if (isSenderAlive) {
+    //     socketId === ''
+    //     ? socket.to(roomId).emit('receive_message', data)
+    //     : socket.to(socketId).emit('receive_message', data);
+
+    //     if(socketId) console.log('귓속말 emit 보낸 상태', data);
+    //   } else {
+    //     socket.emit('receive_message', { msg: '죽은 유저입니다.' });
+    //     console.log('채팅 하는 사람이 죽었음', { msg: '죽은 유저입니다.' });
+    //   }
+    // });
+
     socket.on('disconnect', () => {
       console.log('User Disconnected', socket.id);
     });

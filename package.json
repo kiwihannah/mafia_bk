@@ -30,7 +30,7 @@
     "express-session": "^1.17.2",
     "helmet": "^5.0.2",
     "letsencrypt": "^2.1.10",
-    "moment": "^2.29.1",
+    "moment": "^2.29.2",
     "mysql2": "^2.3.3",
     "openvidu-node-client": "^2.21.0",
     "pm2": "^5.2.0",

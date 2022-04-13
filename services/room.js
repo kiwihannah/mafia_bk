@@ -1,5 +1,6 @@
 const { Room, User, GameGroup, Log } = require('../models');
-const date = new Date().toISOString().substring(0,10).replace(/-/g,'');
+const { moment } = require('moment');
+const date = moment().format('YYYYMMDD');
 
 module.exports = {
   create: {
