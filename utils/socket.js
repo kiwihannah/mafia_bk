@@ -9,7 +9,6 @@ const date = new Date().toISOString().substring(0, 10).replace(/-/g, '');
 const app = express();
 
 module.exports = (server) => {
-  console.log('[ socket util on ] : 한나소켓시작');
   const io = SocketIO(server, { cors: { origin: '*' } });
 
   io.on('connection', (socket) => {
@@ -17,24 +16,19 @@ module.exports = (server) => {
     socket['nickname'] = `Anon`;
 
     socket.on('join_room', async (data) => {
-      // 방검색 socket.rooms
       const { userId, roomId } = data;
       const socketId = socket.id;
 
       try {
         socket.join(roomId);
-        // db저장 로직
         const prevUser = await GameGroup.findOne({ where: { userId } });
         await prevUser.update({ socketId });
-        console.log(
-          `@@@ 방 입장 --> 유저아이디 : ${userId} | 방 번호 : ${roomId} | 소켓 아이디: ${socketId}`
-        );
+
       } catch (error) {
         throw error;
       }
     });
 
-    // 채팅 (귓속말 추가)
     socket.on('send_message', (data) => {
       console.log(data.socketId);
       
@@ -44,115 +38,68 @@ module.exports = (server) => {
       if(data.socketId) console.log('귓속말 emit 보낸 상태', data);
     });
 
-    // 채팅 (귓속말 추가)
-    // socket.on('send_message', async (data) => {
-    //   const { roomId, socketId } = data;
-    //   const sender = socket.id;
-    //   const isSenderAlive = await GameGroup.findOne({ socketId: sender, isEliminated: 'N' });
-      
-    //   if (isSenderAlive) {
-    //     socketId === ''
-    //     ? socket.to(roomId).emit('receive_message', data)
-    //     : socket.to(socketId).emit('receive_message', data);
-
-    //     if(socketId) console.log('귓속말 emit 보낸 상태', data);
-    //   } else {
-    //     socket.emit('receive_message', { msg: '죽은 유저입니다.' });
-    //     console.log('채팅 하는 사람이 죽었음', { msg: '죽은 유저입니다.' });
-    //   }
-    // });
-
     socket.on('disconnect', () => {
       console.log('User Disconnected', socket.id);
     });
 
-    // 현재 유저 테이블 반환
     socket.on('currUsers', async (data) => {
-      console.log('currentUser 요청하기는 함-->', data); //function ()
       const { roomId } = data;
       const users = await GameGroup.findAll({ where: { roomId } });
-
-      console.log(`[ ##### system ##### ]
-      \n 현재 유저 테이블 반환 :`);
-      console.log(users);
 
       socket.to(roomId).emit('currUsers', users);
       socket.emit('currUsersToMe', users);
     });
 
     socket.on('currUsersToMe', async (data) => {
-      console.log('currentUser 요청하기는 함-->', data);
       const { roomId } = data;
       const users = await GameGroup.findAll({ where: { roomId } });
-
-      console.log(`[ ##### system ##### ]
-      \n 현재 유저 테이블 반환 :`);
-      console.log(users);
 
       socket.emit('currUsersToMe', users);
     });
 
-    // 상태 데이터 반환 data: { roomId: 0, status: 'blah'};
     socket.on('getStatus', async (data) => {
       const { roomId, status } = data;
       const prevStatus = await GameStatus.findOne({ where: { roomId } });
       const gameStatus = await prevStatus.update({ status });
 
-      // console.log(`[ ##### system ##### ]
-      // \n 현재 생성된 소켓 룸 리스트 :`);
-      // console.log(io.sockets.adapter.rooms);
-
-      console.log(`[ ##### system ##### ]
-      \n 현재 스테이터스 소켓 반환 :`);
-      console.log(gameStatus);
-
       socket.to(roomId).emit('getStatus', gameStatus);
       socket.emit('getStatusToMe', gameStatus);
     });
 
-    // 메세지 전달
     socket.on('getMsg', async (data) => {
       const { roomId, msg } = data;
-
-      console.log(`[ ##### system ##### ]
-      \n 현재 메세지 소켓 반환 :`);
-      console.log(msg);
 
       socket.to(roomId).emit('getMsg', msg);
       socket.emit('getMsgToMe', msg);
     });
 
-    // 레디 카운트 (레디)
     socket.on('readyCnt', async (data) => {
       const { roomId, userId } = data;
       const readyUser = await GameGroup.findOne({ where: { userId } });
       await readyUser.update({ isReady: 'Y' });
-
       const users = await GameGroup.findAll({ where: { roomId, isReady: 'Y' } });
       const readyCnt = users.length;
+
       socket.to(roomId).emit('readyCnt', { readyCnt });
       socket.emit('myReadyCnt', { myReadyCnt: readyCnt });
     });
 
-    // 레디 카운트 (취소)
     socket.on('cancelReady', async (data) => {
       const { roomId, userId } = data;
       const readyUser = await GameGroup.findOne({ where: { userId } });
       await readyUser.update({ isReady: 'N' });
-
       const users = await GameGroup.findAll({ where: { roomId, isReady: 'Y' } });
       const readyCnt = users.length;
+
       socket.to(roomId).emit('readyCnt', { readyCnt });
       socket.emit('myReadyCnt', { myReadyCnt: readyCnt });
     });
 
-    // 각자 낮 투표 (사원) 처리
     socket.on('dayTimeVoteArr', async (data) => {
       const { roomId, userId, candidacy, roundNo } = data;
       const prevStatus = await GameStatus.findOne({ where: { roomId } });
       try {
         if (candidacy !== 0) {
-          // 투표 테이블에 추가
           await Vote.create({
             voter: userId,
             candidacy,
@@ -166,7 +113,6 @@ module.exports = (server) => {
             candidacy: candidacy,
             voteCnt: candidacyCnt.length,
           };
-          console.log('@@@@@ 개인 낮 투표를 했다-->', data);
 
           socket.to(roomId).emit('dayTimeVoteArr', data);
           socket.emit('dayTimeVoteArr', data);
@@ -187,7 +133,6 @@ module.exports = (server) => {
 
     // 이긴 유저 테이블 결과 동시 반환
     socket.on('winner', async (data) => {
-      console.log('@@@@@ WINNER 요청이 들어오긴 함 방번호-->', data);
       const { roomId, userId } = data;
       const prevStatus = await GameStatus.findOne({ where: { roomId } });
       const spyGroup = await GameGroup.findAll({ where: { roomId, role: 4 } });
@@ -202,15 +147,9 @@ module.exports = (server) => {
         },
       });
 
-      // 배열 반환
       const winnerArr = [];
       if (prevStatus.isResult === 2) winnerArr.push(spyGroup);
       if (prevStatus.isResult === 1) winnerArr.push(emplGroup);
-
-      console.log(`[ ##### system ##### ]
-        \n게임을 종료합니다.
-        \n방 번호:${roomId} `);
-      console.log(winnerArr[0]);
 
       socket.to(roomId).emit('winner', { users: winnerArr[0] });
       socket.emit('winnerToMe', { users: winnerArr[0] });
@@ -219,11 +158,7 @@ module.exports = (server) => {
     // 방 나가기 소켓 제거 기능
     socket.on('leaveRoom', (data) => {
       const { roomId } = data;
-      console.log('@@@@@ 방 나가기 요청이 들어오긴 함 방번호-->', roomId);
       socket.leave(roomId);
-      // const currentRoom = socket.adapter.rooms[roomId];
-      // const userCnt = currentRoom ? currentRoom.length : 0;
-      // if (userCnt === 0) axios.delete(`http://localhost:8005/room/${roomId}`)
     });
 
     // 방 리스트 소켓 반환
@@ -236,7 +171,6 @@ module.exports = (server) => {
         order: [['createdAt', 'DESC']],
       });
 
-      console.log('[ ##### system #### ]', rooms)
       socket.emit('getRooms', rooms);
     });
 

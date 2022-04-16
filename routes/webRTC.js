@@ -20,8 +20,6 @@ var OpenVidu = require('openvidu-node-client').OpenVidu;
 
 // Entrypoint to OpenVidu Node Client SDK
 var OV = new OpenVidu(DOMAIN_OR_PUBLIC_IP, OPENVIDU_SECRET);
-console.log(DOMAIN_OR_PUBLIC_IP);
-console.log(OPENVIDU_SECRET);
 
 const express = require('express');
 const router = express.Router();
@@ -47,7 +45,6 @@ router.post('/session', async function (req, res) {
       raw: true,
       attributes: ['id'],
     });
-    console.log(findDBsessionName);
     let nickname = req.session.loggedUser.nickname;
     //console.log(nickname);
 
@@ -64,7 +61,6 @@ router.post('/session', async function (req, res) {
     //   serverData: req.session.loggedUser.nickname,
     // });
     var serverData = JSON.stringify(nickname);
-    console.log(serverData);
     //let role = OpenViduRole.PUBLISHER;
     console.log('Getting a token | {sessionName}={' + sessionName + '}');
 
@@ -73,8 +69,6 @@ router.post('/session', async function (req, res) {
       data: serverData,
       role: OpenViduRole.PUBLISHER,
     };
-    //console.log(role.toLowerCase());
-    console.log(connectionProperties);
     if (findDBsessionName === sessionName) {
       if (mapSessions[sessionName]) {
         console.log(sessionName);

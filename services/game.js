@@ -301,10 +301,6 @@ module.exports = {
       const isAlreadyProtected = await IsLaywerDone(roomId);
       const prevUser = await SelectOneUser(roomId, userId);
 
-      console.log(isLawyer)
-      console.log(isAlreadyProtected)
-      console.log(prevUser)
-
       let msg = '';
       if (prevUser && isLawyer && !isAlreadyProtected) {
         const protectedUser = await prevUser.update({ isProtected: `Y${prevStatus.roundNo}` });
