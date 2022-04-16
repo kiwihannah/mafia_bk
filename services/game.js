@@ -132,7 +132,7 @@ module.exports = {
     }),
   },
 
-  SendMsg: {
+  sendMsg: {
     start: ServiceAsyncWrapper(async (data) => {
       const { userId, roomId } = data;
       const prevRoom = await Room.findOne({ where: { id: roomId } });

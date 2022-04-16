@@ -46,7 +46,7 @@ module.exports = {
   sendMsg: {
     start: ControllerAsyncWrapper(async (req, res) => {
       const { roomId, userId } = req.params;
-      const msg = await gameService.SendMsg.start({ roomId, userId });
+      const msg = await gameService.sendMsg.start({ roomId, userId });
       return res.status(200).json({ msg });
     }),
   },
