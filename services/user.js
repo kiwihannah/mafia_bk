@@ -1,7 +1,8 @@
 const { User, Log } = require('../models');
 const { ServiceAsyncWrapper } = require('../utils/wrapper');
-const { moment } = require('moment');
-const date = moment().format('YYYYMMDD');
+const moment = require('moment');
+const today = moment();
+const date = today.format('YYYYMMDD');
 
 module.exports = {
   create: {
