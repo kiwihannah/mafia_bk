@@ -3,11 +3,6 @@ const SocketIO = require('socket.io');
 const { GameStatus, GameGroup, Vote, Log, Room, User } = require('../models');
 const { Op } = require('sequelize');
 
-const { SocketAsyncWrapper } = require('./wrapper'); // 에러 핸들러 작업 요망
-const date = new Date().toISOString().substring(0, 10).replace(/-/g, '');
-
-const app = express();
-
 module.exports = (server) => {
   const io = SocketIO(server, { cors: { origin: '*' } });
 
@@ -122,7 +117,6 @@ module.exports = (server) => {
       }
     });
 
-    // 라운드 반환
     socket.on('getRoundNo', async (data) => {
       const { roomId } = data;
       const prevStatus = await GameStatus.findOne({ where: { roomId } });
@@ -131,7 +125,6 @@ module.exports = (server) => {
       socket.emit('getRoundNo', { roundNo: prevStatus.roundNo });
     });
 
-    // 이긴 유저 테이블 결과 동시 반환
     socket.on('winner', async (data) => {
       const { roomId, userId } = data;
       const prevStatus = await GameStatus.findOne({ where: { roomId } });
@@ -155,13 +148,11 @@ module.exports = (server) => {
       socket.emit('winnerToMe', { users: winnerArr[0] });
     });
 
-    // 방 나가기 소켓 제거 기능
     socket.on('leaveRoom', (data) => {
       const { roomId } = data;
       socket.leave(roomId);
     });
 
-    // 방 리스트 소켓 반환
     socket.on('getRooms', async () => {
       const rooms = await Room.findAll({
         include: {

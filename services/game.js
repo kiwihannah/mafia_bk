@@ -366,7 +366,7 @@ module.exports = {
       return msg;
     }),
 
-    // 프론트 데이터 확인용
+    // 프론트 확인용
     isZeroVote: ServiceAsyncWrapper(async (data) => {
       const { roomId } = data;
       const isVote = await Vote.findAll({ where: { roomId } });
