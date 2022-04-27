@@ -3,8 +3,6 @@ config/
 .env
 images/
 app.js
-app.bk.js
-app.bkkk.js
 ecosystem.config.js
 nginx.conf
 .well-known/
@@ -19,3 +17,4 @@ nginx.conf
 sessions/
 test/
 socketEx.js
+deploy copy.yaml

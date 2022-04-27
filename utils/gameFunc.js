@@ -16,8 +16,8 @@ module.exports = {
     });
 
     userId
-        ? (selectedUserId = userId)
-        : (selectedUserId = userArr[Math.floor(Math.random() * userArr.length)]);
+        ? selectedUserId = userId
+        : selectedUserId = userArr[Math.floor(Math.random() * userArr.length)];
 
     const prevUser = await GameGroup.findOne({
       where: {
